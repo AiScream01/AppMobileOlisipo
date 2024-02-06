@@ -3,25 +3,23 @@ import 'package:rui_pedro_s_application10/core/app_export.dart';
 import 'package:rui_pedro_s_application10/widgets/custom_elevated_button.dart';
 import 'package:rui_pedro_s_application10/widgets/custom_text_form_field.dart';
 import 'package:rui_pedro_s_application10/servidor.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
-// ignore_for_file: must_be_immutable
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key? key}) : super(key: key);
 
-  TextEditingController emailController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
-  TextEditingController passwordController = TextEditingController();
+  var servidor = Servidor();
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Scaffold(
-            extendBody: true,
-            extendBodyBehindAppBar: true,
-            resizeToAvoidBottomInset: false,
-            body: Container(
+      child: Scaffold(
+        extendBody: true,
+        extendBodyBehindAppBar: true,
+        resizeToAvoidBottomInset: false,
+        body: Container(
                 width: SizeUtils.width,
                 height: SizeUtils.height,
                 decoration: BoxDecoration(
@@ -88,11 +86,28 @@ class LoginScreen extends StatelessWidget {
                       child: Text("Esqueceu-se da password?",
                           style: CustomTextStyles.titleSmallNunitoPrimary)))),
           SizedBox(height: 50.v),
-          CustomElevatedButton(
-            height: 60.v, width: 155.h, text: "Login",
-            // Chama a função de login quando o botão é pressionado
-            onPressed: () => login(context),
-          ),
+                CustomElevatedButton(
+        height: 60.v,
+        width: 155.h,
+        text: "Login",
+        onPressed: () async {
+          String? token = await servidor.login(
+            emailController.text,
+            passwordController.text,
+          );
+          if (token != null) {
+            await servidor.saveToken(token);
+            print(token);
+            Navigator.pushReplacementNamed(context, '/pagina_principal_screen');
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Credenciais inválidas'),
+              ),
+            );
+          }
+        },
+      ),
           SizedBox(height: 19.v),
           GestureDetector(
               onTap: () {
