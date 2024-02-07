@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rui_pedro_s_application10/core/app_export.dart';
+import 'package:rui_pedro_s_application11/core/app_export.dart';
 
 class AppDecoration {
   // Fill decorations
@@ -47,20 +47,6 @@ class AppDecoration {
         ],
       );
   static BoxDecoration get outlinePrimary => BoxDecoration(
-        border: Border.all(
-          color: theme.colorScheme.primary,
-          width: 1.h,
-        ),
-      );
-  static BoxDecoration get outlinePrimary1 => BoxDecoration(
-        color: theme.colorScheme.onPrimaryContainer,
-        border: Border.all(
-          color: theme.colorScheme.primary,
-          width: 1.h,
-          strokeAlign: strokeAlignCenter,
-        ),
-      );
-  static BoxDecoration get outlinePrimary2 => BoxDecoration(
         color: theme.colorScheme.onPrimaryContainer.withOpacity(0.85),
         border: Border.all(
           color: theme.colorScheme.primary,
@@ -68,7 +54,15 @@ class AppDecoration {
           strokeAlign: strokeAlignCenter,
         ),
       );
-  static BoxDecoration get outlinePrimary3 => BoxDecoration(
+  static BoxDecoration get outlinePrimary1 => BoxDecoration(
+        border: Border.all(
+          color: theme.colorScheme.primary,
+          width: 1.h,
+          strokeAlign: strokeAlignCenter,
+        ),
+      );
+  static BoxDecoration get outlinePrimary2 => BoxDecoration(
+        color: theme.colorScheme.onPrimaryContainer,
         border: Border.all(
           color: theme.colorScheme.primary,
           width: 1.h,

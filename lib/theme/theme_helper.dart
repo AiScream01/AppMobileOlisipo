@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../core/app_export.dart';
 
@@ -124,9 +125,9 @@ class TextThemes {
         ),
         headlineLarge: TextStyle(
           color: appTheme.black900,
-          fontSize: 32.fSize,
-          fontFamily: 'Nunito',
-          fontWeight: FontWeight.w800,
+          fontSize: 30.fSize,
+          fontFamily: 'Inter',
+          fontWeight: FontWeight.w600,
         ),
         headlineSmall: TextStyle(
           color: appTheme.black900,
@@ -147,10 +148,10 @@ class TextThemes {
           fontWeight: FontWeight.w600,
         ),
         titleSmall: TextStyle(
-          color: appTheme.gray700,
+          color: Color(0XFF1ED700),
           fontSize: 15.fSize,
-          fontFamily: 'Roboto',
-          fontWeight: FontWeight.w500,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeight.w700,
         ),
       );
 }
@@ -161,11 +162,10 @@ class ColorSchemes {
     // Primary colors
     primary: Color(0XFF1ED700),
     primaryContainer: Color(0XFFFF0000),
-    secondaryContainer: Color(0XFFBDBDBD),
+    secondaryContainer: Color(0XFFFFB84D),
 
     // Error colors
     errorContainer: Color(0XFF666666),
-    onError: Color(0XFFFFB84D),
 
     // On colors(text colors)
     onPrimary: Color(0XFF222222),
@@ -187,7 +187,6 @@ class PrimaryColors {
   Color get gray200 => Color(0XFFE7E7E7);
   Color get gray20001 => Color(0XFFECECEC);
   Color get gray300 => Color(0XFFDADADA);
-  Color get gray700 => Color(0XFF6E5D62);
 
   // Green
   Color get green400 => Color(0XFF5DB074);

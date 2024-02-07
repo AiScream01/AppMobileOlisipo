@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:rui_pedro_s_application10/core/app_export.dart';
-import 'package:rui_pedro_s_application10/widgets/custom_outlined_button.dart';
-import 'package:rui_pedro_s_application10/widgets/custom_text_form_field.dart';
-import 'package:rui_pedro_s_application10/presentation/push_notification_dialog/push_notification_dialog.dart';
+import 'package:rui_pedro_s_application11/core/app_export.dart';
+import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
+import 'package:rui_pedro_s_application11/widgets/custom_text_form_field.dart';
+import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
 
 // ignore_for_file: must_be_immutable
 class PedidoHorasScreen extends StatelessWidget {
@@ -38,16 +38,16 @@ class PedidoHorasScreen extends StatelessWidget {
                         EdgeInsets.symmetric(horizontal: 20.h, vertical: 27.v),
                     child: Column(mainAxisSize: MainAxisSize.min, children: [
                       SizedBox(height: 3.v),
-                      _buildUserProfileRow(context),
+                      _buildUserProfile(context),
                       SizedBox(height: 3.v),
                       Text("Horas", style: theme.textTheme.displayMedium),
                       SizedBox(height: 12.v),
-                      _buildHoursRequestStack(context)
+                      _buildPedidoHoras(context)
                     ])))));
   }
 
   /// Section Widget
-  Widget _buildUserProfileRow(BuildContext context) {
+  Widget _buildUserProfile(BuildContext context) {
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: 5.h),
         child:
@@ -63,15 +63,12 @@ class PedidoHorasScreen extends StatelessWidget {
               imagePath: ImageConstant.imgMegaphone,
               height: 20.v,
               width: 39.h,
-              margin: EdgeInsets.only(top: 12.v, bottom: 13.v),
-              onTap: () {
-                onTapImgMegaphone(context);
-              })
+              margin: EdgeInsets.only(top: 12.v, bottom: 13.v))
         ]));
   }
 
   /// Section Widget
-  Widget _buildHoursRequestStack(BuildContext context) {
+  Widget _buildPedidoHoras(BuildContext context) {
     return SizedBox(
         height: 627.v,
         width: 370.h,
@@ -117,7 +114,7 @@ class PedidoHorasScreen extends StatelessWidget {
                                   width: 126.h,
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 30.h, vertical: 1.v),
-                                  decoration: AppDecoration.outlinePrimary1
+                                  decoration: AppDecoration.outlinePrimary2
                                       .copyWith(
                                           borderRadius:
                                               BorderRadiusStyle.roundedBorder8),
@@ -153,11 +150,6 @@ class PedidoHorasScreen extends StatelessWidget {
   /// Navigates to the paginaPerfilScreen when the action is triggered.
   onTapImgDoUtilizador(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
-  }
-
-  /// Navigates to the menuHamburguerScreen when the action is triggered.
-  onTapImgMegaphone(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.menuHamburguerScreen);
   }
 
   /// Displays a dialog with the [PushNotificationDialog] content.

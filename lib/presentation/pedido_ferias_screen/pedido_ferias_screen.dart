@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:rui_pedro_s_application10/core/app_export.dart';
-import 'package:rui_pedro_s_application10/widgets/custom_outlined_button.dart';
-import 'package:rui_pedro_s_application10/presentation/push_notification_dialog/push_notification_dialog.dart';
+import 'package:rui_pedro_s_application11/core/app_export.dart';
+import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
+import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
 
 class PedidoFeriasScreen extends StatelessWidget {
   const PedidoFeriasScreen({Key? key}) : super(key: key);
@@ -33,16 +33,16 @@ class PedidoFeriasScreen extends StatelessWidget {
                         EdgeInsets.symmetric(horizontal: 21.h, vertical: 27.v),
                     child: Column(mainAxisSize: MainAxisSize.min, children: [
                       SizedBox(height: 3.v),
-                      _buildUserSection(context),
+                      _buildNinetyFiveRow(context),
                       SizedBox(height: 3.v),
                       Text("Férias", style: theme.textTheme.displayMedium),
                       SizedBox(height: 13.v),
-                      _buildVacationSection(context)
+                      _buildFiftySixStack(context)
                     ])))));
   }
 
   /// Section Widget
-  Widget _buildUserSection(BuildContext context) {
+  Widget _buildNinetyFiveRow(BuildContext context) {
     return Padding(
         padding: EdgeInsets.only(right: 8.h),
         child:
@@ -58,15 +58,12 @@ class PedidoFeriasScreen extends StatelessWidget {
               imagePath: ImageConstant.imgMegaphone,
               height: 20.v,
               width: 39.h,
-              margin: EdgeInsets.only(top: 12.v, bottom: 13.v),
-              onTap: () {
-                onTapImgMegaphone(context);
-              })
+              margin: EdgeInsets.only(top: 12.v, bottom: 13.v))
         ]));
   }
 
   /// Section Widget
-  Widget _buildVacationSection(BuildContext context) {
+  Widget _buildFiftySixStack(BuildContext context) {
     return SizedBox(
         height: 626.v,
         width: 365.h,
@@ -114,11 +111,8 @@ class PedidoFeriasScreen extends StatelessWidget {
                                   width: 126.h,
                                   text: "Calendário",
                                   buttonStyle:
-                                      CustomButtonStyles.outlinePrimaryTL10,
-                                  buttonTextStyle: theme.textTheme.titleLarge!,
-                                  onPressed: () {
-                                    onTapCalendrio(context);
-                                  })
+                                      CustomButtonStyles.outlinePrimary,
+                                  buttonTextStyle: theme.textTheme.titleLarge!)
                             ])),
                     SizedBox(height: 77.v),
                     Padding(
@@ -136,11 +130,8 @@ class PedidoFeriasScreen extends StatelessWidget {
                                   width: 126.h,
                                   text: "Calendário",
                                   buttonStyle:
-                                      CustomButtonStyles.outlinePrimaryTL10,
-                                  buttonTextStyle: theme.textTheme.titleLarge!,
-                                  onPressed: () {
-                                    onTapCalendrio1(context);
-                                  })
+                                      CustomButtonStyles.outlinePrimary,
+                                  buttonTextStyle: theme.textTheme.titleLarge!)
                             ])),
                     Spacer(),
                     CustomOutlinedButton(
@@ -156,21 +147,6 @@ class PedidoFeriasScreen extends StatelessWidget {
   /// Navigates to the paginaPerfilScreen when the action is triggered.
   onTapImgDoUtilizador(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
-  }
-
-  /// Navigates to the menuHamburguerScreen when the action is triggered.
-  onTapImgMegaphone(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.menuHamburguerScreen);
-  }
-
-  /// Navigates to the pedidoFeriasTwoScreen when the action is triggered.
-  onTapCalendrio(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.pedidoFeriasTwoScreen);
-  }
-
-  /// Navigates to the pedidoFeriasOneScreen when the action is triggered.
-  onTapCalendrio1(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.pedidoFeriasOneScreen);
   }
 
   /// Displays a dialog with the [PushNotificationDialog] content.

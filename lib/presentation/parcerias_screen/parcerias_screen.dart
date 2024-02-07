@@ -1,6 +1,6 @@
 import '../parcerias_screen/widgets/parceriasgrid_item_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:rui_pedro_s_application10/core/app_export.dart';
+import 'package:rui_pedro_s_application11/core/app_export.dart';
 
 class ParceriasScreen extends StatelessWidget {
   const ParceriasScreen({Key? key}) : super(key: key);
@@ -92,10 +92,7 @@ class ParceriasScreen extends StatelessWidget {
               imagePath: ImageConstant.imgMegaphone,
               height: 20.v,
               width: 39.h,
-              margin: EdgeInsets.only(top: 12.v, bottom: 13.v),
-              onTap: () {
-                onTapImgMegaphone(context);
-              })
+              margin: EdgeInsets.only(top: 12.v, bottom: 13.v))
         ]));
   }
 
@@ -134,10 +131,5 @@ class ParceriasScreen extends StatelessWidget {
   /// Navigates to the paginaPerfilScreen when the action is triggered.
   onTapImgDoUtilizador(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
-  }
-
-  /// Navigates to the menuHamburguerScreen when the action is triggered.
-  onTapImgMegaphone(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.menuHamburguerScreen);
   }
 }

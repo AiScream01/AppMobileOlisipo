@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:rui_pedro_s_application10/core/app_export.dart';
-import 'package:rui_pedro_s_application10/widgets/custom_outlined_button.dart';
-import 'package:rui_pedro_s_application10/widgets/custom_text_form_field.dart';
-import 'package:rui_pedro_s_application10/presentation/push_notification_dialog/push_notification_dialog.dart';
+import 'package:rui_pedro_s_application11/core/app_export.dart';
+import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
+import 'package:rui_pedro_s_application11/widgets/custom_text_form_field.dart';
+import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
 
 // ignore_for_file: must_be_immutable
 class DespesasViaturaPropriaScreen extends StatelessWidget {
@@ -104,15 +104,15 @@ class DespesasViaturaPropriaScreen extends StatelessWidget {
                                           Padding(
                                               padding:
                                                   EdgeInsets.only(left: 1.h),
-                                              child: _buildPortagensRow(context,
-                                                  text: "Kilometros",
+                                              child: _buildSixtyTwoRow(context,
+                                                  title: "Kilometros",
                                                   price: "300")),
                                           SizedBox(height: 45.v),
                                           Padding(
                                               padding:
                                                   EdgeInsets.only(left: 1.h),
-                                              child: _buildPortagensRow(context,
-                                                  text: "Portagens ",
+                                              child: _buildSixtyTwoRow(context,
+                                                  title: "Portagens ",
                                                   price: "18€")),
                                           SizedBox(height: 98.v),
                                           Align(
@@ -162,10 +162,7 @@ class DespesasViaturaPropriaScreen extends StatelessWidget {
               imagePath: ImageConstant.imgMegaphone,
               height: 20.v,
               width: 39.h,
-              margin: EdgeInsets.only(top: 12.v, bottom: 13.v),
-              onTap: () {
-                onTapImgMegaphone(context);
-              })
+              margin: EdgeInsets.only(top: 12.v, bottom: 13.v))
         ]));
   }
 
@@ -186,7 +183,7 @@ class DespesasViaturaPropriaScreen extends StatelessWidget {
         height: 32.v,
         width: 126.h,
         text: "Viseu",
-        buttonStyle: CustomButtonStyles.outlinePrimaryTL101,
+        buttonStyle: CustomButtonStyles.outlinePrimaryTL10,
         buttonTextStyle: theme.textTheme.titleLarge!);
   }
 
@@ -196,7 +193,7 @@ class DespesasViaturaPropriaScreen extends StatelessWidget {
         height: 32.v,
         width: 126.h,
         text: "Lisboa",
-        buttonStyle: CustomButtonStyles.outlinePrimaryTL10,
+        buttonStyle: CustomButtonStyles.outlinePrimary,
         buttonTextStyle: theme.textTheme.titleLarge!);
   }
 
@@ -211,21 +208,21 @@ class DespesasViaturaPropriaScreen extends StatelessWidget {
   }
 
   /// Common widget
-  Widget _buildPortagensRow(
+  Widget _buildSixtyTwoRow(
     BuildContext context, {
-    required String text,
+    required String title,
     required String price,
   }) {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
       Padding(
           padding: EdgeInsets.only(top: 3.v),
-          child: Text(text,
+          child: Text(title,
               style: theme.textTheme.titleLarge!
                   .copyWith(color: appTheme.black900))),
       Container(
           width: 126.h,
           padding: EdgeInsets.symmetric(horizontal: 30.h, vertical: 1.v),
-          decoration: AppDecoration.outlinePrimary2
+          decoration: AppDecoration.outlinePrimary
               .copyWith(borderRadius: BorderRadiusStyle.roundedBorder8),
           child: Text(price,
               style: theme.textTheme.titleLarge!
@@ -236,11 +233,6 @@ class DespesasViaturaPropriaScreen extends StatelessWidget {
   /// Navigates to the paginaPerfilScreen when the action is triggered.
   onTapImgDoUtilizador(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
-  }
-
-  /// Navigates to the menuHamburguerScreen when the action is triggered.
-  onTapImgMegaphone(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.menuHamburguerScreen);
   }
 
   /// Displays a dialog with the [PushNotificationDialog] content.

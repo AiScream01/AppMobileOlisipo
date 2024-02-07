@@ -7,9 +7,6 @@ class ImageConstant {
 
   static String imgContentBlock = '$imagePath/img_content_block.png';
 
-  // Pagina Perfil images
-  static String imgEdit = '$imagePath/img_edit.svg';
-
   // Parcerias images
   static String imgImage3 = '$imagePath/img_image_3.png';
 
@@ -55,6 +52,9 @@ class ImageConstant {
   static String imgUser = '$imagePath/img_user.svg';
 
   static String imgOverflowMenu = '$imagePath/img_overflow_menu.svg';
+
+  // Pagina Perfil images
+  static String imgEdit = '$imagePath/img_edit.svg';
 
   // Common images
   static String imgLogin = '$imagePath/img_login.png';

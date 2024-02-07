@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:rui_pedro_s_application10/core/app_export.dart';
-import 'package:rui_pedro_s_application10/widgets/custom_outlined_button.dart';
-import 'package:rui_pedro_s_application10/widgets/custom_text_form_field.dart';
-import 'package:rui_pedro_s_application10/presentation/push_notification_dialog/push_notification_dialog.dart';
+import 'package:rui_pedro_s_application11/core/app_export.dart';
+import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
+import 'package:rui_pedro_s_application11/widgets/custom_text_form_field.dart';
+import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
 
 // ignore_for_file: must_be_immutable
 class AjudasScreen extends StatelessWidget {
@@ -42,16 +42,16 @@ class AjudasScreen extends StatelessWidget {
                         EdgeInsets.symmetric(horizontal: 20.h, vertical: 22.v),
                     child: Column(mainAxisSize: MainAxisSize.min, children: [
                       SizedBox(height: 8.v),
-                      _buildDoUtilizadorRow(context),
+                      _buildNinetyThreeRow(context),
                       SizedBox(height: 16.v),
                       Text("Ajudas", style: theme.textTheme.displayMedium),
                       SizedBox(height: 9.v),
-                      _buildAjudasStack(context)
+                      _buildSixtySixStack(context)
                     ])))));
   }
 
   /// Section Widget
-  Widget _buildDoUtilizadorRow(BuildContext context) {
+  Widget _buildNinetyThreeRow(BuildContext context) {
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: 5.h),
         child:
@@ -67,15 +67,12 @@ class AjudasScreen extends StatelessWidget {
               imagePath: ImageConstant.imgMegaphone,
               height: 20.v,
               width: 39.h,
-              margin: EdgeInsets.only(top: 12.v, bottom: 13.v),
-              onTap: () {
-                onTapImgMegaphone(context);
-              })
+              margin: EdgeInsets.only(top: 12.v, bottom: 13.v))
         ]));
   }
 
   /// Section Widget
-  Widget _buildAjudasStack(BuildContext context) {
+  Widget _buildSixtySixStack(BuildContext context) {
     return SizedBox(
         height: 622.v,
         width: 370.h,
@@ -143,11 +140,6 @@ class AjudasScreen extends StatelessWidget {
   /// Navigates to the paginaPerfilScreen when the action is triggered.
   onTapImgDoUtilizador(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
-  }
-
-  /// Navigates to the menuHamburguerScreen when the action is triggered.
-  onTapImgMegaphone(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.menuHamburguerScreen);
   }
 
   /// Displays a dialog with the [PushNotificationDialog] content.

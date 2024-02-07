@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rui_pedro_s_application10/core/app_export.dart';
+import 'package:rui_pedro_s_application11/core/app_export.dart';
 
 class NoticiasScreen extends StatelessWidget {
   const NoticiasScreen({Key? key}) : super(key: key);
@@ -69,12 +69,11 @@ class NoticiasScreen extends StatelessWidget {
                                         TextSpan(text: " "),
                                         TextSpan(
                                             text: "Ver mais",
-                                            style: CustomTextStyles
-                                                .titleSmallNunitoff1ed700)
+                                            style: theme.textTheme.titleSmall)
                                       ]),
                                       textAlign: TextAlign.left)))),
                       SizedBox(height: 14.v),
-                      _buildEightyEightRow(context),
+                      _buildEightyTwoRow(context),
                       SizedBox(height: 17.v),
                       _buildViewRow(context),
                       SizedBox(height: 5.v)
@@ -98,15 +97,12 @@ class NoticiasScreen extends StatelessWidget {
               imagePath: ImageConstant.imgMegaphone,
               height: 20.v,
               width: 39.h,
-              margin: EdgeInsets.only(top: 12.v, bottom: 13.v),
-              onTap: () {
-                onTapImgMegaphone(context);
-              })
+              margin: EdgeInsets.only(top: 12.v, bottom: 13.v))
         ]));
   }
 
   /// Section Widget
-  Widget _buildEightyEightRow(BuildContext context) {
+  Widget _buildEightyTwoRow(BuildContext context) {
     return Padding(
         padding: EdgeInsets.only(left: 8.h),
         child: Row(
@@ -137,8 +133,7 @@ class NoticiasScreen extends StatelessWidget {
                                 "Este texto vai conter a descrição da notícia que está acima.\n",
                             style: CustomTextStyles.titleMediumNunitoff000000),
                         TextSpan(
-                            text: "Ver mais",
-                            style: CustomTextStyles.titleSmallNunitoff1ed700)
+                            text: "Ver mais", style: theme.textTheme.titleSmall)
                       ]),
                       textAlign: TextAlign.left))
             ]));
@@ -176,8 +171,7 @@ class NoticiasScreen extends StatelessWidget {
                                 "Este texto vai conter a descrição da notícia que está acima.\n",
                             style: CustomTextStyles.titleMediumNunitoff000000),
                         TextSpan(
-                            text: "Ver mais",
-                            style: CustomTextStyles.titleSmallNunitoff1ed700)
+                            text: "Ver mais", style: theme.textTheme.titleSmall)
                       ]),
                       textAlign: TextAlign.left))
             ]));
@@ -186,11 +180,6 @@ class NoticiasScreen extends StatelessWidget {
   /// Navigates to the paginaPerfilScreen when the action is triggered.
   onTapImgDoUtilizador(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
-  }
-
-  /// Navigates to the menuHamburguerScreen when the action is triggered.
-  onTapImgMegaphone(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.menuHamburguerScreen);
   }
 
   /// Navigates to the noticiaScreen when the action is triggered.

@@ -1,7 +1,7 @@
 import '../reunioes_screen/widgets/meetingcardlist_item_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:rui_pedro_s_application10/core/app_export.dart';
-import 'package:rui_pedro_s_application10/widgets/custom_elevated_button.dart';
+import 'package:rui_pedro_s_application11/core/app_export.dart';
+import 'package:rui_pedro_s_application11/widgets/custom_elevated_button.dart';
 
 class ReunioesScreen extends StatelessWidget {
   const ReunioesScreen({Key? key}) : super(key: key);
@@ -57,8 +57,7 @@ class ReunioesScreen extends StatelessWidget {
                                     text: "Faça um pedido de reunião",
                                     margin:
                                         EdgeInsets.symmetric(horizontal: 5.h),
-                                    buttonStyle:
-                                        CustomButtonStyles.fillPrimaryTL25,
+                                    buttonStyle: CustomButtonStyles.fillPrimary,
                                     buttonTextStyle:
                                         theme.textTheme.titleMedium!,
                                     onPressed: () {
@@ -86,10 +85,7 @@ class ReunioesScreen extends StatelessWidget {
               imagePath: ImageConstant.imgMegaphone,
               height: 20.v,
               width: 39.h,
-              margin: EdgeInsets.only(top: 12.v, bottom: 13.v),
-              onTap: () {
-                onTapImgMegaphone(context);
-              })
+              margin: EdgeInsets.only(top: 12.v, bottom: 13.v))
         ]));
   }
 
@@ -112,11 +108,6 @@ class ReunioesScreen extends StatelessWidget {
   /// Navigates to the paginaPerfilScreen when the action is triggered.
   onTapImgDoUtilizador(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
-  }
-
-  /// Navigates to the menuHamburguerScreen when the action is triggered.
-  onTapImgMegaphone(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.menuHamburguerScreen);
   }
 
   /// Navigates to the pedidoReuniaoScreen when the action is triggered.

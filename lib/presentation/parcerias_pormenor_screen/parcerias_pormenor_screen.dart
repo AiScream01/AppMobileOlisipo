@@ -2,7 +2,7 @@ import '../parcerias_pormenor_screen/widgets/contentcontentslider_item_widget.da
 import '../parcerias_pormenor_screen/widgets/pageheaderslider_item_widget.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:rui_pedro_s_application10/core/app_export.dart';
+import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 // ignore_for_file: must_be_immutable
@@ -109,10 +109,7 @@ class ParceriasPormenorScreen extends StatelessWidget {
               imagePath: ImageConstant.imgMegaphone,
               height: 20.v,
               width: 39.h,
-              margin: EdgeInsets.only(top: 12.v, bottom: 13.v),
-              onTap: () {
-                onTapImgMegaphone(context);
-              })
+              margin: EdgeInsets.only(top: 12.v, bottom: 13.v))
         ]));
   }
 
@@ -161,10 +158,5 @@ class ParceriasPormenorScreen extends StatelessWidget {
   /// Navigates to the paginaPerfilScreen when the action is triggered.
   onTapImgDoUtilizador(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
-  }
-
-  /// Navigates to the menuHamburguerScreen when the action is triggered.
-  onTapImgMegaphone(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.menuHamburguerScreen);
   }
 }

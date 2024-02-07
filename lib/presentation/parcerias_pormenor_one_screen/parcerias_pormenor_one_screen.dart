@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rui_pedro_s_application10/core/app_export.dart';
+import 'package:rui_pedro_s_application11/core/app_export.dart';
 
 class ParceriasPormenorOneScreen extends StatelessWidget {
   const ParceriasPormenorOneScreen({Key? key}) : super(key: key);
@@ -52,8 +52,8 @@ class ParceriasPormenorOneScreen extends StatelessWidget {
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Text("Nome parceria",
-                                                  style: CustomTextStyles
-                                                      .headlineLargeInter),
+                                                  style: theme
+                                                      .textTheme.headlineLarge),
                                               SizedBox(height: 6.v),
                                               Padding(
                                                   padding: EdgeInsets.only(
@@ -63,7 +63,7 @@ class ParceriasPormenorOneScreen extends StatelessWidget {
                                                           CrossAxisAlignment
                                                               .start,
                                                       children: [
-                                                        _buildTwentyTwoRow(
+                                                        _buildNineteenRow(
                                                             context),
                                                         SizedBox(height: 10.v),
                                                         Text("Parceria ",
@@ -108,15 +108,12 @@ class ParceriasPormenorOneScreen extends StatelessWidget {
               imagePath: ImageConstant.imgMegaphone,
               height: 20.v,
               width: 39.h,
-              margin: EdgeInsets.only(top: 12.v, bottom: 13.v),
-              onTap: () {
-                onTapImgMegaphone(context);
-              })
+              margin: EdgeInsets.only(top: 12.v, bottom: 13.v))
         ]));
   }
 
   /// Section Widget
-  Widget _buildTwentyTwoRow(BuildContext context) {
+  Widget _buildNineteenRow(BuildContext context) {
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 9.h, vertical: 91.v),
         decoration: AppDecoration.fillGray
@@ -141,10 +138,5 @@ class ParceriasPormenorOneScreen extends StatelessWidget {
   /// Navigates to the paginaPerfilScreen when the action is triggered.
   onTapImgDoUtilizador(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
-  }
-
-  /// Navigates to the menuHamburguerScreen when the action is triggered.
-  onTapImgMegaphone(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.menuHamburguerScreen);
   }
 }

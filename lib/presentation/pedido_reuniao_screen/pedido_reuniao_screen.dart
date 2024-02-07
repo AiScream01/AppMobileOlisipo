@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:rui_pedro_s_application10/core/app_export.dart';
-import 'package:rui_pedro_s_application10/widgets/app_bar/appbar_leading_image.dart';
-import 'package:rui_pedro_s_application10/widgets/app_bar/appbar_trailing_image.dart';
-import 'package:rui_pedro_s_application10/widgets/app_bar/custom_app_bar.dart';
-import 'package:rui_pedro_s_application10/widgets/custom_outlined_button.dart';
-import 'package:rui_pedro_s_application10/presentation/push_notification_dialog/push_notification_dialog.dart';
+import 'package:rui_pedro_s_application11/core/app_export.dart';
+import 'package:rui_pedro_s_application11/widgets/app_bar/appbar_leading_image.dart';
+import 'package:rui_pedro_s_application11/widgets/app_bar/appbar_trailing_image.dart';
+import 'package:rui_pedro_s_application11/widgets/app_bar/custom_app_bar.dart';
+import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
+import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
 
 class PedidoReuniaoScreen extends StatelessWidget {
   const PedidoReuniaoScreen({Key? key}) : super(key: key);
@@ -105,7 +105,7 @@ class PedidoReuniaoScreen extends StatelessWidget {
                                                                 horizontal: 8.h,
                                                                 vertical: 1.v),
                                                         decoration: AppDecoration
-                                                            .outlinePrimary1
+                                                            .outlinePrimary2
                                                             .copyWith(
                                                                 borderRadius:
                                                                     BorderRadiusStyle
@@ -165,11 +165,11 @@ class PedidoReuniaoScreen extends StatelessWidget {
                                                                       alignment:
                                                                           Alignment
                                                                               .topCenter,
-                                                                      child: GestureDetector(
-                                                                          onTap: () {
-                                                                            onTapTxtCalendRio(context);
-                                                                          },
-                                                                          child: Text("Calendário", style: theme.textTheme.titleLarge)))
+                                                                      child: Text(
+                                                                          "Calendário",
+                                                                          style: theme
+                                                                              .textTheme
+                                                                              .titleLarge))
                                                                 ]))
                                                       ]))),
                                           SizedBox(height: 40.v),
@@ -197,7 +197,7 @@ class PedidoReuniaoScreen extends StatelessWidget {
                                                                     30.h,
                                                                 vertical: 1.v),
                                                         decoration: AppDecoration
-                                                            .outlinePrimary1
+                                                            .outlinePrimary2
                                                             .copyWith(
                                                                 borderRadius:
                                                                     BorderRadiusStyle
@@ -233,26 +233,13 @@ class PedidoReuniaoScreen extends StatelessWidget {
         actions: [
           AppbarTrailingImage(
               imagePath: ImageConstant.imgMegaphone,
-              margin: EdgeInsets.fromLTRB(25.h, 17.v, 25.h, 18.v),
-              onTap: () {
-                onTapMegaphone(context);
-              })
+              margin: EdgeInsets.fromLTRB(25.h, 17.v, 25.h, 18.v))
         ]);
   }
 
   /// Navigates to the paginaPerfilScreen when the action is triggered.
   onTapDoUtilizador(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
-  }
-
-  /// Navigates to the menuHamburguerScreen when the action is triggered.
-  onTapMegaphone(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.menuHamburguerScreen);
-  }
-
-  /// Navigates to the pedidoReuniaoOneScreen when the action is triggered.
-  onTapTxtCalendRio(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.pedidoReuniaoOneScreen);
   }
 
   /// Displays a dialog with the [PushNotificationDialog] content.

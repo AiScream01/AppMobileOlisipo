@@ -1,22 +1,11 @@
-import 'package:rui_pedro_s_application10/core/app_export.dart';
+import 'dart:ui';
+import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:flutter/material.dart';
 
 /// A class that offers pre-defined button styles for customizing button appearance.
 class CustomButtonStyles {
   // Filled button style
-  static ButtonStyle get fillOnPrimaryContainer => ElevatedButton.styleFrom(
-        backgroundColor: theme.colorScheme.onPrimaryContainer,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5.h),
-        ),
-      );
   static ButtonStyle get fillPrimary => ElevatedButton.styleFrom(
-        backgroundColor: theme.colorScheme.primary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5.h),
-        ),
-      );
-  static ButtonStyle get fillPrimaryTL25 => ElevatedButton.styleFrom(
         backgroundColor: theme.colorScheme.primary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(25.h),
@@ -24,7 +13,7 @@ class CustomButtonStyles {
       );
 
   // Outline button style
-  static ButtonStyle get outlinePrimaryTL10 => OutlinedButton.styleFrom(
+  static ButtonStyle get outlinePrimary => OutlinedButton.styleFrom(
         backgroundColor: theme.colorScheme.onPrimaryContainer.withOpacity(0.85),
         side: BorderSide(
           color: theme.colorScheme.primary,
@@ -34,7 +23,7 @@ class CustomButtonStyles {
           borderRadius: BorderRadius.circular(10.h),
         ),
       );
-  static ButtonStyle get outlinePrimaryTL101 => OutlinedButton.styleFrom(
+  static ButtonStyle get outlinePrimaryTL10 => OutlinedButton.styleFrom(
         backgroundColor: theme.colorScheme.onPrimaryContainer,
         side: BorderSide(
           color: theme.colorScheme.primary,

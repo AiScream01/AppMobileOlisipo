@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:rui_pedro_s_application10/core/app_export.dart';
+import 'package:rui_pedro_s_application11/core/app_export.dart';
 
 // ignore: must_be_immutable
-class SliderItemWidget extends StatelessWidget {
-  const SliderItemWidget({Key? key})
+class ContentsliderItemWidget extends StatelessWidget {
+  const ContentsliderItemWidget({Key? key})
       : super(
           key: key,
         );

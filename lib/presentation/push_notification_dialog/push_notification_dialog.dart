@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rui_pedro_s_application10/core/app_export.dart';
-import 'package:rui_pedro_s_application10/widgets/custom_elevated_button.dart';
+import 'package:rui_pedro_s_application11/core/app_export.dart';
+import 'package:rui_pedro_s_application11/widgets/custom_elevated_button.dart';
 
 // ignore_for_file: must_be_immutable
 class PushNotificationDialog extends StatelessWidget {
@@ -54,7 +54,7 @@ class PushNotificationDialog extends StatelessWidget {
                 CustomElevatedButton(
                   height: 51.v,
                   text: "Ir para página principal",
-                  buttonStyle: CustomButtonStyles.fillPrimaryTL25,
+                  buttonStyle: CustomButtonStyles.fillPrimary,
                   buttonTextStyle: theme.textTheme.titleMedium!,
                 ),
               ],

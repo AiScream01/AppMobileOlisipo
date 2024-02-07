@@ -20,20 +20,7 @@ class CustomTextStyles {
       theme.textTheme.bodyMedium!.inter.copyWith(
         color: appTheme.black900,
       );
-  static get bodyMediumRobotoPrimary =>
-      theme.textTheme.bodyMedium!.roboto.copyWith(
-        color: theme.colorScheme.primary,
-        fontSize: 15.fSize,
-      );
   // Headline text style
-  static get headlineLargeInter =>
-      theme.textTheme.headlineLarge!.inter.copyWith(
-        fontSize: 30.fSize,
-        fontWeight: FontWeight.w600,
-      );
-  static get headlineLargePrimary => theme.textTheme.headlineLarge!.copyWith(
-        color: theme.colorScheme.primary,
-      );
   static get headlineSmallBold => theme.textTheme.headlineSmall!.copyWith(
         fontWeight: FontWeight.w700,
       );
@@ -64,11 +51,6 @@ class CustomTextStyles {
       theme.textTheme.titleLarge!.inter.copyWith(
         fontWeight: FontWeight.w500,
       );
-  static get titleLargeInterOnError =>
-      theme.textTheme.titleLarge!.inter.copyWith(
-        color: theme.colorScheme.onError,
-        fontWeight: FontWeight.w700,
-      );
   static get titleLargeInterPrimary =>
       theme.textTheme.titleLarge!.inter.copyWith(
         color: theme.colorScheme.primary,
@@ -77,6 +59,11 @@ class CustomTextStyles {
   static get titleLargeInterPrimaryContainer =>
       theme.textTheme.titleLarge!.inter.copyWith(
         color: theme.colorScheme.primaryContainer,
+        fontWeight: FontWeight.w700,
+      );
+  static get titleLargeInterSecondaryContainer =>
+      theme.textTheme.titleLarge!.inter.copyWith(
+        color: theme.colorScheme.secondaryContainer,
         fontWeight: FontWeight.w700,
       );
   static get titleLargeInterSemiBold =>
@@ -101,10 +88,6 @@ class CustomTextStyles {
         color: theme.colorScheme.errorContainer,
         fontWeight: FontWeight.w500,
       );
-  static get titleMediumGreen400 => theme.textTheme.titleMedium!.copyWith(
-        color: appTheme.green400,
-        fontWeight: FontWeight.w500,
-      );
   static get titleMediumMedium => theme.textTheme.titleMedium!.copyWith(
         fontWeight: FontWeight.w500,
       );
@@ -124,46 +107,13 @@ class CustomTextStyles {
         color: Color(0XFF000000),
         fontWeight: FontWeight.w500,
       );
-  static get titleMediumRoboto => theme.textTheme.titleMedium!.roboto.copyWith(
-        fontSize: 18.fSize,
-        fontWeight: FontWeight.w700,
-      );
-  static get titleMediumSecondaryContainer =>
-      theme.textTheme.titleMedium!.copyWith(
-        color: theme.colorScheme.secondaryContainer,
-        fontWeight: FontWeight.w500,
-      );
-  static get titleSmallBlack900 => theme.textTheme.titleSmall!.copyWith(
-        color: appTheme.black900,
-        fontSize: 14.fSize,
-        fontWeight: FontWeight.w700,
-      );
-  static get titleSmallNunitoPrimary =>
-      theme.textTheme.titleSmall!.nunito.copyWith(
+  static get titleSmallPrimary => theme.textTheme.titleSmall!.copyWith(
         color: theme.colorScheme.primary,
         fontSize: 14.fSize,
-        fontWeight: FontWeight.w700,
-      );
-  static get titleSmallNunitoff1ed700 =>
-      theme.textTheme.titleSmall!.nunito.copyWith(
-        color: Color(0XFF1ED700),
-        fontWeight: FontWeight.w700,
-      );
-  static get titleSmallOnPrimaryContainer =>
-      theme.textTheme.titleSmall!.copyWith(
-        color: theme.colorScheme.onPrimaryContainer,
-        fontSize: 14.fSize,
-        fontWeight: FontWeight.w700,
       );
 }
 
 extension on TextStyle {
-  TextStyle get roboto {
-    return copyWith(
-      fontFamily: 'Roboto',
-    );
-  }
-
   TextStyle get nunito {
     return copyWith(
       fontFamily: 'Nunito',

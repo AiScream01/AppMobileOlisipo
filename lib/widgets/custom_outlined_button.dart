@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rui_pedro_s_application10/core/app_export.dart';
-import 'package:rui_pedro_s_application10/widgets/base_button.dart';
+import 'package:rui_pedro_s_application11/core/app_export.dart';
+import 'package:rui_pedro_s_application11/widgets/base_button.dart';
 
 class CustomOutlinedButton extends BaseButton {
   CustomOutlinedButton({
