@@ -1,5 +1,5 @@
 
-# rui_pedro_s_application11
+# rui_pedro_s_application10
 ### Table of contents
 - [System requirements](#system-requirements)
 - [Figma design guidelines for better UI accuracy](#figma-design-guideline-for-better-accuracy)
@@ -26,7 +26,7 @@ Check the UI of all the app screens from a single place by setting up the 'initi
 
 ### Application structure
 After successful build, your application structure should look like this:
-                    
+
 ```
 .
 ├── android                         - It contains files required to run the application on an Android platform.

@@ -1,40 +1,55 @@
 name: rui_pedro_s_application11
 description: A new Flutter project.
 version: 1.0.0+1
-environment: 
-  sdk: '>=2.12.0 <3.0.0'
-dependencies: 
-  flutter: 
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+dependencies:
+  shared_preferences:
+  http:
+  flutter:
     sdk: flutter
+  sqflite:
+  path:
   cached_network_image: ^3.3.0
   flutter_svg: ^2.0.9
   carousel_slider: ^4.2.1
   smooth_page_indicator: ^1.1.0
+  calendar_date_picker2: ^0.5.3
   intl: ^0.18.0
-dev_dependencies: 
-  flutter_test: 
+dev_dependencies:
+  flutter_test:
     sdk: flutter
-flutter: 
+flutter:
   uses-material-design: true
-  assets: 
+  assets:
     - assets/
     - assets/images/
-  fonts: 
+  fonts:
     - family: Nunito
-      fonts: 
+      fonts:
         - asset: assets/fonts/NunitoBold.ttf
           weight: 700
         - asset: assets/fonts/NunitoRegular.ttf
           weight: 400
         - asset: assets/fonts/NunitoMedium.ttf
           weight: 500
+        - asset: assets/fonts/NunitoExtraBold.ttf
+          weight: 800
     - family: Inter
-      fonts: 
-        - asset: assets/fonts/InterSemiBold.ttf
-          weight: 600
+      fonts:
         - asset: assets/fonts/InterMedium.ttf
           weight: 500
+        - asset: assets/fonts/InterSemiBold.ttf
+          weight: 600
         - asset: assets/fonts/InterRegular.ttf
           weight: 400
         - asset: assets/fonts/InterBold.ttf
           weight: 700
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/RobotoRegular.ttf
+          weight: 400
+        - asset: assets/fonts/RobotoBold.ttf
+          weight: 700
+        - asset: assets/fonts/RobotoMedium.ttf
+          weight: 500
