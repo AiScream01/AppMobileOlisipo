@@ -73,7 +73,7 @@ class AppRoutes {
     noticiasScreen: (context) => NoticiasScreen(),
     pedidoFeriasScreen: (context) => PedidoFeriasScreen(),
     despesasViaturaPropriaScreen: (context) => DespesasViaturaPropriaScreen(),
-    ajudasScreen: (context) => AjudasScreen(),
+    ajudasScreen: (context) => AjudasScreen(title: 'Ajudas'),
     reunioesScreen: (context) => ReunioesScreen(),
     pedidoReuniaoScreen: (context) => PedidoReuniaoScreen(),
     parceriasScreen: (context) => ParceriasScreen(),

@@ -39,12 +39,12 @@ class DespesasViaturaPropriaScreen extends StatelessWidget {
                     child: Column(mainAxisSize: MainAxisSize.min, children: [
                       SizedBox(height: 5.v),
                       _buildDoUtilizadorRow(context),
-                      SizedBox(height: 10.v),
+                      SizedBox(height: 5.v),
                       Text("Viatura própria",
                           style: theme.textTheme.displayMedium),
                       SizedBox(height: 10.v),
                       SizedBox(
-                          height: 624.v,
+                          height: 5.v,
                           width: 370.h,
                           child: Stack(alignment: Alignment.center, children: [
                             _buildEditText(context),
@@ -60,7 +60,7 @@ class DespesasViaturaPropriaScreen extends StatelessWidget {
                                     child: Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          SizedBox(height: 57.v),
+                                          SizedBox(height: 50.v),
                                           Padding(
                                               padding:
                                                   EdgeInsets.only(left: 1.h),
@@ -80,7 +80,7 @@ class DespesasViaturaPropriaScreen extends StatelessWidget {
                                                                 .titleLarge)),
                                                     _buildViseuButton(context)
                                                   ])),
-                                          SizedBox(height: 45.v),
+                                          SizedBox(height: 50.v),
                                           Padding(
                                               padding:
                                                   EdgeInsets.only(left: 1.h),
@@ -100,21 +100,21 @@ class DespesasViaturaPropriaScreen extends StatelessWidget {
                                                                 .titleLarge)),
                                                     _buildLisboaButton(context)
                                                   ])),
-                                          SizedBox(height: 36.v),
+                                          SizedBox(height: 50.v),
                                           Padding(
                                               padding:
                                                   EdgeInsets.only(left: 1.h),
                                               child: _buildSixtyTwoRow(context,
                                                   title: "Kilometros",
                                                   price: "300")),
-                                          SizedBox(height: 45.v),
+                                          SizedBox(height: 50.v),
                                           Padding(
                                               padding:
                                                   EdgeInsets.only(left: 1.h),
                                               child: _buildSixtyTwoRow(context,
                                                   title: "Portagens ",
                                                   price: "18€")),
-                                          SizedBox(height: 98.v),
+                                          SizedBox(height: 50.v),
                                           Align(
                                               alignment: Alignment.centerLeft,
                                               child: Padding(
@@ -138,7 +138,7 @@ class DespesasViaturaPropriaScreen extends StatelessWidget {
                                                             style: CustomTextStyles
                                                                 .titleLargePrimary)
                                                       ]))),
-                                          SizedBox(height: 81.v),
+                                          SizedBox(height: 65.v),
                                           _buildEnviarButton(context)
                                         ])))
                           ]))

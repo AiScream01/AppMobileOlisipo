@@ -3,16 +3,33 @@ import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_text_form_field.dart';
 import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
+import 'package:rui_pedro_s_application11/servidor.dart';
+
+class AjudasScreen extends StatefulWidget {
+  const AjudasScreen({Key? key, required this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  State<AjudasScreen> createState() => _AjudasScreen();
+}
 
 // ignore_for_file: must_be_immutable
-class AjudasScreen extends StatelessWidget {
-  AjudasScreen({Key? key}) : super(key: key);
+class _AjudasScreen extends State<AjudasScreen> {
 
-  TextEditingController editTextController = TextEditingController();
+  final TextEditingController custoController = TextEditingController();
+  final TextEditingController descricaoController = TextEditingController();
+  final TextEditingController faturaController = TextEditingController();
 
-  TextEditingController editTextController1 = TextEditingController();
+  @override
+  void dispose() {
+    custoController.dispose();
+    descricaoController.dispose();
+    faturaController.dispose();
+    super.dispose();
+  }
 
-  TextEditingController editTextController2 = TextEditingController();
+  var servidor = Servidor();
 
   @override
   Widget build(BuildContext context) {
@@ -39,13 +56,14 @@ class AjudasScreen extends StatelessWidget {
                 child: Container(
                     width: double.maxFinite,
                     padding:
-                        EdgeInsets.symmetric(horizontal: 20.h, vertical: 22.v),
+                        EdgeInsets.symmetric(horizontal: 20.h, vertical: 10.v),
                     child: Column(mainAxisSize: MainAxisSize.min, children: [
                       SizedBox(height: 8.v),
                       _buildNinetyThreeRow(context),
-                      SizedBox(height: 16.v),
-                      Text("Ajudas", style: theme.textTheme.displayMedium),
-                      SizedBox(height: 9.v),
+                      SizedBox(height: 20.v),
+                      Text("Ajudas de custo",
+                          style: theme.textTheme.displayMedium),
+                      SizedBox(height: 1.v),
                       _buildSixtySixStack(context)
                     ])))));
   }
@@ -77,12 +95,6 @@ class AjudasScreen extends StatelessWidget {
         height: 622.v,
         width: 370.h,
         child: Stack(alignment: Alignment.center, children: [
-          Padding(
-              padding: EdgeInsets.only(right: 29.h, bottom: 110.v),
-              child: CustomTextFormField(
-                  width: 67.h,
-                  controller: editTextController,
-                  alignment: Alignment.bottomRight)),
           Align(
               alignment: Alignment.center,
               child: Container(
@@ -97,7 +109,7 @@ class AjudasScreen extends StatelessWidget {
                         child:
                             Text("Custo", style: theme.textTheme.titleLarge)),
                     SizedBox(height: 15.v),
-                    CustomTextFormField(controller: editTextController1),
+                    CustomTextFormField(controller: custoController),
                     SizedBox(height: 32.v),
                     Align(
                         alignment: Alignment.centerLeft,
@@ -107,14 +119,31 @@ class AjudasScreen extends StatelessWidget {
                     Padding(
                         padding: EdgeInsets.only(right: 3.h),
                         child: CustomTextFormField(
-                            controller: editTextController2,
+                            controller: descricaoController,
+                            maxLines: null,
                             textInputAction: TextInputAction.done,
                             borderDecoration:
                                 TextFormFieldStyleHelper.outlineBlackTL10,
                             filled: true,
                             fillColor: theme.colorScheme.onPrimaryContainer)),
                     SizedBox(height: 34.v),
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text("Fatura",
+                            style: theme.textTheme.titleLarge)),
+                    SizedBox(height: 9.v),
                     Padding(
+                        padding: EdgeInsets.only(right: 3.h),
+                        child: CustomTextFormField(
+                            controller: faturaController,
+                            maxLines: null,
+                            textInputAction: TextInputAction.done,
+                            borderDecoration:
+                                TextFormFieldStyleHelper.outlineBlackTL10,
+                            filled: true,
+                            fillColor: theme.colorScheme.onPrimaryContainer)),
+                    SizedBox(height: 10.v),
+                    /*Padding(
                         padding: EdgeInsets.only(left: 4.h, right: 7.h),
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -125,14 +154,62 @@ class AjudasScreen extends StatelessWidget {
                                       style: theme.textTheme.titleLarge)),
                               Text("PDF",
                                   style: CustomTextStyles.titleLargePrimary)
-                            ])),
+                            ])),*/
                     SizedBox(height: 85.v),
                     CustomOutlinedButton(
-                        width: 144.h,
-                        text: "Enviar",
-                        onPressed: () {
-                          onTapEnviar(context);
-                        })
+                       text: "Enviar",
+                      onPressed: () async {
+                      if (!custoController.text.isNotEmpty ||
+                          !descricaoController.text.isNotEmpty) {
+                        final snackBar = SnackBar(
+                          content:
+                              Text('Preencha todos os campos antes de enviar.'),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        return;
+                      }
+
+                      try {
+                        await servidor.inserirAjudaCusto(
+                          await servidor.obterTokenLocalmente(),
+                          double.parse(custoController.text),
+                          descricaoController.text,
+                          // faturaController.text, // Aqui você pode usar filePath ou lógica para lidar com faturas
+                          'fatura.pdf'
+                          //false,
+                        );
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content:
+                                Text('Ajudas de Custo enviadas com sucesso!'),
+                          ),
+                        );
+                      } catch (e) {
+                        print('Erro ao enviar ajudas de custo: $e');
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Erro ao enviar Ajudas de Custo!'),
+                              content: Text(
+                                'Dados inválidos para a submissão de ajudas de custo.',
+                                style: TextStyle(fontSize: 17),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('OK'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    },
+                    )
                   ])))
         ]));
   }
@@ -140,17 +217,5 @@ class AjudasScreen extends StatelessWidget {
   /// Navigates to the paginaPerfilScreen when the action is triggered.
   onTapImgDoUtilizador(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
-  }
-
-  /// Displays a dialog with the [PushNotificationDialog] content.
-  onTapEnviar(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-              content: PushNotificationDialog(),
-              backgroundColor: Colors.transparent,
-              contentPadding: EdgeInsets.zero,
-              insetPadding: const EdgeInsets.only(left: 0),
-            ));
   }
 }

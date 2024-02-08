@@ -32,6 +32,38 @@ class Servidor {
     }
   }
 
+Future<void> inserirAjudaCusto(
+  String? token,
+  double valorAjuda,
+  String descritivoAjuda,
+  String faturaAjuda,
+  //bool confirmacaoAjudas,
+) async {
+  var url = '$baseURL/ajudascusto/create/';
+
+  var response = await http.post(
+    Uri.parse(url),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Authorization': 'Bearer $token',
+    },
+    body: jsonEncode(<String, dynamic>{
+      'custo_param': valorAjuda,
+      'descricao_param': descritivoAjuda,
+      'comprovativo_param': faturaAjuda,
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    print('Ajudas de Custo inseridas com sucesso!');
+  } else {
+    print('Erro em Ajudas de Custo inseridas: ${response.statusCode}');
+    throw Exception('Falha ao inserir Ajudas de Custo inseridas');
+  }
+}
+
+
+
   Future<void> saveToken(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('token', token);

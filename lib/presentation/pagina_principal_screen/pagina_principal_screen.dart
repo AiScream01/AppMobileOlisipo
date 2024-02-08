@@ -14,6 +14,35 @@ class PaginaPrincipalScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
+        appBar: AppBar(
+        ),
+        extendBody: true,
+        extendBodyBehindAppBar: true,
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text('Exemplo de Drawer'),
+              ),
+              ListTile(
+                title: const Text('Ajudas de Custo'),
+                onTap: () {
+                   Navigator.pushNamed(context, AppRoutes.ajudasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Registar utilizador'),
+                onTap: () {
+                   Navigator.pushNamed(context, AppRoutes.recuperarPasswordEmailScreen);
+                },
+              ),
+            ],
+          ),
+        ),
             body: SizedBox(
                 height: SizeUtils.height,
                 width: double.maxFinite,

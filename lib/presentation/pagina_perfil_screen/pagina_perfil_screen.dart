@@ -1,19 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
+import 'package:rui_pedro_s_application11/servidor.dart';
 
 class PaginaPerfilScreen extends StatelessWidget {
-  const PaginaPerfilScreen({Key? key})
-      : super(
-          key: key,
-        );
+  const PaginaPerfilScreen({Key? key}) : super( key: key);
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+        ),
         extendBody: true,
         extendBodyBehindAppBar: true,
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text('Exemplo de Drawer'),
+              ),
+              ListTile(
+                title: const Text('Registar utilizador'),
+                onTap: () {
+                   Navigator.pushNamed(context, AppRoutes.recuperarPasswordEmailScreen);
+                },
+              ),
+            ],
+          ),
+        ),
         body: Container(
           width: SizeUtils.width,
           height: SizeUtils.height,
@@ -83,7 +102,7 @@ class PaginaPerfilScreen extends StatelessWidget {
           Align(
             alignment: Alignment.center,
             child: SizedBox(
-              height: 158.v,
+              height: 130.v,
               width: 163.h,
               child: Stack(
                 alignment: Alignment.centerRight,
@@ -201,7 +220,7 @@ class PaginaPerfilScreen extends StatelessWidget {
             style: CustomTextStyles.titleLargePrimary,
           ),
           Padding(
-            padding: EdgeInsets.only(right: 99.h),
+            padding: EdgeInsets.only(right: 50.h),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
