@@ -15,6 +15,18 @@ class PaginaPrincipalScreen extends StatelessWidget {
     return SafeArea(
         child: Scaffold(
         appBar: AppBar(
+          actions: [
+            // Adicione o IconButton do perfil aqui
+            IconButton(
+              icon: Icon(Icons.account_circle), // Ícone do perfil
+              iconSize: 40.0,
+              onPressed: () {
+                // Adicione a lógica que deseja executar ao clicar no ícone do perfil
+                // Por exemplo, abrir a tela de perfil
+                Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
+              },
+            ),
+          ],
         ),
         extendBody: true,
         extendBodyBehindAppBar: true,
@@ -24,7 +36,7 @@ class PaginaPrincipalScreen extends StatelessWidget {
             children: [
               const DrawerHeader(
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: Colors.green,
                 ),
                 child: Text('Exemplo de Drawer'),
               ),
@@ -35,9 +47,45 @@ class PaginaPrincipalScreen extends StatelessWidget {
                 },
               ),
               ListTile(
-                title: const Text('Registar utilizador'),
+                title: const Text('Despesas viatura própria'),
                 onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.recuperarPasswordEmailScreen);
+                   Navigator.pushNamed(context, AppRoutes.despesasViaturaPropriaScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Faltas'),
+                onTap: () {
+                   Navigator.pushNamed(context, AppRoutes.faltasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Noticias'),
+                onTap: () {
+                   Navigator.pushNamed(context, AppRoutes.noticiaScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Parcerias'),
+                onTap: () {
+                   Navigator.pushNamed(context, AppRoutes.parceriasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Ferias'),
+                onTap: () {
+                   Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Horas'),
+                onTap: () {
+                   Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Reuniões'),
+                onTap: () {
+                   Navigator.pushNamed(context, AppRoutes.reunioesScreen);
                 },
               ),
             ],

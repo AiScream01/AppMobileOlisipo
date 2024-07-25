@@ -20,14 +20,56 @@ class PaginaPerfilScreen extends StatelessWidget {
             children: [
               const DrawerHeader(
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: Colors.green,
                 ),
                 child: Text('Exemplo de Drawer'),
               ),
               ListTile(
-                title: const Text('Registar utilizador'),
+                title: const Text('Ajudas de Custo'),
                 onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.recuperarPasswordEmailScreen);
+                   Navigator.pushNamed(context, AppRoutes.ajudasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Despesas viatura própria'),
+                onTap: () {
+                   Navigator.pushNamed(context, AppRoutes.despesasViaturaPropriaScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Faltas'),
+                onTap: () {
+                   Navigator.pushNamed(context, AppRoutes.faltasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Noticias'),
+                onTap: () {
+                   Navigator.pushNamed(context, AppRoutes.noticiaScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Parcerias'),
+                onTap: () {
+                   Navigator.pushNamed(context, AppRoutes.parceriasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Ferias'),
+                onTap: () {
+                   Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Horas'),
+                onTap: () {
+                   Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Reuniões'),
+                onTap: () {
+                   Navigator.pushNamed(context, AppRoutes.reunioesScreen);
                 },
               ),
             ],

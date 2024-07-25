@@ -16,8 +16,6 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        extendBody: true,
-        extendBodyBehindAppBar: true,
         resizeToAvoidBottomInset: false,
         body: Container(
                 width: SizeUtils.width,
