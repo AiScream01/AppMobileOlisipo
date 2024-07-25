@@ -120,19 +120,24 @@ class RegistoScreen extends StatelessWidget {
             ),
             Spacer(),
             CustomElevatedButton(
-              width: 155.h,
+              width: 185.h,
               text: "Efetuar Pedido",
               buttonTextStyle: CustomTextStyles.titleLargeOnPrimary,
             ),
             SizedBox(height: 14.v),
-            SizedBox(
-              width: 97.h,
-              child: Text(
-                "Já tem conta?\nFaz o login",
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: CustomTextStyles.titleMediumNunitoPrimary,
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, AppRoutes.loginScreen);
+              },
+              child: SizedBox(
+                width: 97.h,
+                child: Text(
+                  "Já tem conta?\nFaz o login",
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: CustomTextStyles.titleMediumNunitoPrimary,
+                ),
               ),
             ),
           ],

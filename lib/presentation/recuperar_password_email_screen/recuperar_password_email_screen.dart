@@ -114,14 +114,19 @@ class RecuperarPasswordEmailScreen extends StatelessWidget {
               text: "Recuperar",
             ),
             SizedBox(height: 17.v),
-            SizedBox(
-              width: 97.h,
-              child: Text(
-                "Já tem conta?\nFaz o login",
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: CustomTextStyles.titleMediumNunitoPrimary,
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, AppRoutes.loginScreen);
+              },
+              child: SizedBox(
+                width: 97.h,
+                child: Text(
+                  "Já tem conta?\nFaz o login",
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: CustomTextStyles.titleMediumNunitoPrimary,
+                ),
               ),
             ),
           ],

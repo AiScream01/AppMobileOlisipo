@@ -52,6 +52,7 @@ class AppRoutes {
   static const String parceriasPormenorOneScreen =
       '/parcerias_pormenor_one_screen';
 
+  //Esta é para eliminar 
   static const String parceriasPormenorScreen = '/parcerias_pormenor_screen';
 
   static const String faltasScreen = '/faltas_screen';
