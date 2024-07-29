@@ -54,7 +54,7 @@ class NoticiaScreen extends StatelessWidget {
                                                                     height:
                                                                         16.v),
                                                                 Text(
-                                                                    "Título da notícia",
+                                                                    "NASA Descobre Exoplaneta",
                                                                     style: theme
                                                                         .textTheme
                                                                         .displayMedium),
@@ -70,20 +70,26 @@ class NoticiaScreen extends StatelessWidget {
                                                                         color: theme
                                                                             .colorScheme
                                                                             .onPrimaryContainer,
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(35
-                                                                                .h),
+                                                                        borderRadius: BorderRadius.circular(35
+                                                                            .h),
                                                                         border: Border.all(
-                                                                            color:
-                                                                                appTheme.gray20001,
-                                                                            width: 1.h),
+                                                                            color: appTheme
+                                                                                .gray20001,
+                                                                            width: 1
+                                                                                .h),
                                                                         boxShadow: [
                                                                           BoxShadow(
                                                                               color: appTheme.black900.withOpacity(0.2),
                                                                               spreadRadius: 2.h,
                                                                               blurRadius: 2.h,
                                                                               offset: Offset(0, 4))
-                                                                        ])),
+                                                                        ]),
+                                                                    child: ClipRRect(
+                                                                        borderRadius: BorderRadius.circular(35
+                                                                            .h),
+                                                                        child: Image.network(
+                                                                            'https://exoplanets.nasa.gov/system/news_items/main_images/731_HubbleK2-18b.jpg',
+                                                                            fit: BoxFit.cover))),
                                                                 SizedBox(
                                                                     height:
                                                                         27.v),
@@ -96,14 +102,9 @@ class NoticiaScreen extends StatelessWidget {
                                                                         right: 4
                                                                             .h),
                                                                     child: Text(
-                                                                        "Este texto vai conter a descrição da notícia.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit ",
-                                                                        maxLines:
-                                                                            9,
-                                                                        overflow:
-                                                                            TextOverflow
-                                                                                .ellipsis,
+                                                                        "A NASA anunciou a descoberta de um exoplaneta que pode conter água em sua superfície. O planeta, chamado K2-18b.",
                                                                         style: CustomTextStyles
-                                                                            .titleLargeMedium))
+                                                                            .titleLargeMedium)),
                                                               ]))),
                                                   Align(
                                                       alignment:
@@ -115,7 +116,7 @@ class NoticiaScreen extends StatelessWidget {
                                                                   children: [
                                                                     TextSpan(
                                                                         text:
-                                                                            "Este texto vai conter a descrição da notícia que está acima.\n",
+                                                                            "Este texto contém uma descrição da notícia acima.\n",
                                                                         style: CustomTextStyles
                                                                             .titleMediumNunitoff000000),
                                                                     TextSpan(
@@ -150,7 +151,13 @@ class NoticiaScreen extends StatelessWidget {
                                                       spreadRadius: 2.h,
                                                       blurRadius: 2.h,
                                                       offset: Offset(0, 4))
-                                                ])))
+                                                ]),
+                                            child: Padding(
+                                                padding: EdgeInsets.all(8.h),
+                                                child: Text(
+                                                    "K2-18b é um exoplaneta super-Terra, maior que o nosso planeta, mas menor que Netuno. A descoberta de vapor de água na atmosfera de K2-18b é um passo importante na busca por vida fora do Sistema Solar.",
+                                                    style: CustomTextStyles
+                                                        .titleLargeMedium))))
                                   ]))))
                 ]))));
   }
