@@ -23,8 +23,8 @@ class MyApp extends StatelessWidget {
           theme: theme,
           title: 'rui_pedro_s_application11',
           debugShowCheckedModeBanner: false,
-          initialRoute: AppRoutes.loginScreen,
-          //initialRoute: AppRoutes.pedidoReuniaoScreen,
+          //initialRoute: AppRoutes.loginScreen,
+          initialRoute: AppRoutes.despesasViaturaPropriaScreen,
           routes: AppRoutes.routes,
         );
       },

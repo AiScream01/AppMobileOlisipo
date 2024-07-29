@@ -1,153 +1,131 @@
 import 'package:flutter/material.dart';
-import 'package:rui_pedro_s_application11/core/app_export.dart';
-import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
-import 'package:rui_pedro_s_application11/widgets/custom_text_form_field.dart';
-import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
 
-// ignore_for_file: must_be_immutable
+// ignore: must_be_immutable
 class FaltasScreen extends StatelessWidget {
   FaltasScreen({Key? key}) : super(key: key);
 
   TextEditingController editTextController = TextEditingController();
-
   TextEditingController editTextController1 = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Scaffold(
-            extendBody: true,
-            extendBodyBehindAppBar: true,
-            resizeToAvoidBottomInset: false,
-            body: Container(
-                width: SizeUtils.width,
-                height: SizeUtils.height,
-                decoration: BoxDecoration(
-                    color: theme.colorScheme.onPrimaryContainer,
-                    boxShadow: [
-                      BoxShadow(
-                          color: appTheme.black900.withOpacity(0.3),
-                          spreadRadius: 2.h,
-                          blurRadius: 2.h,
-                          offset: Offset(10, 10))
-                    ],
-                    image: DecorationImage(
-                        image: AssetImage(ImageConstant.imgLogin),
-                        fit: BoxFit.cover)),
-                child: Container(
-                    width: double.maxFinite,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 20.h, vertical: 29.v),
-                    child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      _buildUserProfile(context),
-                      SizedBox(height: 20.v),
-                      Text("Faltas", style: theme.textTheme.displayMedium),
-                      SizedBox(height: 12.v),
-                      _buildFaltasForm(context)
-                    ])))));
+      child: Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(
+                  'assets/background_image.png'), // Update the image path
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildUserProfile(context),
+                const SizedBox(height: 20),
+                Center(
+                  child: Text("Faltas",
+                      style: Theme.of(context).textTheme.headlineSmall),
+                ),
+                const SizedBox(height: 20),
+                _buildFaltasForm(context),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
-  /// Section Widget
   Widget _buildUserProfile(BuildContext context) {
-    return Padding(
-        padding: EdgeInsets.only(left: 10.h),
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          CustomImageView(
-              imagePath: ImageConstant.imgDoUtilizador,
-              height: 45.adaptSize,
-              width: 45.adaptSize,
-              onTap: () {
-                onTapImgDoUtilizador(context);
-              }),
-          CustomImageView(
-              imagePath: ImageConstant.imgMegaphone,
-              height: 20.v,
-              width: 39.h,
-              margin: EdgeInsets.only(top: 12.v, bottom: 13.v))
-        ]));
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        IconButton(
+          icon: Icon(Icons.person, size: 30),
+          onPressed: () {
+            onTapImgDoUtilizador(context);
+          },
+        ),
+        IconButton(
+          icon: Icon(Icons.menu, size: 30),
+          onPressed: () {},
+        ),
+      ],
+    );
   }
 
-  /// Section Widget
   Widget _buildFaltasForm(BuildContext context) {
-    return SizedBox(
-        height: 608.v,
-        width: 370.h,
-        child: Stack(alignment: Alignment.center, children: [
-          Padding(
-              padding: EdgeInsets.only(right: 29.h, bottom: 103.v),
-              child: CustomTextFormField(
-                  width: 67.h,
-                  controller: editTextController,
-                  alignment: Alignment.bottomRight)),
-          Align(
-              alignment: Alignment.center,
-              child: Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 27.h, vertical: 47.v),
-                  decoration: AppDecoration.outlineGray.copyWith(
-                      borderRadius: BorderRadiusStyle.roundedBorder35),
-                  child: Column(mainAxisSize: MainAxisSize.min, children: [
-                    SizedBox(height: 19.v),
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                            padding: EdgeInsets.only(left: 2.h),
-                            child: Text("Data",
-                                style: theme.textTheme.titleLarge))),
-                    SizedBox(height: 87.v),
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text("Descrição",
-                            style: theme.textTheme.titleLarge)),
-                    SizedBox(height: 9.v),
-                    Padding(
-                        padding: EdgeInsets.only(left: 2.h, right: 3.h),
-                        child: CustomTextFormField(
-                            controller: editTextController1,
-                            textInputAction: TextInputAction.done,
-                            borderDecoration:
-                                TextFormFieldStyleHelper.outlineBlackTL10,
-                            filled: true,
-                            fillColor: theme.colorScheme.onPrimaryContainer)),
-                    SizedBox(height: 34.v),
-                    Padding(
-                        padding: EdgeInsets.only(left: 2.h, right: 7.h),
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                  padding: EdgeInsets.only(top: 1.v),
-                                  child: Text("Comprovativo",
-                                      style: theme.textTheme.titleLarge)),
-                              Text("PDF",
-                                  style: CustomTextStyles.titleLargePrimary)
-                            ])),
-                    SizedBox(height: 61.v),
-                    CustomOutlinedButton(
-                        width: 144.h,
-                        text: "Enviar",
-                        onPressed: () {
-                          onTapEnviar(context);
-                        })
-                  ])))
-        ]));
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(20.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Data", style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 10),
+            TextField(
+              controller: editTextController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text("Descrição", style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 10),
+            TextField(
+              controller: editTextController1,
+              maxLines: 3,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Comprovativo",
+                    style: Theme.of(context).textTheme.titleMedium),
+                Text("PDF", style: TextStyle(color: Colors.green)),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  onTapEnviar(context);
+                },
+                child: Text("Enviar"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
-  /// Navigates to the paginaPerfilScreen when the action is triggered.
   onTapImgDoUtilizador(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
+    Navigator.pushNamed(context, '/profile'); // Update with your route
   }
 
-  /// Displays a dialog with the [PushNotificationDialog] content.
   onTapEnviar(BuildContext context) {
     showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-              content: PushNotificationDialog(),
-              backgroundColor: Colors.transparent,
-              contentPadding: EdgeInsets.zero,
-              insetPadding: const EdgeInsets.only(left: 0),
-            ));
+      context: context,
+      builder: (_) => AlertDialog(
+        content: Text("Notification sent!"),
+      ),
+    );
   }
 }
