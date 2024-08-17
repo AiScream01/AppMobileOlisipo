@@ -4,20 +4,28 @@ import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_text_form_field.dart';
 import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
 
-// ignore_for_file: must_be_immutable
 class FaltasScreen extends StatelessWidget {
   FaltasScreen({Key? key}) : super(key: key);
 
-  TextEditingController dateController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
+  final TextEditingController dateController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        extendBody: true,
-        extendBodyBehindAppBar: true,
-        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          actions: [
+            IconButton(
+              icon: Icon(Icons.account_circle),
+              iconSize: 40.0,
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
+              },
+            ),
+          ],
+        ),
+        drawer: _buildDrawer(context),
         body: Container(
           width: double.infinity,
           height: double.infinity,
@@ -32,9 +40,7 @@ class FaltasScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 29),
             child: Column(
               children: [
-                _buildUserProfile(context),
-                SizedBox(height: 20),
-                Text("Faltas", style: theme.textTheme.displayMedium),
+                _buildPageTitle(),
                 SizedBox(height: 12),
                 _buildFaltasForm(context),
               ],
@@ -45,28 +51,81 @@ class FaltasScreen extends StatelessWidget {
     );
   }
 
-  /// Section Widget
-  Widget _buildUserProfile(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        IconButton(
-          icon: Icon(Icons.person, size: 45),
-          onPressed: () {
-            onTapImgDoUtilizador(context);
-          },
-        ),
-        IconButton(
-          icon: Icon(Icons.menu, size: 45),
-          onPressed: () {
-            // Implement menu action
-          },
-        ),
-      ],
+  /// Drawer with menu options similar to the previous screen.
+  Widget _buildDrawer(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          const DrawerHeader(
+            decoration: BoxDecoration(
+              color: Colors.green,
+            ),
+            child: Text('Menu'),
+          ),
+          ListTile(
+            title: const Text('Ajudas de Custo'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.ajudasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Despesas viatura própria'),
+            onTap: () {
+              Navigator.pushNamed(
+                  context, AppRoutes.despesasViaturaPropriaScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Faltas'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.faltasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Notícias'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.noticiasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Parcerias'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.parceriasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Férias'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Horas'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Reuniões'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.reunioesScreen);
+            },
+          ),
+        ],
+      ),
     );
   }
 
-  /// Section Widget
+  /// Builds the title section for the Faltas page.
+  Widget _buildPageTitle() {
+    return Text(
+      "Faltas",
+      style: theme.textTheme.displayMedium,
+    );
+  }
+
+  /// Builds the form for submitting a "Falta".
   Widget _buildFaltasForm(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -84,16 +143,14 @@ class FaltasScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Data", style: theme.textTheme.titleLarge),
-          SizedBox(height: 10),
+          _buildFormLabel("Data"),
           CustomTextFormField(
             controller: dateController,
             hintText: 'DD/MM/YYYY',
             textInputAction: TextInputAction.next,
           ),
           SizedBox(height: 20),
-          Text("Descrição", style: theme.textTheme.titleLarge),
-          SizedBox(height: 10),
+          _buildFormLabel("Descrição"),
           CustomTextFormField(
             controller: descriptionController,
             hintText: 'Descrição da falta',
@@ -101,45 +158,66 @@ class FaltasScreen extends StatelessWidget {
             maxLines: 4,
           ),
           SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("Comprovativo", style: theme.textTheme.titleLarge),
-              TextButton(
-                onPressed: () {
-                  // Implement file upload
-                },
-                child: Text(
-                  "PDF",
-                  style: TextStyle(
-                    color: theme.colorScheme.primary,
-                    decoration: TextDecoration.underline,
-                  ),
-                ),
-              ),
-            ],
-          ),
+          _buildProofUploadSection(context),
           SizedBox(height: 20),
-          Center(
-            child: CustomOutlinedButton(
-              text: "Enviar",
-              onPressed: () {
-                onTapEnviar(context);
-              },
-            ),
-          ),
+          _buildEnviarButton(context),
         ],
       ),
     );
   }
 
+  /// Builds the label for form fields.
+  Widget _buildFormLabel(String labelText) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 10),
+      child: Text(
+        labelText,
+        style: theme.textTheme.titleLarge,
+      ),
+    );
+  }
+
+  /// Builds the section for uploading a proof document.
+  Widget _buildProofUploadSection(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text("Comprovativo", style: theme.textTheme.titleLarge),
+        TextButton(
+          onPressed: () {
+            // Implement file upload
+          },
+          child: Text(
+            "PDF",
+            style: TextStyle(
+              color: theme.colorScheme.primary,
+              decoration: TextDecoration.underline,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Builds the send button.
+  Widget _buildEnviarButton(BuildContext context) {
+    return Center(
+      child: CustomOutlinedButton(
+        text: "Enviar",
+        onPressed: () {
+          onTapEnviar(context);
+        },
+      ),
+    );
+  }
+
   /// Navigates to the paginaPerfilScreen when the action is triggered.
-  onTapImgDoUtilizador(BuildContext context) {
+  void onTapImgDoUtilizador(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
   }
 
-  /// Displays a dialog with the [PushNotificationDialog] content.
-  onTapEnviar(BuildContext context) {
+  /// Displays a dialog with the PushNotificationDialog content.
+  void onTapEnviar(BuildContext context) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(

@@ -34,116 +34,112 @@ class _AjudasScreen extends State<AjudasScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-          extendBody: true,
-          extendBodyBehindAppBar: true,
-          resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-          actions: [
-            // Adicione o IconButton do perfil aqui
-            IconButton(
-              icon: Icon(Icons.account_circle), // Ícone do perfil
-              iconSize: 40.0,
-              onPressed: () {
-                // Adicione a lógica que deseja executar ao clicar no ícone do perfil
-                // Por exemplo, abrir a tela de perfil
-                Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
-              },
-            ),
-          ],
-        ),
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.green,
+            extendBody: true,
+            extendBodyBehindAppBar: true,
+            resizeToAvoidBottomInset: false,
+            appBar: AppBar(
+              actions: [
+                // Adicione o IconButton do perfil aqui
+                IconButton(
+                  icon: Icon(Icons.account_circle), // Ícone do perfil
+                  iconSize: 40.0,
+                  onPressed: () {
+                    // Adicione a lógica que deseja executar ao clicar no ícone do perfil
+                    // Por exemplo, abrir a tela de perfil
+                    Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
+                  },
                 ),
-                child: Text('Exemplo de Drawer'),
-              ),
-              ListTile(
-                title: const Text('Ajudas de Custo'),
-                onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.ajudasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Despesas viatura própria'),
-                onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.despesasViaturaPropriaScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Faltas'),
-                onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.faltasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Noticias'),
-                onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.noticiaScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Parcerias'),
-                onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.parceriasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Ferias'),
-                onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Horas'),
-                onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Reuniões'),
-                onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.reunioesScreen);
-                },
-              ),
-            ],
-          ),
-        ),
-
-      body: Container(
-          width: SizeUtils.width,
-          height: SizeUtils.height,
-          decoration: BoxDecoration(
-              color: theme.colorScheme.onPrimaryContainer,
-              boxShadow: [
-                BoxShadow(
-                  color: appTheme.black900.withOpacity(0.3),
-                  spreadRadius: 2.h,
-                  blurRadius: 2.h,
-                  offset: Offset(10, 10))
               ],
-              image: DecorationImage(
-                  image: AssetImage(ImageConstant.imgLogin),
-                  fit: BoxFit.cover)),
-          child: Container(
-              width: double.maxFinite,
-              padding:
-                  EdgeInsets.symmetric(horizontal: 20.h, vertical: 10.v),
-              child: Column(mainAxisSize: MainAxisSize.min, children: [
-                SizedBox(height: 70.v),
-                Text("Ajudas de custo",
-                    style: theme.textTheme.displayMedium),
-                SizedBox(height: 1.v),
-                _buildSixtySixStack(context)
-              ]
-            )
-          )
-        )
-      )
-    );
+            ),
+            drawer: Drawer(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  const DrawerHeader(
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                    ),
+                    child: Text('Menu'),
+                  ),
+                  ListTile(
+                    title: const Text('Ajudas de Custo'),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.ajudasScreen);
+                    },
+                  ),
+                  ListTile(
+                    title: const Text('Despesas viatura própria'),
+                    onTap: () {
+                      Navigator.pushNamed(
+                          context, AppRoutes.despesasViaturaPropriaScreen);
+                    },
+                  ),
+                  ListTile(
+                    title: const Text('Faltas'),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.faltasScreen);
+                    },
+                  ),
+                  ListTile(
+                    title: const Text('Noticias'),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.noticiaScreen);
+                    },
+                  ),
+                  ListTile(
+                    title: const Text('Parcerias'),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.parceriasScreen);
+                    },
+                  ),
+                  ListTile(
+                    title: const Text('Ferias'),
+                    onTap: () {
+                      Navigator.pushNamed(
+                          context, AppRoutes.pedidoFeriasScreen);
+                    },
+                  ),
+                  ListTile(
+                    title: const Text('Horas'),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
+                    },
+                  ),
+                  ListTile(
+                    title: const Text('Reuniões'),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.reunioesScreen);
+                    },
+                  ),
+                ],
+              ),
+            ),
+            body: Container(
+                width: SizeUtils.width,
+                height: SizeUtils.height,
+                decoration: BoxDecoration(
+                    color: theme.colorScheme.onPrimaryContainer,
+                    boxShadow: [
+                      BoxShadow(
+                          color: appTheme.black900.withOpacity(0.3),
+                          spreadRadius: 2.h,
+                          blurRadius: 2.h,
+                          offset: Offset(10, 10))
+                    ],
+                    image: DecorationImage(
+                        image: AssetImage(ImageConstant.imgLogin),
+                        fit: BoxFit.cover)),
+                child: Container(
+                    width: double.maxFinite,
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 20.h, vertical: 10.v),
+                    child: Column(mainAxisSize: MainAxisSize.min, children: [
+                      SizedBox(height: 70.v),
+                      Text("Ajudas de custo",
+                          style: theme.textTheme.displayMedium),
+                      SizedBox(height: 1.v),
+                      _buildSixtySixStack(context)
+                    ])))));
   }
 
   /// Section Widget

@@ -17,118 +17,143 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Container(
-                width: SizeUtils.width,
-                height: SizeUtils.height,
-                decoration: BoxDecoration(
-                    color: theme.colorScheme.onPrimaryContainer,
-                    boxShadow: [
-                      BoxShadow(
-                          color: appTheme.black900.withOpacity(0.3),
-                          spreadRadius: 2.h,
-                          blurRadius: 2.h,
-                          offset: Offset(10, 10))
-                    ],
-                    image: DecorationImage(
-                        image: AssetImage(ImageConstant.imgLogin),
-                        fit: BoxFit.cover)),
-                child: Container(
-                    width: double.maxFinite,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 20.h, vertical: 27.v),
-                    child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      SizedBox(height: 48.v),
-                      CustomImageView(
-                          imagePath: ImageConstant.imgOlisipoLogoblack,
-                          height: 118.v,
-                          width: 270.h),
-                      SizedBox(height: 33.v),
-                      _buildLoginForm(context)
-                    ])))));
+        resizeToAvoidBottomInset: true, // permite evitar o overflow
+        body: SingleChildScrollView(
+          // permite a rolagem para evitar overflow
+          child: Container(
+            width: double.infinity,
+            height: MediaQuery.of(context)
+                .size
+                .height, // usa o tamanho total da tela
+            decoration: BoxDecoration(
+              color: theme.colorScheme.onPrimaryContainer,
+              image: DecorationImage(
+                image: AssetImage(ImageConstant.imgLogin),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 27),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(height: 48),
+                  CustomImageView(
+                    imagePath: ImageConstant.imgOlisipoLogoblack,
+                    height: 118,
+                    width: 270,
+                  ),
+                  SizedBox(height: 33),
+                  _buildLoginForm(context),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
-  /// Section Widget
   Widget _buildLoginForm(BuildContext context) {
     return Container(
-        margin: EdgeInsets.only(left: 2.h),
-        padding: EdgeInsets.symmetric(horizontal: 16.h, vertical: 17.v),
-        decoration: AppDecoration.outlineGray
-            .copyWith(borderRadius: BorderRadiusStyle.roundedBorder35),
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          SizedBox(height: 42.v),
-          Text("Login", style: theme.textTheme.displaySmall),
-          SizedBox(height: 25.v),
-          Align(
-              alignment: Alignment.centerLeft,
-              child: Text("Email", style: CustomTextStyles.bodyMediumBlack900)),
-          SizedBox(height: 2.v),
-          CustomTextFormField(controller: emailController),
-          SizedBox(height: 18.v),
-          Align(
-              alignment: Alignment.centerLeft,
-              child: Text("Password", style: theme.textTheme.bodyMedium)),
-          SizedBox(height: 2.v),
-          CustomTextFormField(
-              controller: passwordController,
-              textInputAction: TextInputAction.done,
-              obscureText: true),
-          SizedBox(height: 12.v),
-          Align(
-              alignment: Alignment.centerRight,
-              child: GestureDetector(
-                  onTap: () {
-                    onTapTxtEsqueceusedapassword(context);
-                  },
-                  child: Padding(
-                      padding: EdgeInsets.only(right: 13.h),
-                      child: Text("Esqueceu-se da password?",
-                          style: CustomTextStyles.titleMediumNunitoPrimary)))),
-          SizedBox(height: 50.v),
-                CustomElevatedButton(
-        height: 60.v,
-        width: 155.h,
-        text: "Login",
-        onPressed: () async {
-          String? token = await servidor.login(
-            emailController.text,
-            passwordController.text,
-          );
-          if (token != null) {
-            await servidor.saveToken(token);
-            print(token);
-            Navigator.pushReplacementNamed(context, '/pagina_principal_screen');
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Credenciais inválidas'),
-              ),
-            );
-          }
-        },
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 17),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(35),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
       ),
-          SizedBox(height: 19.v),
-          GestureDetector(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text("Login", style: theme.textTheme.displaySmall),
+          SizedBox(height: 25),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text("Email", style: theme.textTheme.bodyMedium),
+          ),
+          SizedBox(height: 2),
+          CustomTextFormField(
+            controller: emailController,
+          ),
+          SizedBox(height: 18),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text("Password", style: theme.textTheme.bodyMedium),
+          ),
+          SizedBox(height: 2),
+          CustomTextFormField(
+            controller: passwordController,
+            textInputAction: TextInputAction.done,
+            obscureText: true,
+          ),
+          SizedBox(height: 12),
+          Align(
+            alignment: Alignment.centerRight,
+            child: GestureDetector(
               onTap: () {
-                onTapTxtNovoAquiFazO(context);
+                onTapTxtEsqueceusedapassword(context);
               },
-              child: SizedBox(
-                  width: 161.h,
-                  child: Text("Novo aqui?\nFaz o pedido de conta",
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      style: CustomTextStyles.titleMediumNunitoPrimary)))
-        ]));
+              child: Text(
+                "Esqueceu-se da password?",
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.primary,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 50),
+          CustomElevatedButton(
+            height: 60,
+            width: 155,
+            text: "Login",
+            onPressed: () async {
+              String? token = await servidor.login(
+                emailController.text,
+                passwordController.text,
+              );
+              if (token != null) {
+                await servidor.saveToken(token);
+                Navigator.pushReplacementNamed(
+                    context, '/pagina_principal_screen');
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Credenciais inválidas'),
+                  ),
+                );
+              }
+            },
+          ),
+          SizedBox(height: 19),
+          GestureDetector(
+            onTap: () {
+              onTapTxtNovoAquiFazO(context);
+            },
+            child: Text(
+              "Novo aqui?\nFaz o pedido de conta",
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.primary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
-  /// Navigates to the recuperarPasswordEmailScreen when the action is triggered.
-  onTapTxtEsqueceusedapassword(BuildContext context) {
+  void onTapTxtEsqueceusedapassword(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.recuperarPasswordEmailScreen);
   }
 
-  /// Navigates to the registoScreen when the action is triggered.
-  onTapTxtNovoAquiFazO(BuildContext context) {
+  void onTapTxtNovoAquiFazO(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.registoScreen);
   }
 }
