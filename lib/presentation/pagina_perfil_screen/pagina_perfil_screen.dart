@@ -3,14 +3,13 @@ import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
 
 class PaginaPerfilScreen extends StatelessWidget {
-  const PaginaPerfilScreen({Key? key}) : super( key: key);
+  const PaginaPerfilScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-        ),
+        appBar: AppBar(),
         extendBody: true,
         extendBodyBehindAppBar: true,
         drawer: Drawer(
@@ -21,54 +20,55 @@ class PaginaPerfilScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.green,
                 ),
-                child: Text('Exemplo de Drawer'),
+                child: Text('Menu de Navegação'),
               ),
               ListTile(
                 title: const Text('Ajudas de Custo'),
                 onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.ajudasScreen);
+                  Navigator.pushNamed(context, AppRoutes.ajudasScreen);
                 },
               ),
               ListTile(
                 title: const Text('Despesas viatura própria'),
                 onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.despesasViaturaPropriaScreen);
+                  Navigator.pushNamed(
+                      context, AppRoutes.despesasViaturaPropriaScreen);
                 },
               ),
               ListTile(
                 title: const Text('Faltas'),
                 onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.faltasScreen);
+                  Navigator.pushNamed(context, AppRoutes.faltasScreen);
                 },
               ),
               ListTile(
                 title: const Text('Noticias'),
                 onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.noticiaScreen);
+                  Navigator.pushNamed(context, AppRoutes.noticiaScreen);
                 },
               ),
               ListTile(
                 title: const Text('Parcerias'),
                 onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.parceriasScreen);
+                  Navigator.pushNamed(context, AppRoutes.parceriasScreen);
                 },
               ),
               ListTile(
                 title: const Text('Ferias'),
                 onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
+                  Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
                 },
               ),
               ListTile(
                 title: const Text('Horas'),
                 onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
+                  Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
                 },
               ),
               ListTile(
                 title: const Text('Reuniões'),
                 onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.reunioesScreen);
+                  Navigator.pushNamed(context, AppRoutes.reunioesScreen);
                 },
               ),
             ],

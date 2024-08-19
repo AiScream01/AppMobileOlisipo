@@ -38,7 +38,7 @@ class DespesasViaturaPropriaScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.green,
                 ),
-                child: Text('Menu'),
+                child: Text('Menu de Navegação'),
               ),
               ListTile(
                 title: const Text('Ajudas de Custo'),
@@ -49,7 +49,8 @@ class DespesasViaturaPropriaScreen extends StatelessWidget {
               ListTile(
                 title: const Text('Despesas viatura própria'),
                 onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.despesasViaturaPropriaScreen);
+                  Navigator.pushNamed(
+                      context, AppRoutes.despesasViaturaPropriaScreen);
                 },
               ),
               ListTile(

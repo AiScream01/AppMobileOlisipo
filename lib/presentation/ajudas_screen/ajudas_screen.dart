@@ -59,7 +59,7 @@ class _AjudasScreen extends State<AjudasScreen> {
                     decoration: BoxDecoration(
                       color: Colors.green,
                     ),
-                    child: Text('Menu'),
+                    child: Text('Menu de Navegação'),
                   ),
                   ListTile(
                     title: const Text('Ajudas de Custo'),
