@@ -8,128 +8,182 @@ class ParceriasScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Scaffold(
-            extendBody: true,
-            extendBodyBehindAppBar: true,
-            body: Container(
-                width: SizeUtils.width,
-                height: SizeUtils.height,
+      child: Scaffold(
+        appBar: AppBar(
+          actions: [
+            IconButton(
+              icon: Icon(Icons.account_circle),
+              iconSize: 40.0,
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
+              },
+            ),
+          ],
+        ),
+        extendBody: true,
+        extendBodyBehindAppBar: true,
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              const DrawerHeader(
                 decoration: BoxDecoration(
-                    color: theme.colorScheme.onPrimaryContainer,
+                  color: Colors.green,
+                ),
+                child: Text('Menu de Navegação'),
+              ),
+              ListTile(
+                title: const Text('Ajudas de Custo'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.ajudasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Despesas viatura própria'),
+                onTap: () {
+                  Navigator.pushNamed(
+                      context, AppRoutes.despesasViaturaPropriaScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Faltas'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.faltasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Noticias'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.noticiaScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Parcerias'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.parceriasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Ferias'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Horas'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Reuniões'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.reunioesScreen);
+                },
+              ),
+            ],
+          ),
+        ),
+        body: Container(
+          width: SizeUtils.width,
+          height: SizeUtils.height,
+          decoration: BoxDecoration(
+            color: theme.colorScheme.onPrimaryContainer,
+            boxShadow: [
+              BoxShadow(
+                color: appTheme.black900.withOpacity(0.3),
+                spreadRadius: 2.h,
+                blurRadius: 2.h,
+                offset: Offset(10, 10),
+              ),
+            ],
+            image: DecorationImage(
+              image: AssetImage(ImageConstant.imgLogin),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 30.v),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: 50.v), // Espaçamento para descer o conteúdo
+                Container(
+                  padding: EdgeInsets.all(16.h),
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/background_pattern.png'),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: Text(
+                    "Parcerias",
+                    style: theme.textTheme.displayMedium?.copyWith(
+                      fontSize: 38.h,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                SizedBox(height: 20.v), // Espaçamento entre o título e o grid
+                Container(
+                  padding: EdgeInsets.all(16.h),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.onPrimary.withOpacity(0.9),
+                    borderRadius: BorderRadius.circular(20.h),
                     boxShadow: [
                       BoxShadow(
-                          color: appTheme.black900.withOpacity(0.3),
-                          spreadRadius: 2.h,
-                          blurRadius: 2.h,
-                          offset: Offset(10, 10))
+                        color: appTheme.black900.withOpacity(0.25),
+                        spreadRadius: 2.h,
+                        blurRadius: 2.h,
+                        offset: Offset(0, 4),
+                      ),
                     ],
-                    image: DecorationImage(
-                        image: AssetImage(ImageConstant.imgLogin),
-                        fit: BoxFit.cover)),
-                child: Container(
-                    width: double.maxFinite,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 20.h, vertical: 30.v),
-                    child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      _buildDoUtilizadorRow(context),
-                      SizedBox(height: 20.v),
-                      Text("Parcerias", style: theme.textTheme.displayMedium),
-                      SizedBox(height: 12.v),
-                      SizedBox(
-                          height: 607.v,
-                          width: 370.h,
-                          child: Stack(alignment: Alignment.center, children: [
-                            Align(
-                                alignment: Alignment.bottomRight,
-                                child: Container(
-                                    height: 40.v,
-                                    width: 67.h,
-                                    margin: EdgeInsets.only(
-                                        right: 29.h, bottom: 102.v),
-                                    decoration: BoxDecoration(
-                                        color: theme.colorScheme.primary,
-                                        borderRadius:
-                                            BorderRadius.circular(7.h),
-                                        border: Border.all(
-                                            color: theme.colorScheme.primary,
-                                            width: 1.h),
-                                        boxShadow: [
-                                          BoxShadow(
-                                              color: appTheme.black900
-                                                  .withOpacity(0.25),
-                                              spreadRadius: 2.h,
-                                              blurRadius: 2.h,
-                                              offset: Offset(0, 4))
-                                        ]))),
-                            Align(
-                                alignment: Alignment.center,
-                                child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 14.h, vertical: 26.v),
-                                    decoration: AppDecoration.outlineGray
-                                        .copyWith(
-                                            borderRadius: BorderRadiusStyle
-                                                .roundedBorder35),
-                                    child: _buildParceriasGrid(context)))
-                          ]))
-                    ])))));
+                  ),
+                  child: _buildParceriasGrid(context),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
-  /// Section Widget
-  Widget _buildDoUtilizadorRow(BuildContext context) {
-    return Padding(
-        padding: EdgeInsets.only(left: 10.h),
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          CustomImageView(
-              imagePath: ImageConstant.imgDoUtilizador,
-              height: 45.adaptSize,
-              width: 45.adaptSize,
-              onTap: () {
-                onTapImgDoUtilizador(context);
-              }),
-          CustomImageView(
-              imagePath: ImageConstant.imgMegaphone,
-              height: 20.v,
-              width: 39.h,
-              margin: EdgeInsets.only(top: 12.v, bottom: 13.v))
-        ]));
-  }
-
-  /// Section Widget
   Widget _buildParceriasGrid(BuildContext context) {
     return Padding(
-        padding: EdgeInsets.only(right: 5.h),
-        child: GridView.builder(
-            shrinkWrap: true,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                mainAxisExtent: 71.v,
-                crossAxisCount: 4,
-                mainAxisSpacing: 16.h,
-                crossAxisSpacing: 16.h),
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: 20,
-            itemBuilder: (context, index) {
-              return ParceriasgridItemWidget(onTapWidget: () {
-                onTapWidget(context);
-              }, onTapImgImageThree: () {
-                onTapImgImageThree(context);
-              });
-            }));
+      padding: EdgeInsets.symmetric(vertical: 10.v),
+      child: GridView.builder(
+        shrinkWrap: true,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          mainAxisExtent: 120.v,
+          crossAxisCount: 2,
+          mainAxisSpacing: 16.h,
+          crossAxisSpacing: 16.h,
+        ),
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: 20,
+        itemBuilder: (context, index) {
+          return ParceriasgridItemWidget(
+            onTapWidget: () {
+              onTapWidget(context);
+            },
+            onTapImgImageThree: () {
+              onTapImgImageThree(context);
+            },
+          );
+        },
+      ),
+    );
   }
 
-  /// Navigates to the parceriasPormenorOneScreen when the action is triggered.
-  onTapWidget(BuildContext context) {
+  void onTapWidget(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.parceriasPormenorOneScreen);
   }
 
-  /// Navigates to the parceriasPormenorOneScreen when the action is triggered.
-  onTapImgImageThree(BuildContext context) {
+  void onTapImgImageThree(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.parceriasPormenorOneScreen);
-  }
-
-  /// Navigates to the paginaPerfilScreen when the action is triggered.
-  onTapImgDoUtilizador(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
   }
 }

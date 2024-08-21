@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
           title: 'rui_pedro_s_application11',
           debugShowCheckedModeBanner: false,
           //initialRoute: AppRoutes.loginScreen,
-          initialRoute: AppRoutes.parceriasPormenorOneScreen,
+          initialRoute: AppRoutes.recuperarPasswordConfirmarPasswordScreen,
           routes: AppRoutes.routes,
         );
       },

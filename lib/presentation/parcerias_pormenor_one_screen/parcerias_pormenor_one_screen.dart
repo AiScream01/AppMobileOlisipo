@@ -114,8 +114,10 @@ class ParceriasPormenorOneScreen extends StatelessWidget {
                       child: Column(
                         children: [
                           SizedBox(height: 30.v),
-                          Text("Parcerias",
-                              style: theme.textTheme.displayMedium),
+                          Text(
+                            "Parcerias",
+                            style: theme.textTheme.displayMedium,
+                          ),
                           SizedBox(height: 12.v),
                           Container(
                             margin: EdgeInsets.only(left: 1.h),
@@ -129,8 +131,11 @@ class ParceriasPormenorOneScreen extends StatelessWidget {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text("Nome parceria",
-                                    style: theme.textTheme.headlineLarge),
+                                Text(
+                                  "Nome parceria",
+                                  style: theme.textTheme.headlineLarge,
+                                  textAlign: TextAlign.center,
+                                ),
                                 SizedBox(height: 10.v),
                                 Padding(
                                   padding: EdgeInsets.only(right: 5.h),
