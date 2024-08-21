@@ -14,83 +14,85 @@ class PaginaPrincipalScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-        appBar: AppBar(
-          actions: [
-            // Adicione o IconButton do perfil aqui
-            IconButton(
-              icon: Icon(Icons.account_circle), // Ícone do perfil
-              iconSize: 40.0,
-              onPressed: () {
-                // Adicione a lógica que deseja executar ao clicar no ícone do perfil
-                // Por exemplo, abrir a tela de perfil
-                Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
-              },
-            ),
-          ],
-        ),
-        extendBody: true,
-        extendBodyBehindAppBar: true,
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.green,
+            appBar: AppBar(
+              actions: [
+                // Adicione o IconButton do perfil aqui
+                IconButton(
+                  icon: Icon(Icons.account_circle), // Ícone do perfil
+                  iconSize: 40.0,
+                  onPressed: () {
+                    // Adicione a lógica que deseja executar ao clicar no ícone do perfil
+                    // Por exemplo, abrir a tela de perfil
+                    Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
+                  },
                 ),
-                child: Text('Exemplo de Drawer'),
+              ],
+            ),
+            extendBody: true,
+            extendBodyBehindAppBar: true,
+            drawer: Drawer(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  const DrawerHeader(
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                    ),
+                    child: Text('Menu de Navegação'),
+                  ),
+                  ListTile(
+                    title: const Text('Ajudas de Custo'),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.ajudasScreen);
+                    },
+                  ),
+                  ListTile(
+                    title: const Text('Despesas viatura própria'),
+                    onTap: () {
+                      Navigator.pushNamed(
+                          context, AppRoutes.despesasViaturaPropriaScreen);
+                    },
+                  ),
+                  ListTile(
+                    title: const Text('Faltas'),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.faltasScreen);
+                    },
+                  ),
+                  ListTile(
+                    title: const Text('Noticias'),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.noticiaScreen);
+                    },
+                  ),
+                  ListTile(
+                    title: const Text('Parcerias'),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.parceriasScreen);
+                    },
+                  ),
+                  ListTile(
+                    title: const Text('Ferias'),
+                    onTap: () {
+                      Navigator.pushNamed(
+                          context, AppRoutes.pedidoFeriasScreen);
+                    },
+                  ),
+                  ListTile(
+                    title: const Text('Horas'),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
+                    },
+                  ),
+                  ListTile(
+                    title: const Text('Reuniões'),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.reunioesScreen);
+                    },
+                  ),
+                ],
               ),
-              ListTile(
-                title: const Text('Ajudas de Custo'),
-                onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.ajudasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Despesas viatura própria'),
-                onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.despesasViaturaPropriaScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Faltas'),
-                onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.faltasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Noticias'),
-                onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.noticiaScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Parcerias'),
-                onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.parceriasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Ferias'),
-                onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Horas'),
-                onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Reuniões'),
-                onTap: () {
-                   Navigator.pushNamed(context, AppRoutes.reunioesScreen);
-                },
-              ),
-            ],
-          ),
-        ),
+            ),
             body: SizedBox(
                 height: SizeUtils.height,
                 width: double.maxFinite,
@@ -106,7 +108,7 @@ class PaginaPrincipalScreen extends StatelessWidget {
                       child: SingleChildScrollView(
                           child: Container(
                               margin: EdgeInsets.only(
-                                  left: 20.h, right: 20.h, bottom: 80.v),
+                                  left: 20.h, right: 20.h, bottom: 20.v),
                               decoration: BoxDecoration(
                                   borderRadius:
                                       BorderRadiusStyle.roundedBorder30),
@@ -159,77 +161,49 @@ class PaginaPrincipalScreen extends StatelessWidget {
                                                   SizedBox(height: 13.v),
                                                   _buildUserStatusColumn(
                                                       context),
-                                                  SizedBox(height: 16.v),
+                                                  SizedBox(height: 10.v),
                                                   Padding(
                                                       padding:
                                                           EdgeInsets.symmetric(
-                                                              horizontal: 41.h),
-                                                      child: Row(
+                                                              horizontal: 20.h),
+                                                      child: Column(
                                                           mainAxisAlignment:
                                                               MainAxisAlignment
                                                                   .spaceBetween,
                                                           children: [
-                                                            Text("Pedido:",
-                                                                style: CustomTextStyles
-                                                                    .titleLargeInterMedium),
-                                                            Text("Estado:",
-                                                                style: CustomTextStyles
-                                                                    .titleLargeInterMedium)
-                                                          ])),
-                                                  SizedBox(height: 6.v),
-                                                  Divider(
-                                                      indent: 16.h,
-                                                      endIndent: 6.h),
-                                                  SizedBox(height: 6.v),
-                                                  Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 3.h,
-                                                          right: 1.h),
-                                                      child: _buildRequestRow(
-                                                          context,
-                                                          pedidoDeReuniaoText:
-                                                              "Pedido de férias",
-                                                          reprovadoText:
-                                                              "Aprovado")),
-                                                  SizedBox(height: 12.v),
-                                                  Padding(
-                                                      padding: EdgeInsets.only(
-                                                          right: 4.h),
-                                                      child: _buildRequestRow(
-                                                          context,
-                                                          pedidoDeReuniaoText:
-                                                              "Pedido de reunião",
-                                                          reprovadoText:
-                                                              "Reprovado")),
-                                                  SizedBox(height: 12.v),
-                                                  Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 3.h,
-                                                          right: 1.h),
-                                                      child: _buildRequestRow(
-                                                          context,
-                                                          pedidoDeReuniaoText:
-                                                              "Pedido de ajudas",
-                                                          reprovadoText:
-                                                              "Pendente")),
-                                                  SizedBox(height: 49.v)
+                                                            _buildRequestRow(
+                                                                context,
+                                                                pedidoDeReuniaoText:
+                                                                    "Pedido de férias",
+                                                                reprovadoText:
+                                                                    "Aprovado"),
+                                                            SizedBox(
+                                                                height: 10.v),
+                                                            _buildRequestRow(
+                                                                context,
+                                                                pedidoDeReuniaoText:
+                                                                    "Pedido de reunião",
+                                                                reprovadoText:
+                                                                    "Reprovado"),
+                                                            SizedBox(
+                                                                height: 10.v),
+                                                            _buildRequestRow(
+                                                                context,
+                                                                pedidoDeReuniaoText:
+                                                                    "Pedido de ajudas",
+                                                                reprovadoText:
+                                                                    "Pendente"),
+                                                            SizedBox(
+                                                                height: 10.v),
+                                                            _buildRequestRow(
+                                                                context,
+                                                                pedidoDeReuniaoText:
+                                                                    "Pedido de Contas",
+                                                                reprovadoText:
+                                                                    "Enviado")
+                                                          ]))
                                                 ])),
-                                        SizedBox(height: 12.v),
-                                        Padding(
-                                            padding: EdgeInsets.only(
-                                                left: 15.h, right: 37.h),
-                                            child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text("Pedido de Contas",
-                                                      style: CustomTextStyles
-                                                          .titleLargeInter),
-                                                  Text("Enviado",
-                                                      style: CustomTextStyles
-                                                          .titleLargeInterBluegray700)
-                                                ]))
+                                        SizedBox(height: 10.v)
                                       ])))))
                 ]))));
   }
@@ -299,6 +273,23 @@ class PaginaPrincipalScreen extends StatelessWidget {
     required String pedidoDeReuniaoText,
     required String reprovadoText,
   }) {
+    // Método para determinar a cor com base no status do pedido
+    Color getStatusColor(String status) {
+      switch (status.toLowerCase()) {
+        case 'aprovado':
+          return Colors.green;
+        case 'reprovado':
+          return Colors.red;
+        case 'pendente':
+          return Colors.yellow;
+        case 'enviado':
+        case 'em análise':
+          return Colors.grey;
+        default:
+          return Colors.black;
+      }
+    }
+
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 9.h, vertical: 7.v),
         decoration: AppDecoration.fillGray
@@ -314,7 +305,7 @@ class PaginaPrincipalScreen extends StatelessWidget {
               padding: EdgeInsets.only(top: 2.v),
               child: Text(reprovadoText,
                   style: CustomTextStyles.titleLargeInterPrimaryContainer
-                      .copyWith(color: theme.colorScheme.primaryContainer)))
+                      .copyWith(color: getStatusColor(reprovadoText))))
         ]));
   }
 

@@ -7,6 +7,13 @@ class PaginaPerfilScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController nameController =
+        TextEditingController(text: "Pedro Martins");
+    final TextEditingController passwordController =
+        TextEditingController(text: "**************");
+    final TextEditingController emailController =
+        TextEditingController(text: "pedromartins@gmail.com");
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(),
@@ -74,49 +81,54 @@ class PaginaPerfilScreen extends StatelessWidget {
             ],
           ),
         ),
-        body: Container(
-          width: SizeUtils.width,
-          height: SizeUtils.height,
-          decoration: BoxDecoration(
-            color: theme.colorScheme.onPrimaryContainer,
-            boxShadow: [
-              BoxShadow(
-                color: appTheme.black900.withOpacity(0.3),
-                spreadRadius: 2.h,
-                blurRadius: 2.h,
-                offset: Offset(
-                  10,
-                  10,
-                ),
-              ),
-            ],
-            image: DecorationImage(
-              image: AssetImage(
-                ImageConstant.imgLogin,
-              ),
-              fit: BoxFit.cover,
-            ),
-          ),
+        body: SingleChildScrollView(
+          // Adiciona um scroll para evitar overflow
           child: Container(
-            width: double.maxFinite,
-            padding: EdgeInsets.symmetric(
-              horizontal: 21.h,
-              vertical: 28.v,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(height: 14.v),
-                CustomImageView(
-                  imagePath: ImageConstant.imgMegaphone,
-                  height: 20.v,
-                  width: 39.h,
-                  alignment: Alignment.centerRight,
-                  margin: EdgeInsets.only(right: 4.h),
+            width: SizeUtils.width,
+            height: SizeUtils.height,
+            decoration: BoxDecoration(
+              color: theme.colorScheme.onPrimaryContainer,
+              boxShadow: [
+                BoxShadow(
+                  color: appTheme.black900.withOpacity(0.3),
+                  spreadRadius: 2.h,
+                  blurRadius: 2.h,
+                  offset: Offset(
+                    10,
+                    10,
+                  ),
                 ),
-                SizedBox(height: 45.v),
-                _buildPaginaPerfil(context),
               ],
+              image: DecorationImage(
+                image: AssetImage(
+                  ImageConstant.imgLogin,
+                ),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Container(
+              width: double.maxFinite,
+              padding: EdgeInsets.symmetric(
+                horizontal: 21.h,
+                vertical: 28.v,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 14.v),
+                  CustomImageView(
+                    imagePath: ImageConstant.imgMegaphone,
+                    height: 20.v,
+                    width: 39.h,
+                    alignment: Alignment.centerRight,
+                    margin: EdgeInsets.only(right: 4.h),
+                  ),
+                  SizedBox(
+                      height: 20.v), // Diminui o espaçamento entre elementos
+                  _buildPaginaPerfil(context, nameController,
+                      passwordController, emailController),
+                ],
+              ),
             ),
           ),
         ),
@@ -124,13 +136,16 @@ class PaginaPerfilScreen extends StatelessWidget {
     );
   }
 
-  /// Section Widget
-  Widget _buildPaginaPerfil(BuildContext context) {
+  Widget _buildPaginaPerfil(
+      BuildContext context,
+      TextEditingController nameController,
+      TextEditingController passwordController,
+      TextEditingController emailController) {
     return Container(
       width: 369.h,
       padding: EdgeInsets.symmetric(
         horizontal: 15.h,
-        vertical: 21.v,
+        vertical: 15.v, // Reduz a altura do padding
       ),
       decoration: AppDecoration.outlineGray.copyWith(
         borderRadius: BorderRadiusStyle.roundedBorder35,
@@ -142,149 +157,92 @@ class PaginaPerfilScreen extends StatelessWidget {
         children: [
           Align(
             alignment: Alignment.center,
-            child: SizedBox(
-              height: 130.v,
-              width: 163.h,
-              child: Stack(
-                alignment: Alignment.centerRight,
-                children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      height: 158.v,
-                      width: 163.h,
-                      decoration: BoxDecoration(
-                        color: appTheme.gray300,
-                        borderRadius: BorderRadius.circular(
-                          81.h,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: appTheme.black900.withOpacity(0.25),
-                            spreadRadius: 2.h,
-                            blurRadius: 2.h,
-                            offset: Offset(
-                              0,
-                              4,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Container(
-                      height: 97.v,
-                      width: 115.h,
-                      margin: EdgeInsets.only(right: 15.h),
-                      child: Stack(
-                        alignment: Alignment.bottomRight,
-                        children: [
-                          CustomImageView(
-                            imagePath: ImageConstant.imgDoUtilizador,
-                            height: 97.adaptSize,
-                            width: 97.adaptSize,
-                            alignment: Alignment.centerLeft,
-                          ),
-                          CustomImageView(
-                            imagePath: ImageConstant.imgEdit,
-                            height: 19.v,
-                            width: 20.h,
-                            alignment: Alignment.bottomRight,
-                            margin: EdgeInsets.only(bottom: 4.v),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 58.v),
-          Text(
-            "Nome",
-            style: CustomTextStyles.titleLargePrimary,
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: 7.v),
-                child: Text(
-                  "Pedro Martins",
-                  style: theme.textTheme.bodyLarge,
-                ),
-              ),
-              CustomImageView(
-                imagePath: ImageConstant.imgEdit,
-                height: 19.v,
-                width: 20.h,
-                margin: EdgeInsets.only(
-                  left: 12.h,
-                  bottom: 13.v,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 28.v),
-          Text(
-            "Password",
-            style: CustomTextStyles.titleLargePrimary,
-          ),
-          SizedBox(height: 3.v),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: 4.v),
-                child: Text(
-                  "**************",
-                  style: theme.textTheme.bodyLarge,
-                ),
-              ),
-              CustomImageView(
-                imagePath: ImageConstant.imgEdit,
-                height: 19.v,
-                width: 20.h,
-                margin: EdgeInsets.only(
-                  left: 9.h,
-                  bottom: 10.v,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 29.v),
-          Text(
-            "Email",
-            style: CustomTextStyles.titleLargePrimary,
-          ),
-          Padding(
-            padding: EdgeInsets.only(right: 50.h),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Stack(
+              alignment:
+                  Alignment.bottomRight, // Alinhamento do ícone de edição
               children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 8.v),
-                  child: Text(
-                    "pedromartins@gmail.com",
-                    style: theme.textTheme.bodyLarge,
+                Container(
+                  height: 120.v,
+                  width: 120.h,
+                  decoration: BoxDecoration(
+                    color: appTheme.gray300,
+                    borderRadius: BorderRadius.circular(
+                      60.h,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: appTheme.black900.withOpacity(0.25),
+                        spreadRadius: 2.h,
+                        blurRadius: 2.h,
+                        offset: Offset(
+                          0,
+                          4,
+                        ),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: CustomImageView(
+                      imagePath: ImageConstant.imgDoUtilizador,
+                      height: 90.adaptSize,
+                      width: 90.adaptSize,
+                    ),
                   ),
                 ),
-                CustomImageView(
-                  imagePath: ImageConstant.imgEdit,
-                  height: 19.v,
-                  width: 20.h,
-                  margin: EdgeInsets.only(
-                    left: 10.h,
-                    bottom: 14.v,
+                Positioned(
+                  bottom: 0, // Alinha o ícone de edição à borda inferior
+                  right: 0, // Alinha o ícone de edição à borda direita
+                  child: CustomImageView(
+                    imagePath: ImageConstant.imgEdit,
+                    height: 19.v,
+                    width: 19.h,
                   ),
                 ),
               ],
             ),
           ),
+          SizedBox(
+              height: 50.v), // Reduz a altura entre a imagem e o primeiro campo
+          Text(
+            "Nome",
+            style: CustomTextStyles.titleLargePrimary,
+          ),
+          TextField(
+            controller: nameController,
+            decoration: InputDecoration(
+              border: UnderlineInputBorder(),
+              isDense: true,
+            ),
+            style: theme.textTheme.bodyLarge,
+          ),
+          SizedBox(height: 20.v), // Reduz a altura entre campos de texto
+          Text(
+            "Password",
+            style: CustomTextStyles.titleLargePrimary,
+          ),
+          TextField(
+            controller: passwordController,
+            decoration: InputDecoration(
+              border: UnderlineInputBorder(),
+              isDense: true,
+            ),
+            obscureText: true,
+            style: theme.textTheme.bodyLarge,
+          ),
           SizedBox(height: 20.v),
+          Text(
+            "Email",
+            style: CustomTextStyles.titleLargePrimary,
+          ),
+          TextField(
+            controller: emailController,
+            decoration: InputDecoration(
+              border: UnderlineInputBorder(),
+              isDense: true,
+            ),
+            style: theme.textTheme.bodyLarge,
+          ),
+          SizedBox(height: 15.v),
           Text(
             "Contrato",
             style: CustomTextStyles.titleLargePrimary,
@@ -296,7 +254,7 @@ class PaginaPerfilScreen extends StatelessWidget {
             text: "PDF",
             buttonTextStyle: CustomTextStyles.bodyLarge16_1,
           ),
-          SizedBox(height: 44.v),
+          SizedBox(height: 20.v), // Reduz a altura do espaçamento final
           CustomOutlinedButton(
             height: 29.v,
             width: 81.h,
