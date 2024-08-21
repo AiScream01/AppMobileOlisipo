@@ -5,13 +5,9 @@ import 'package:rui_pedro_s_application11/widgets/custom_text_form_field.dart';
 
 // ignore: must_be_immutable
 class RecuperarPasswordConfirmarPasswordScreen extends StatelessWidget {
-  RecuperarPasswordConfirmarPasswordScreen({Key? key})
-      : super(
-          key: key,
-        );
+  RecuperarPasswordConfirmarPasswordScreen({Key? key}) : super(key: key);
 
   TextEditingController passwordController = TextEditingController();
-
   TextEditingController passwordController1 = TextEditingController();
 
   @override
@@ -31,37 +27,31 @@ class RecuperarPasswordConfirmarPasswordScreen extends StatelessWidget {
                 color: appTheme.black900.withOpacity(0.3),
                 spreadRadius: 2.h,
                 blurRadius: 2.h,
-                offset: Offset(
-                  10,
-                  10,
-                ),
+                offset: Offset(10, 10),
               ),
             ],
             image: DecorationImage(
-              image: AssetImage(
-                ImageConstant.imgLogin,
-              ),
+              image: AssetImage(ImageConstant.imgLogin),
               fit: BoxFit.cover,
             ),
           ),
-          child: Container(
-            width: double.maxFinite,
-            padding: EdgeInsets.symmetric(
-              horizontal: 21.h,
-              vertical: 24.v,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(height: 51.v),
-                CustomImageView(
-                  imagePath: ImageConstant.imgOlisipoLogoblack,
-                  height: 118.v,
-                  width: 246.h,
-                ),
-                SizedBox(height: 32.v),
-                _buildPasswordRecovery(context),
-              ],
+          child: Center(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 21.h, vertical: 24.v),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: 51.v),
+                  CustomImageView(
+                    imagePath: ImageConstant.imgOlisipoLogoblack,
+                    height: 118.v,
+                    width: 246.h,
+                  ),
+                  SizedBox(height: 32.v),
+                  _buildPasswordRecovery(context),
+                ],
+              ),
             ),
           ),
         ),
@@ -72,28 +62,23 @@ class RecuperarPasswordConfirmarPasswordScreen extends StatelessWidget {
   /// Section Widget
   Widget _buildPasswordRecovery(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 15.h,
-        vertical: 21.v,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 30.v),
       decoration: AppDecoration.outlineGray.copyWith(
         borderRadius: BorderRadiusStyle.roundedBorder35,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: 31.v),
-          SizedBox(
-            width: 172.h,
-            child: Text(
-              "Recuperar Password",
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.displaySmall,
-            ),
+          SizedBox(height: 20.v),
+          Text(
+            "Recuperar Password",
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.displaySmall,
           ),
-          SizedBox(height: 41.v),
+          SizedBox(height: 40.v),
           Align(
             alignment: Alignment.centerLeft,
             child: Padding(
@@ -104,12 +89,12 @@ class RecuperarPasswordConfirmarPasswordScreen extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 2.v),
+          SizedBox(height: 10.v),
           CustomTextFormField(
             controller: passwordController,
             obscureText: true,
           ),
-          SizedBox(height: 18.v),
+          SizedBox(height: 20.v),
           Align(
             alignment: Alignment.centerLeft,
             child: Padding(
@@ -120,20 +105,23 @@ class RecuperarPasswordConfirmarPasswordScreen extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 2.v),
+          SizedBox(height: 10.v),
           CustomTextFormField(
             controller: passwordController1,
             textInputAction: TextInputAction.done,
             obscureText: true,
           ),
-          SizedBox(height: 70.v),
+          SizedBox(height: 50.v),
           CustomElevatedButton(
             width: 155.h,
             text: "Recuperar",
           ),
-          SizedBox(height: 18.v),
-          SizedBox(
-            width: 97.h,
+          SizedBox(height: 20.v),
+          GestureDetector(
+            onTap: () {
+              // Navegar para a tela de login
+              Navigator.pushNamed(context, AppRoutes.loginScreen);
+            },
             child: Text(
               "Já tem conta?\nFaz o login",
               maxLines: 2,

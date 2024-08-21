@@ -46,18 +46,17 @@ class RecuperarPasswordEmailScreen extends StatelessWidget {
             width: double.maxFinite,
             padding: EdgeInsets.symmetric(
               horizontal: 21.h,
-              vertical: 23.v,
+              vertical: 30.v,
             ),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 52.v),
                 CustomImageView(
                   imagePath: ImageConstant.imgOlisipoLogoblack,
                   height: 118.v,
                   width: 246.h,
                 ),
-                SizedBox(height: 32.v),
+                SizedBox(height: 40.v),
                 _buildPasswordRecovery(context),
               ],
             ),
@@ -69,69 +68,65 @@ class RecuperarPasswordEmailScreen extends StatelessWidget {
 
   /// Section Widget
   Widget _buildPasswordRecovery(BuildContext context) {
-    return Expanded(
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: 14.h,
-          vertical: 23.v,
-        ),
-        decoration: AppDecoration.outlineGray.copyWith(
-          borderRadius: BorderRadiusStyle.roundedBorder35,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(height: 29.v),
-            SizedBox(
-              width: 172.h,
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: 20.h,
+        vertical: 30.v,
+      ),
+      decoration: AppDecoration.outlineGray.copyWith(
+        borderRadius: BorderRadiusStyle.roundedBorder35,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: 200.h,
+            child: Text(
+              "Recuperar Password",
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.displaySmall,
+            ),
+          ),
+          SizedBox(height: 40.v),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: EdgeInsets.only(left: 5.h),
               child: Text(
-                "Recuperar Password",
+                "Email",
+                style: theme.textTheme.bodyMedium,
+              ),
+            ),
+          ),
+          SizedBox(height: 10.v),
+          CustomTextFormField(
+            controller: emailController,
+            textInputAction: TextInputAction.done,
+          ),
+          SizedBox(height: 30.v),
+          CustomElevatedButton(
+            width: 155.h,
+            text: "Recuperar",
+          ),
+          SizedBox(height: 25.v),
+          GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.loginScreen);
+            },
+            child: SizedBox(
+              width: 150.h,
+              child: Text(
+                "Já tem conta?\nFaz o login",
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,
-                style: theme.textTheme.displaySmall,
+                style: CustomTextStyles.titleMediumNunitoPrimary,
               ),
             ),
-            SizedBox(height: 36.v),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: EdgeInsets.only(left: 5.h),
-                child: Text(
-                  "Email",
-                  style: theme.textTheme.bodyMedium,
-                ),
-              ),
-            ),
-            SizedBox(height: 2.v),
-            CustomTextFormField(
-              controller: emailController,
-              textInputAction: TextInputAction.done,
-              obscureText: true,
-            ),
-            Spacer(),
-            CustomElevatedButton(
-              width: 155.h,
-              text: "Recuperar",
-            ),
-            SizedBox(height: 17.v),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, AppRoutes.loginScreen);
-              },
-              child: SizedBox(
-                width: 97.h,
-                child: Text(
-                  "Já tem conta?\nFaz o login",
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
-                  style: CustomTextStyles.titleMediumNunitoPrimary,
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

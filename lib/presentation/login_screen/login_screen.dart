@@ -17,14 +17,11 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        resizeToAvoidBottomInset: true, // permite evitar o overflow
+        resizeToAvoidBottomInset: true,
         body: SingleChildScrollView(
-          // permite a rolagem para evitar overflow
           child: Container(
             width: double.infinity,
-            height: MediaQuery.of(context)
-                .size
-                .height, // usa o tamanho total da tela
+            height: MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
               color: theme.colorScheme.onPrimaryContainer,
               image: DecorationImage(
@@ -40,8 +37,10 @@ class LoginScreen extends StatelessWidget {
                   SizedBox(height: 48),
                   CustomImageView(
                     imagePath: ImageConstant.imgOlisipoLogoblack,
-                    height: 118,
-                    width: 270,
+                    height: 118, // Mantenha o valor de altura atual ou ajuste
+                    width: 270, // Ajuste a largura se necessário
+                    fit: BoxFit
+                        .contain, // Adiciona esta linha para garantir que a imagem não seja cortada
                   ),
                   SizedBox(height: 33),
                   _buildLoginForm(context),
