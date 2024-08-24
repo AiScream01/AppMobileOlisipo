@@ -113,12 +113,6 @@ class AppNavigationScreen extends StatelessWidget {
                         ),
                         _buildScreenTitle(
                           context,
-                          screenTitle: "Parcerias Pormenor",
-                          onTapScreenTitle: () => onTapScreenTitle(
-                              context, AppRoutes.parceriasPormenorScreen),
-                        ),
-                        _buildScreenTitle(
-                          context,
                           screenTitle: "faltas",
                           onTapScreenTitle: () =>
                               onTapScreenTitle(context, AppRoutes.faltasScreen),

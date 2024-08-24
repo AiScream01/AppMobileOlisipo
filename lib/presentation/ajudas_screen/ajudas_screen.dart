@@ -3,7 +3,7 @@ import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_elevated_button.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_text_form_field.dart';
-import 'package:rui_pedro_s_application11/servidor.dart';
+import 'package:rui_pedro_s_application11/servidor/servidor.dart';
 
 class AjudasScreen extends StatefulWidget {
   const AjudasScreen({Key? key, required this.title}) : super(key: key);

@@ -13,7 +13,6 @@ import 'package:rui_pedro_s_application11/presentation/reunioes_screen/reunioes_
 import 'package:rui_pedro_s_application11/presentation/pedido_reuniao_screen/pedido_reuniao_screen.dart';
 import 'package:rui_pedro_s_application11/presentation/parcerias_screen/parcerias_screen.dart';
 import 'package:rui_pedro_s_application11/presentation/parcerias_pormenor_one_screen/parcerias_pormenor_one_screen.dart';
-import 'package:rui_pedro_s_application11/presentation/parcerias_pormenor_screen/parcerias_pormenor_screen.dart';
 import 'package:rui_pedro_s_application11/presentation/faltas_screen/faltas_screen.dart';
 import 'package:rui_pedro_s_application11/presentation/pedido_horas_screen/pedido_horas_screen.dart';
 import 'package:rui_pedro_s_application11/presentation/pagina_perfil_screen/pagina_perfil_screen.dart';
@@ -52,9 +51,6 @@ class AppRoutes {
   static const String parceriasPormenorOneScreen =
       '/parcerias_pormenor_one_screen';
 
-  //Esta é para eliminar 
-  static const String parceriasPormenorScreen = '/parcerias_pormenor_screen';
-
   static const String faltasScreen = '/faltas_screen';
 
   static const String pedidoHorasScreen = '/pedido_horas_screen';
@@ -79,7 +75,6 @@ class AppRoutes {
     pedidoReuniaoScreen: (context) => PedidoReuniaoScreen(),
     parceriasScreen: (context) => ParceriasScreen(),
     parceriasPormenorOneScreen: (context) => ParceriasPormenorOneScreen(),
-    parceriasPormenorScreen: (context) => ParceriasPormenorScreen(),
     faltasScreen: (context) => FaltasScreen(),
     pedidoHorasScreen: (context) => PedidoHorasScreen(),
     paginaPerfilScreen: (context) => PaginaPerfilScreen(),
