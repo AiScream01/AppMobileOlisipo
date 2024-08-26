@@ -194,7 +194,7 @@ class Servidor {
   }
 
   // Método para obter dados utilizador
-  Future<void> obterDadosUsuario() async {
+  Future<void> obterDadosUtilizador() async {
     var url = '/utilizador/dados';
     try {
       String? token = await obterTokenLocalmente();
@@ -208,10 +208,10 @@ class Servidor {
         var dados = json.decode(response.body);
         print('Dados do usuário: $dados');
       } else {
-        print('Erro ao obter dados do usuário: ${response.statusCode}');
+        print('Erro ao obter dados do utilizador: ${response.statusCode}');
       }
     } catch (e) {
-      print('Erro ao obter dados do usuário: $e');
+      print('Erro ao obter dados do utilizador: $e');
     }
   }
 
