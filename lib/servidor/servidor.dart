@@ -196,7 +196,7 @@ class Servidor {
 
   // Obter lista de parcerias
   Future<List<dynamic>> obterParcerias() async {
-    var url = '/parcerias';
+    var url = '/protocolosparceria'; //Corrigido
     try {
       var response = await _get(url);
       if (response.statusCode == 200) {
@@ -213,7 +213,7 @@ class Servidor {
 
   // Obter detalhes de uma parceria específica
   Future<Map<String, dynamic>?> obterDetalhesParceria(String idParceria) async {
-    var url = '/parcerias/$idParceria';
+    var url = '/protocolosparceria/$idParceria'; //Corrigido
     try {
       var response = await _get(url);
       if (response.statusCode == 200) {
@@ -232,10 +232,10 @@ class Servidor {
   //     Ajudas de Custo
   // =========================
 
-  // Inserir uma ajuda de custo
+  //Inserir Ajudas de Custo
   Future<void> inserirAjudaCusto(String? token, double valorAjuda,
       String descritivoAjuda, String faturaAjuda) async {
-    var url = '/ajudascusto/create/';
+    var url = '/ajudascusto/'; // Corrigido
     try {
       var response = await _post(
         url,
@@ -274,7 +274,8 @@ class Servidor {
     String? comprovativoPath,
   }) async {
     try {
-      var uri = Uri.parse('$baseURL/despesas_viatura');
+      // URL corrigido para apontar para a rota correta
+      var uri = Uri.parse('$baseURL/despesas_viatura/create');
       var request = http.MultipartRequest('POST', uri);
 
       request.headers['Authorization'] = 'Bearer $token';
@@ -310,7 +311,7 @@ class Servidor {
   //          Faltas
   // =========================
 
-  // Enviar uma falta
+  //Enviar faltas
   Future<bool> enviarFalta({
     required String token,
     required String data,
@@ -318,7 +319,8 @@ class Servidor {
     String? comprovativoPath,
   }) async {
     try {
-      var uri = Uri.parse('$baseURL/faltas');
+      // Atualize o URL para corresponder ao backend
+      var uri = Uri.parse('$baseURL/faltas/create'); // Corrigido
       var request = http.MultipartRequest('POST', uri);
 
       request.headers['Authorization'] = 'Bearer $token';
@@ -695,7 +697,8 @@ class Servidor {
   Future<List<dynamic>> obterReunioes({String? token}) async {
     var url = '/reunioes';
     try {
-      var response = await _get(url, headers: {'Authorization': 'Bearer $token'});
+      var response =
+          await _get(url, headers: {'Authorization': 'Bearer $token'});
       if (response.statusCode == 200) {
         return json.decode(response.body);
       } else {
@@ -708,10 +711,12 @@ class Servidor {
     }
   }
 
-  Future<Map<String, dynamic>?> obterDetalhesReuniao(String idReuniao, {String? token}) async {
+  Future<Map<String, dynamic>?> obterDetalhesReuniao(String idReuniao,
+      {String? token}) async {
     var url = '/reunioes/$idReuniao';
     try {
-      var response = await _get(url, headers: {'Authorization': 'Bearer $token'});
+      var response =
+          await _get(url, headers: {'Authorization': 'Bearer $token'});
       if (response.statusCode == 200) {
         return json.decode(response.body);
       } else {
@@ -741,7 +746,10 @@ class Servidor {
           'data_hora': dataHora,
           'participantes': participantes,
         },
-        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json; charset=UTF-8'},
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json; charset=UTF-8'
+        },
       );
       if (response.statusCode == 201) {
         print('Reunião marcada com sucesso!');
@@ -759,7 +767,8 @@ class Servidor {
   Future<bool> cancelarReuniao(String idReuniao, {String? token}) async {
     var url = '/reunioes/$idReuniao';
     try {
-      var response = await _delete(url, headers: {'Authorization': 'Bearer $token'});
+      var response =
+          await _delete(url, headers: {'Authorization': 'Bearer $token'});
       if (response.statusCode == 204) {
         print('Reunião cancelada com sucesso!');
         return true;
