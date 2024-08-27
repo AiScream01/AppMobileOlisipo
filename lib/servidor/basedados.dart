@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'dart:convert'; // Para usar jsonEncode
+import 'package:http/http.dart' as http; // Para usar http.post
+
 
 class Basededados {
   static const nomebd = "bdadm.db";
@@ -137,6 +140,36 @@ Future<Map<String, dynamic>?> listarFeriasPorId(int id) async {
     return null; // Retorna null se nenhum registro for encontrado
   }
 }
+
+Future<bool> enviarPedidoFeriasParaServidor({
+    required DateTime dataInicio,
+    required DateTime dataFim,
+    required int idUser,
+  }) async {
+    final url = Uri.parse('https://seuservidor.com/api/ferias'); // Substitua pela URL real do seu servidor
+
+    // Faz a requisição POST
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json', // Define o tipo de conteúdo como JSON
+      },
+      body: jsonEncode({
+        'data_inicio': dataInicio.toIso8601String(),
+        'data_fim': dataFim.toIso8601String(),
+        'id_user': idUser,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // Se o servidor retornar status 200, significa que a operação foi bem-sucedida
+      return true;
+    } else {
+      // Caso contrário, exibe o erro no console
+      print('Erro ao enviar dados para o servidor: ${response.statusCode}');
+      return false;
+    }
+  }
 
 
 }

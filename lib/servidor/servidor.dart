@@ -351,41 +351,38 @@ class Servidor {
   }
 
   // =========================
-  //          Férias
-  // =========================
+//          Férias
+// =========================
 
-  // Enviar Pedido de Férias
-  Future<bool> enviarPedidoFerias({
-    required String token,
-    required DateTime dataInicio,
-    required DateTime dataFim,
-  }) async {
-    var url = '/ferias/solicitar'; // Atualize o endpoint conforme necessário
-    try {
-      var response = await _post(
-        url,
-        {
-          'data_inicio': dataInicio.toIso8601String(),
-          'data_fim': dataFim.toIso8601String(),
-        },
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-      );
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        print('Pedido de férias enviado com sucesso!');
-        return true;
-      } else {
-        print('Erro ao enviar pedido de férias: ${response.statusCode}');
-        return false;
-      }
-    } catch (e) {
-      print('Erro ao enviar pedido de férias: $e');
+// Enviar Pedido de Férias
+Future<bool> enviarPedidoFerias({
+  required DateTime dataInicio,
+  required DateTime dataFim,
+}) async {
+  var url = '$baseURL/ferias/create'; // Atualizado para o endpoint correto
+  try {
+    var response = await _post(
+      url,
+      {
+        'data_inicio': dataInicio.toIso8601String(),
+        'data_fim': dataFim.toIso8601String(),
+      },
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+    if (response.statusCode == 201) {
+      print('Pedido de férias enviado com sucesso!');
+      return true;
+    } else {
+      print('Erro ao enviar pedido de férias: ${response.statusCode}');
       return false;
     }
+  } catch (e) {
+    print('Erro ao enviar pedido de férias: $e');
+    return false;
   }
-
+}
   // Obter Pedidos de Férias
   Future<List<dynamic>> obterPedidosFerias({required String token}) async {
     var url = '/ferias'; // Atualize o endpoint conforme necessário

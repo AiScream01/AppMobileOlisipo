@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Adicione esta importação
+import 'package:intl/intl.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
 import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
 
-import '../../servidor/basedados.dart'; // Ajuste o caminho conforme a estrutura do seu projeto
+import '../../servidor/basedados.dart';
 
 class PedidoFeriasScreen extends StatefulWidget {
   const PedidoFeriasScreen({Key? key}) : super(key: key);
@@ -16,7 +16,7 @@ class PedidoFeriasScreen extends StatefulWidget {
 class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
   DateTime? _startDate;
   DateTime? _endDate;
-  final Basededados _basededados = Basededados(); // Instância do banco de dados
+  final Basededados _basededados = Basededados();
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +117,7 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
           ),
           child: Column(
             children: [
-              SizedBox(height: 50), // Aumenta o espaçamento abaixo da AppBar
+              SizedBox(height: 50),
               Expanded(
                 child: SingleChildScrollView(
                   padding: EdgeInsets.symmetric(horizontal: 21),
@@ -125,7 +125,7 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SizedBox(height: 50), // Espaçamento adicional
+                      SizedBox(height: 50),
                       _buildFiftySixStack(context),
                     ],
                   ),
@@ -138,7 +138,6 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
     );
   }
 
-  /// Section Widget
   Widget _buildFiftySixStack(BuildContext context) {
     return SizedBox(
       width: double.infinity,
@@ -233,13 +232,11 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
     );
   }
 
-  /// Função para formatar datas
   String formatDate(DateTime date) {
     final DateFormat formatter = DateFormat('dd/MM/yyyy');
     return formatter.format(date);
   }
 
-  /// Widget para criar uma linha com um rótulo e um botão de calendário
   Widget _buildDatePickerRow({
     required String label,
     required DateTime? selectedDate,
@@ -264,20 +261,56 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
     );
   }
 
-  /// Navega para a página de perfil quando a ação é acionada.
-  void onTapImgDoUtilizador(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
+void onTapEnviar(BuildContext context) async {
+  if (_startDate == null || _endDate == null) {
+    // Verifica se as datas foram selecionadas
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text('Erro'),
+        content: Text('Por favor, selecione as datas de início e fim.'),
+        actions: [
+          TextButton(
+            child: Text('OK'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+    );
+    return;
   }
 
-  /// Exibe um diálogo com o conteúdo de [PushNotificationDialog].
-  void onTapEnviar(BuildContext context) async {
-    if (_startDate == null || _endDate == null) {
-      // Verifica se as datas foram selecionadas
+  int idUser = 1; // Substitua pelo ID real do usuário
+
+  try {
+    // Inserir na base de dados local
+    await _basededados.inserirFerias(_startDate!, _endDate!, idUser);
+
+    // Enviar para o servidor
+    bool sucesso = await _basededados.enviarPedidoFeriasParaServidor(
+      dataInicio: _startDate!,
+      dataFim: _endDate!,
+      idUser: idUser,
+    );
+
+    if (sucesso) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          content: PushNotificationDialog(),
+          backgroundColor: Colors.transparent,
+          contentPadding: EdgeInsets.zero,
+          insetPadding: const EdgeInsets.only(left: 0),
+        ),
+      );
+    } else {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
           title: Text('Erro'),
-          content: Text('Por favor, selecione as datas de início e fim.'),
+          content: Text('Não foi possível enviar o pedido de férias para o servidor.'),
           actions: [
             TextButton(
               child: Text('OK'),
@@ -288,24 +321,26 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
           ],
         ),
       );
-      return;
     }
-
-    // Supondo que você tem um ID de usuário, substitua `1` pelo ID real do usuário
-    int userId = 1; // Obtém o ID do usuário conforme necessário
-
-    await _basededados.inserirFerias(_startDate!, _endDate!, userId);
-
+  } catch (e) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        content: PushNotificationDialog(),
-        backgroundColor: Colors.transparent,
-        contentPadding: EdgeInsets.zero,
-        insetPadding: const EdgeInsets.only(left: 0),
+        title: Text('Erro'),
+        content: Text('Ocorreu um erro ao processar o pedido de férias.'),
+        actions: [
+          TextButton(
+            child: Text('OK'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
       ),
     );
   }
+}
+
 
   /// Função para verificar as férias registradas na base de dados
   void _verificarFerias() async {
@@ -353,3 +388,4 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
     }
   }
 }
+
