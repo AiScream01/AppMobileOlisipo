@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Adicione esta importação
 import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
 import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
+
+import '../../servidor/basedados.dart'; // Ajuste o caminho conforme a estrutura do seu projeto
 
 class PedidoFeriasScreen extends StatefulWidget {
   const PedidoFeriasScreen({Key? key}) : super(key: key);
@@ -13,6 +16,7 @@ class PedidoFeriasScreen extends StatefulWidget {
 class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
   DateTime? _startDate;
   DateTime? _endDate;
+  final Basededados _basededados = Basededados(); // Instância do banco de dados
 
   @override
   Widget build(BuildContext context) {
@@ -94,15 +98,15 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
           ),
         ),
         body: Container(
-          width: SizeUtils.width,
-          height: SizeUtils.height,
+          width: double.infinity,
+          height: double.infinity,
           decoration: BoxDecoration(
             color: theme.colorScheme.onPrimaryContainer,
             boxShadow: [
               BoxShadow(
                 color: appTheme.black900.withOpacity(0.3),
-                spreadRadius: 2.h,
-                blurRadius: 2.h,
+                spreadRadius: 2,
+                blurRadius: 2,
                 offset: Offset(10, 10),
               ),
             ],
@@ -113,15 +117,15 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
           ),
           child: Column(
             children: [
-              SizedBox(height: 50.v), // Aumenta o espaçamento abaixo da AppBar
+              SizedBox(height: 50), // Aumenta o espaçamento abaixo da AppBar
               Expanded(
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(horizontal: 21.h),
+                  padding: EdgeInsets.symmetric(horizontal: 21),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SizedBox(height: 50.v), // Espaçamento adicional
+                      SizedBox(height: 50), // Espaçamento adicional
                       _buildFiftySixStack(context),
                     ],
                   ),
@@ -137,132 +141,126 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
   /// Section Widget
   Widget _buildFiftySixStack(BuildContext context) {
     return SizedBox(
-      height: 626.v,
-      width: 365.h,
+      width: double.infinity,
       child: Stack(
         alignment: Alignment.center,
         children: [
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Container(
-              height: 40.v,
-              width: 66.h,
-              margin: EdgeInsets.only(right: 29.h, bottom: 105.v),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary,
-                borderRadius: BorderRadius.circular(7.h),
-                border: Border.all(
-                  color: theme.colorScheme.primary,
-                  width: 1.h,
+          Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.background,
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: [
+                BoxShadow(
+                  color: appTheme.black900.withOpacity(0.2),
+                  spreadRadius: 2,
+                  blurRadius: 4,
+                  offset: Offset(0, 4),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: appTheme.black900.withOpacity(0.25),
-                    spreadRadius: 2.h,
-                    blurRadius: 2.h,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-              ),
+              ],
             ),
-          ),
-          Align(
-            alignment: Alignment.center,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 25.h, vertical: 22.v),
-              decoration: AppDecoration.outlineGray.copyWith(
-                borderRadius: BorderRadiusStyle.roundedBorder35,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(height: 74.v),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: 20),
+                _buildDatePickerRow(
+                  label: "Data Início",
+                  selectedDate: _startDate,
+                  onPressed: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: _startDate ?? DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2101),
+                    );
+                    if (pickedDate != null) {
+                      setState(() {
+                        _startDate = pickedDate;
+                      });
+                    }
+                  },
+                ),
+                SizedBox(height: 20),
+                _buildDatePickerRow(
+                  label: "Data Fim",
+                  selectedDate: _endDate,
+                  onPressed: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: _endDate ?? DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2101),
+                    );
+                    if (pickedDate != null) {
+                      setState(() {
+                        _endDate = pickedDate;
+                      });
+                    }
+                  },
+                ),
+                SizedBox(height: 20),
+                if (_startDate != null && _endDate != null)
                   Padding(
-                    padding: EdgeInsets.only(left: 4.h),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: 5.v, bottom: 9.v),
-                          child: Text(
-                            "Data Início",
-                            style: theme.textTheme.titleLarge,
-                          ),
-                        ),
-                        CustomOutlinedButton(
-                          height: 39.v,
-                          width: 126.h,
-                          text: "Calendário",
-                          buttonStyle: CustomButtonStyles.outlinePrimary,
-                          buttonTextStyle: theme.textTheme.titleLarge!,
-                          onPressed: () async {
-                            DateTime? pickedDate = await showDatePicker(
-                              context: context,
-                              initialDate: _startDate ?? DateTime.now(),
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime(2101),
-                            );
-                            if (pickedDate != null) {
-                              setState(() {
-                                _startDate = pickedDate;
-                              });
-                            }
-                          },
-                        ),
-                      ],
+                    padding: EdgeInsets.only(top: 10),
+                    child: Text(
+                      'Período Selecionado: ${formatDate(_startDate!)} - ${formatDate(_endDate!)}',
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: Colors.black54,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  SizedBox(height: 77.v),
-                  Padding(
-                    padding: EdgeInsets.only(left: 4.h),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: 8.v, bottom: 2.v),
-                          child: Text(
-                            "Data Fim",
-                            style: theme.textTheme.titleLarge,
-                          ),
-                        ),
-                        CustomOutlinedButton(
-                          height: 39.v,
-                          width: 126.h,
-                          text: "Calendário",
-                          buttonStyle: CustomButtonStyles.outlinePrimary,
-                          buttonTextStyle: theme.textTheme.titleLarge!,
-                          onPressed: () async {
-                            DateTime? pickedDate = await showDatePicker(
-                              context: context,
-                              initialDate: _endDate ?? DateTime.now(),
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime(2101),
-                            );
-                            if (pickedDate != null) {
-                              setState(() {
-                                _endDate = pickedDate;
-                              });
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  Spacer(),
-                  CustomOutlinedButton(
-                    width: 144.h,
-                    text: "Enviar",
-                    onPressed: () {
-                      onTapEnviar(context);
-                    },
-                  ),
-                ],
-              ),
+                SizedBox(height: 20),
+                CustomOutlinedButton(
+                  width: 144,
+                  text: "Enviar",
+                  onPressed: () {
+                    onTapEnviar(context);
+                  },
+                ),
+                CustomOutlinedButton(
+                  width: 144,
+                  text: "Verificar Férias",
+                  onPressed: () {
+                    _verificarFerias();
+                  },
+                ),
+              ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  /// Função para formatar datas
+  String formatDate(DateTime date) {
+    final DateFormat formatter = DateFormat('dd/MM/yyyy');
+    return formatter.format(date);
+  }
+
+  /// Widget para criar uma linha com um rótulo e um botão de calendário
+  Widget _buildDatePickerRow({
+    required String label,
+    required DateTime? selectedDate,
+    required Future<void> Function() onPressed,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: theme.textTheme.titleLarge,
+        ),
+        CustomOutlinedButton(
+          height: 39,
+          width: 126,
+          text: selectedDate == null ? "Selecionar" : formatDate(selectedDate),
+          buttonStyle: CustomButtonStyles.outlinePrimary,
+          buttonTextStyle: theme.textTheme.titleLarge!,
+          onPressed: onPressed,
+        ),
+      ],
     );
   }
 
@@ -272,7 +270,32 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
   }
 
   /// Exibe um diálogo com o conteúdo de [PushNotificationDialog].
-  void onTapEnviar(BuildContext context) {
+  void onTapEnviar(BuildContext context) async {
+    if (_startDate == null || _endDate == null) {
+      // Verifica se as datas foram selecionadas
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text('Erro'),
+          content: Text('Por favor, selecione as datas de início e fim.'),
+          actions: [
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    // Supondo que você tem um ID de usuário, substitua `1` pelo ID real do usuário
+    int userId = 1; // Obtém o ID do usuário conforme necessário
+
+    await _basededados.inserirFerias(_startDate!, _endDate!, userId);
+
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -282,5 +305,51 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
         insetPadding: const EdgeInsets.only(left: 0),
       ),
     );
+  }
+
+  /// Função para verificar as férias registradas na base de dados
+  void _verificarFerias() async {
+    List<Map<String, dynamic>> ferias = await _basededados.listarTodasFerias();
+    if (ferias.isNotEmpty) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text('Férias Registradas'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView.builder(
+              itemCount: ferias.length,
+              itemBuilder: (context, index) {
+                final feriasItem = ferias[index];
+                return ListTile(
+                  title: Text('Início: ${formatDate(DateTime.parse(feriasItem['data_inicio']))}'),
+                  subtitle: Text('Fim: ${formatDate(DateTime.parse(feriasItem['data_fim']))}'),
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: Text('OK'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text('Nenhuma Férias Registrada'),
+          content: Text('Não há férias registradas na base de dados.'),
+          actions: [
+            TextButton(
+              child: Text('OK'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+      );
+    }
   }
 }
