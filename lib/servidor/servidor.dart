@@ -355,34 +355,35 @@ class Servidor {
 // =========================
 
 // Enviar Pedido de Férias
-Future<bool> enviarPedidoFerias({
-  required DateTime dataInicio,
-  required DateTime dataFim,
-}) async {
-  var url = '$baseURL/ferias/create'; // Atualizado para o endpoint correto
-  try {
-    var response = await _post(
-      url,
-      {
-        'data_inicio': dataInicio.toIso8601String(),
-        'data_fim': dataFim.toIso8601String(),
-      },
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    );
-    if (response.statusCode == 201) {
-      print('Pedido de férias enviado com sucesso!');
-      return true;
-    } else {
-      print('Erro ao enviar pedido de férias: ${response.statusCode}');
+  Future<bool> enviarPedidoFerias({
+    required DateTime dataInicio,
+    required DateTime dataFim,
+  }) async {
+    var url = '$baseURL/ferias/create'; // Atualizado para o endpoint correto
+    try {
+      var response = await _post(
+        url,
+        {
+          'data_inicio': dataInicio.toIso8601String(),
+          'data_fim': dataFim.toIso8601String(),
+        },
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      if (response.statusCode == 201) {
+        print('Pedido de férias enviado com sucesso!');
+        return true;
+      } else {
+        print('Erro ao enviar pedido de férias: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Erro ao enviar pedido de férias: $e');
       return false;
     }
-  } catch (e) {
-    print('Erro ao enviar pedido de férias: $e');
-    return false;
   }
-}
+
   // Obter Pedidos de Férias
   Future<List<dynamic>> obterPedidosFerias({required String token}) async {
     var url = '/ferias'; // Atualize o endpoint conforme necessário
@@ -444,7 +445,7 @@ Future<bool> enviarPedidoFerias({
     required String nomeCompleto,
     required String email,
   }) async {
-    var url = '/utilizadores/registrar/';
+    var url = '/utilizador/create'; // URL corrigida
     try {
       var response = await _post(
         url,
@@ -457,7 +458,6 @@ Future<bool> enviarPedidoFerias({
         },
       );
       if (response.statusCode == 201) {
-        // Código 201 indica que o recurso foi criado com sucesso
         print('Utilizador registrado com sucesso!');
         return true;
       } else {
@@ -471,8 +471,9 @@ Future<bool> enviarPedidoFerias({
   }
 
   // Obter dados do utilizador
-  Future<Map<String, dynamic>?> obterDadosUtilizador() async {
-    var url = '/utilizador/dados';
+  Future<Map<String, dynamic>?> obterDadosUtilizador(String id) async {
+    // Adicionado parâmetro 'id'
+    var url = '/utilizador/$id'; // URL corrigida para usar o ID do utilizador
     try {
       String? token = await obterTokenLocalmente();
       if (token == null) {
@@ -496,8 +497,9 @@ Future<bool> enviarPedidoFerias({
   }
 
   // Atualizar a senha do utilizador
-  Future<void> atualizarSenha(String novaSenha) async {
-    var url = '/utilizador/atualizarSenha';
+  Future<void> atualizarSenha(String id, String novaSenha) async {
+    // Adicionado parâmetro 'id'
+    var url = '/utilizador/update/$id'; // URL corrigida
     try {
       String? token = await obterTokenLocalmente();
       if (token == null) {
@@ -523,8 +525,10 @@ Future<bool> enviarPedidoFerias({
   }
 
   // Atualizar dados do utilizador
-  Future<void> atualizarDadosUtilizador(Map<String, dynamic> novosDados) async {
-    var url = '/utilizador/atualizarDados';
+  Future<void> atualizarDadosUtilizador(
+      String id, Map<String, dynamic> novosDados) async {
+    // Adicionado parâmetro 'id'
+    var url = '/utilizador/update/$id'; // URL corrigida
     try {
       String? token = await obterTokenLocalmente();
       if (token == null) {
@@ -555,7 +559,7 @@ Future<bool> enviarPedidoFerias({
 
   // Obter notícias
   Future<List<dynamic>> obterNoticias() async {
-    var url = '/noticias';
+    var url = '/noticias'; // URL está correta
     try {
       var response = await _get(url);
       if (response.statusCode == 200) {
@@ -572,7 +576,8 @@ Future<bool> enviarPedidoFerias({
 
   // Obter conteúdo para o slider
   Future<List<dynamic>> obterConteudoSlider() async {
-    var url = '/conteudo/slider'; // Assumindo que esse é o endpoint correto
+    var url =
+        '/conteudo/slider'; // Verifique se este endpoint realmente existe no servidor
     try {
       var response = await _get(url);
       if (response.statusCode == 200) {
@@ -625,7 +630,7 @@ Future<bool> enviarPedidoFerias({
     required String descricao,
     required String horas,
   }) async {
-    var url = '/horas'; // Atualize o endpoint conforme necessário
+    var url = '/horas/create'; // Corrigido para o endpoint correto
     try {
       var response = await _post(
         url,
