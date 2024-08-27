@@ -113,6 +113,84 @@ class Servidor {
   }
 
   // =========================
+  //    Recuperação de Senha
+  // =========================
+
+// Método para iniciar recuperação de senha
+  Future<bool> recuperarSenha(String email) async {
+    var url = '/utilizador/recuperarSenha'; // Substitua pelo endpoint real
+    try {
+      var response = await _post(
+        url,
+        {'email_param': email},
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+      );
+      if (response.statusCode == 200) {
+        print('Solicitação de recuperação de senha enviada com sucesso!');
+        return true;
+      } else {
+        print(
+            'Erro ao enviar solicitação de recuperação de senha: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Erro ao enviar solicitação de recuperação de senha: $e');
+      return false;
+    }
+  }
+
+  // Solicitar token de redefinição de senha
+  Future<bool> solicitarTokenRedefinicaoSenha(String email) async {
+    var url = '/utilizador/solicitarTokenRedefinicaoSenha';
+    try {
+      var response = await _post(
+        url,
+        {'email': email},
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+      );
+      if (response.statusCode == 200) {
+        print('Token de redefinição de senha solicitado com sucesso!');
+        return true;
+      } else {
+        print(
+            'Erro ao solicitar token de redefinição de senha: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Erro ao solicitar token de redefinição de senha: $e');
+      return false;
+    }
+  }
+
+  // Confirmar nova senha com o token
+  Future<bool> confirmarNovaSenha({
+    required String token,
+    required String novaSenha,
+  }) async {
+    var url = '/utilizador/confirmarNovaSenha';
+    try {
+      var response = await _post(
+        url,
+        {
+          'token': token,
+          'nova_senha': novaSenha,
+        },
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+      );
+      if (response.statusCode == 200) {
+        print('Senha redefinida com sucesso!');
+        return true;
+      } else {
+        print('Erro ao redefinir senha: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Erro ao redefinir senha: $e');
+      return false;
+    }
+  }
+
+  // =========================
   //         Parcerias
   // =========================
 
@@ -335,7 +413,8 @@ class Servidor {
     required String token,
     required String idPedido,
   }) async {
-    var url = '/ferias/$idPedido/cancelar'; // Atualize o endpoint conforme necessário
+    var url =
+        '/ferias/$idPedido/cancelar'; // Atualize o endpoint conforme necessário
     try {
       var response = await _delete(
         url,
@@ -360,6 +439,37 @@ class Servidor {
   // =========================
   //        Utilizador
   // =========================
+
+// Método para registrar um novo utilizador
+  Future<bool> registrarUtilizador({
+    required String nomeCompleto,
+    required String email,
+  }) async {
+    var url = '/utilizadores/registrar/';
+    try {
+      var response = await _post(
+        url,
+        {
+          'nome_completo': nomeCompleto,
+          'email': email,
+        },
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      if (response.statusCode == 201) {
+        // Código 201 indica que o recurso foi criado com sucesso
+        print('Utilizador registrado com sucesso!');
+        return true;
+      } else {
+        print('Erro ao registrar utilizador: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Erro ao enviar registro: $e');
+      return false;
+    }
+  }
 
   // Obter dados do utilizador
   Future<Map<String, dynamic>?> obterDadosUtilizador() async {
@@ -414,8 +524,7 @@ class Servidor {
   }
 
   // Atualizar dados do utilizador
-  Future<void> atualizarDadosUtilizador(
-      Map<String, dynamic> novosDados) async {
+  Future<void> atualizarDadosUtilizador(Map<String, dynamic> novosDados) async {
     var url = '/utilizador/atualizarDados';
     try {
       String? token = await obterTokenLocalmente();
@@ -583,4 +692,84 @@ class Servidor {
     }
   }
 
+  Future<List<dynamic>> obterReunioes({String? token}) async {
+    var url = '/reunioes';
+    try {
+      var response = await _get(url, headers: {'Authorization': 'Bearer $token'});
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        print('Erro ao obter lista de reuniões: ${response.statusCode}');
+        return [];
+      }
+    } catch (e) {
+      print('Erro ao obter lista de reuniões: $e');
+      return [];
+    }
+  }
+
+  Future<Map<String, dynamic>?> obterDetalhesReuniao(String idReuniao, {String? token}) async {
+    var url = '/reunioes/$idReuniao';
+    try {
+      var response = await _get(url, headers: {'Authorization': 'Bearer $token'});
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        print('Erro ao obter detalhes da reunião: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Erro ao obter detalhes da reunião: $e');
+      return null;
+    }
+  }
+
+  Future<bool> marcarReuniao({
+    required String token,
+    required String titulo,
+    required String descricao,
+    required String dataHora,
+    required List<String> participantes,
+  }) async {
+    var url = '/reunioes';
+    try {
+      var response = await _post(
+        url,
+        {
+          'titulo': titulo,
+          'descricao': descricao,
+          'data_hora': dataHora,
+          'participantes': participantes,
+        },
+        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json; charset=UTF-8'},
+      );
+      if (response.statusCode == 201) {
+        print('Reunião marcada com sucesso!');
+        return true;
+      } else {
+        print('Erro ao marcar reunião: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Erro ao marcar reunião: $e');
+      return false;
+    }
+  }
+
+  Future<bool> cancelarReuniao(String idReuniao, {String? token}) async {
+    var url = '/reunioes/$idReuniao';
+    try {
+      var response = await _delete(url, headers: {'Authorization': 'Bearer $token'});
+      if (response.statusCode == 204) {
+        print('Reunião cancelada com sucesso!');
+        return true;
+      } else {
+        print('Erro ao cancelar reunião: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Erro ao cancelar reunião: $e');
+      return false;
+    }
+  }
 }
