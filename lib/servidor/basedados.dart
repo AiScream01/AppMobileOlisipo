@@ -15,21 +15,25 @@ class Basededados {
   }
 
   //---------------------------------------
-  _initDatabase() async {
+  Future<Database> _initDatabase() async {
     String path = join(await getDatabasesPath(), nomebd);
-    return await openDatabase(path, version: versao, onCreate: _onCreate);
+    return await openDatabase(
+      path,
+      version: versao,
+      onCreate: _onCreate,
+    );
   }
 
   //---------------------------------------
   Future _onCreate(Database db, int version) async {
-    await criatabela(db); // Chama o método para criar a tabela ao inicializar o banco de dados
+    await criatabelaUtilizadores(db); // Chama o método para criar a tabela de utilizadores
+    await criatabelaFerias(db); // Chama o método para criar a tabela de férias
   }
-
 
   //---------------------------------------UTILIZADORES-----------------------------------------
 
-  //---------------------------------------Criar tabela
-  Future<void> criatabela(Database db) async {
+  //---------------------------------------Criar tabela de utilizadores
+  Future<void> criatabelaUtilizadores(Database db) async {
     await db.execute('''
       CREATE TABLE utilizadores (
         id_user INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,35 +51,92 @@ class Basededados {
   //---------------------------------------Inserir utilizador
   Future<void> inserirUtilizador(String nome, String email, String palavrapasse) async {
     Database db = await basededados;
-    await db.rawInsert(
-      'INSERT INTO utilizadores (nome, email, palavrapasse) VALUES (?, ?, ?)',
-      [nome, email, palavrapasse]
+    await db.insert(
+      'utilizadores',
+      {
+        'nome': nome,
+        'email': email,
+        'palavrapasse': palavrapasse,
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  //---------------------------------------Listar utilizadores
-  Future<List<Map<String, dynamic>>> listarUtilizadores() async {
-  Database db = await basededados;
-  return await db.query('utilizadores');
+  //---------------------------------------Atualizar utilizador
+  Future<void> atualizarUtilizador(int id, String nome, String email, String palavrapasse) async {
+    Database db = await basededados;
+    await db.update(
+      'utilizadores',
+      {
+        'nome': nome,
+        'email': email,
+        'palavrapasse': palavrapasse,
+      },
+      where: 'id_user = ?',
+      whereArgs: [id],
+    );
   }
 
-  //---------------------------------------Listar utilizador pelo id
-  Future<Map<String, dynamic>?> listarUtilizadorPorId(int id) async {
-  Database db = await basededados;
-  List<Map<String, dynamic>> resultados = await db.query(
+  //---------------------------------------Excluir utilizador
+  Future<void> excluirUtilizador(int id) async {
+    Database db = await basededados;
+    await db.delete(
       'utilizadores',
       where: 'id_user = ?',
       whereArgs: [id],
     );
-
-    if (resultados.isNotEmpty) {
-      return resultados.first; // Retorna o primeiro (e único) registro encontrado
-    } else {
-      return null; // Retorna null se nenhum registo for encontrado
-    }
   }
 
+  //---------------------------------------FÉRIAS-----------------------------------------
 
-  //--------------------------------------------------------------------------------------------
+//---------------------------------------Criar tabela de férias
+Future<void> criatabelaFerias(Database db) async {
+  await db.execute('''
+    CREATE TABLE ferias (
+      id_ferias INTEGER PRIMARY KEY AUTOINCREMENT,
+      data_inicio TEXT,
+      data_fim TEXT,
+      id_user INTEGER,
+      FOREIGN KEY (id_user) REFERENCES utilizadores (id_user)
+    )
+  ''');
+}
+
+//---------------------------------------Inserir férias
+Future<void> inserirFerias(DateTime dataInicio, DateTime dataFim, int idUser) async {
+  Database db = await basededados;
+  await db.insert(
+    'ferias',
+    {
+      'data_inicio': dataInicio.toIso8601String(),
+      'data_fim': dataFim.toIso8601String(),
+      'id_user': idUser,
+    },
+    conflictAlgorithm: ConflictAlgorithm.replace,
+  );
+}
+
+//---------------------------------------Listar todas as férias
+Future<List<Map<String, dynamic>>> listarTodasFerias() async {
+  Database db = await basededados;
+  return await db.query('ferias');
+}
+
+//---------------------------------------Listar férias pelo id
+Future<Map<String, dynamic>?> listarFeriasPorId(int id) async {
+  Database db = await basededados;
+  List<Map<String, dynamic>> resultados = await db.query(
+    'ferias',
+    where: 'id_ferias = ?',
+    whereArgs: [id],
+  );
+
+  if (resultados.isNotEmpty) {
+    return resultados.first; // Retorna o primeiro (e único) registro encontrado
+  } else {
+    return null; // Retorna null se nenhum registro for encontrado
+  }
+}
+
 
 }
