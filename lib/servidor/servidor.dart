@@ -1,10 +1,142 @@
+import 'dart:ffi';
+import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'basedados.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Servidor {
   final String baseURL = 'https://pi4-api.onrender.com'; // URL base principal
+  var url;
 
+  Future<void> getNoticiasEParcerias() async {
+    url = '$baseURL/appmobile/noticiasparcerias';
+
+    
+
+    List<(String, String, String, String)> parcerias = [];
+    List<(String, String, String, String)> noticias = [];
+
+    var result = await http.get(Uri.parse(url));
+
+    var lista1 = jsonDecode(result.body)['parcerias'];
+    lista1.forEach((linha) {
+      parcerias.add((
+        linha['logotipo'].toString(),
+        linha['titulo'].toString(),
+        linha['descricao'].toString(),
+        linha['categoria'].toString()
+      ));
+    });
+
+    var lista2 = jsonDecode(result.body)['noticias'];
+    lista2.forEach((linha) {
+      noticias.add((
+        linha['titulo'].toString(),
+        linha['descricao'].toString(),
+        linha['data'].toString(),
+        linha['imagem'].toString()
+      ));
+    });
+
+    var bd = Basededados();
+    bd.inserirParceria(parcerias);
+    bd.inserirNoticia(noticias);
+  }
+
+  Future<void> getDadosServidor(String idUser) async {
+    url = '$baseURL/appmobile/$idUser';
+
+    List<(String, String, String)> ferias = [];
+    List<(String, String, String)> ajudas = [];
+    List<(String, String, String)> horas = [];
+    List<(String, String, String)> reunioes = [];
+    List<(String, String, String, String)> despesasViatura = [];
+    List<(String, String, String)> faltas = [];
+
+    var result = await http.get(Uri.parse(url));
+
+    var listaFerias = jsonDecode(result.body)['ferias'];
+    listaFerias.forEach((linha) {
+      ferias.add((
+        linha['data_inicio'].toString(),
+        linha['data_fim'].toString(),
+        linha['estado'].toString()
+      ));
+    });
+
+    var listaAjudas = jsonDecode(result.body)['ajudas'];
+    listaAjudas.forEach((linha) {
+      ajudas.add((
+        linha['estado'].toString(),
+        linha['custo'].toString(),
+        linha['descricao'].toString()
+      ));
+    });
+
+    var listaHoras = jsonDecode(result.body)['horas'];
+    listaHoras.forEach((linha) {
+      horas.add((
+        linha['estado'].toString(),
+        linha['horas'].toString(),
+        linha['id_horas'].toString()
+      ));
+    });
+
+    var listaReunioes = jsonDecode(result.body)['reunioes'];
+    listaReunioes.forEach((linha) {
+      reunioes.add((
+        linha['estado'].toString(),
+        linha['titulo'].toString(),
+        linha['descricao'].toString()
+      ));
+    });
+
+    var listaDespesasViatura = jsonDecode(result.body)['despesasViatura'];
+    listaDespesasViatura.forEach((linha) {
+      despesasViatura.add((
+        linha['estado'].toString(),
+        linha['ponto_partida'].toString(),
+        linha['ponto_chegada'].toString(),
+        linha['km'].toString()
+      ));
+    });
+
+    var listaFaltas = jsonDecode(result.body)['faltas'];
+    listaFaltas.forEach((linha) {
+      faltas.add((
+        linha['estado'].toString(),
+        linha['data'].toString(),
+        linha['id_falta'].toString()
+      ));
+    });
+
+    var bd = Basededados();
+    bd.InsertFerias(ferias);
+    bd.inserirAjudaCusto(ajudas);
+    bd.inserirHoras(horas);
+    bd.inserirReuniao(reunioes);
+    bd.inserirDespesaViaturaPessoal(despesasViatura);
+    bd.inserirFalta(faltas);
+  }
+
+
+
+// =========================
+  //     AQUI PARA BAIXO
+  // =========================// =========================
+  //     AQUI PARA BAIXO
+  // =========================// =========================
+  //     AQUI PARA BAIXO
+  // =========================// =========================
+  //     AQUI PARA BAIXO
+  // =========================// =========================
+  //    AQUI PARA BAIXO
+  // =========================// =========================
+  //     AQUI PARA BAIXO
+  // =========================// =========================
+  //     AQUI PARA BAIXO
+  // =========================
   // =========================
   //     Métodos HTTP Básicos
   // =========================

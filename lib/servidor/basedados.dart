@@ -108,7 +108,7 @@ class Basededados {
   }
 
 //---------------------------------------Inserir férias
-  Future<void> inserirFerias(
+  Future<void> InsertFerias(
       DateTime dataInicio, DateTime dataFim, int idUser) async {
     Database db = await basededados;
     await db.insert(
@@ -195,14 +195,29 @@ Future<void> criatabelaParcerias(Database db) async {
 }
 
 //---------------------------------------Inserir parceria
-Future<void> inserirParceria(Map<String, dynamic> parceria) async {
-  Database db = await basededados;
-  await db.insert(
-    'parcerias',
-    parceria,
-    conflictAlgorithm: ConflictAlgorithm.replace,
-  );
-}
+  Future<void> inserirParceria(
+      List<(String, String, String, String)> parceriaData) async {
+    Database db = await basededados;
+
+    await db.delete('protocolos_parcerias');
+
+    for (final (
+          logotipo,
+          titulo,
+          descricao,
+          categoria,
+        ) in parceriaData) {
+      await db.rawInsert(
+          ' INSERT INTO protocolos_parcerias ( logotipo, titulo,descricao,categoria) VALUES (?,?,?,?)',
+          [
+            logotipo,
+            titulo,
+            descricao,
+            categoria
+          ]);
+      print(titulo);
+    }
+  }
 
 //---------------------------------------Atualizar parceria
 Future<void> atualizarParceria(String idParceria, Map<String, dynamic> parceria) async {
@@ -247,6 +262,442 @@ Future<void> excluirParceria(String idParceria) async {
   );
 }
 
+
+//---------------------------------------NOTICIAS-----------------------------------------
+
+//---------------------------------------Criar tabela de notícias
+Future<void> criarTabelaNoticias(Database db) async {
+  await db.execute('''
+    CREATE TABLE noticias (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id_noticia TEXT UNIQUE NOT NULL,
+      titulo TEXT,
+      descricao TEXT,
+      data TEXT,
+      imagem TEXT,
+      sincronizado INTEGER DEFAULT 0
+    )
+  ''');
+}
+
+//---------------------------------------Inserir notícia
+Future<void> inserirNoticia(
+      List<(String, String, String, String)> noticiaData) async {
+    Database db = await basededados;
+
+    await db.delete('parcerias');
+
+    for (final (
+          titulo,
+          descricao,
+          data,
+          imagem,
+        ) in noticiaData) {
+      await db.rawInsert(
+          ' INSERT INTO parcerias ( titulo, descricao,data,imagem) VALUES (?,?,?,?)',
+          [
+            titulo,
+            descricao,
+            data,
+            imagem
+          ]);
+      print(titulo);
+    }
+  }
+
+//---------------------------------------Atualizar notícia
+Future<void> atualizarNoticia(String idNoticia, Map<String, dynamic> noticia) async {
+  Database db = await basededados;
+  await db.update(
+    'noticias',
+    noticia,
+    where: 'id_noticia = ?',
+    whereArgs: [idNoticia],
+  );
+}
+
+//---------------------------------------Listar todas as notícias
+Future<List<Map<String, dynamic>>> listarTodasNoticias() async {
+  Database db = await basededados;
+  return await db.query('noticias');
+}
+
+//---------------------------------------Listar notícia por id
+Future<Map<String, dynamic>?> listarNoticiaPorId(String idNoticia) async {
+  Database db = await basededados;
+  List<Map<String, dynamic>> resultados = await db.query(
+    'noticias',
+    where: 'id_noticia = ?',
+    whereArgs: [idNoticia],
+  );
+
+  if (resultados.isNotEmpty) {
+    return resultados.first;
+  } else {
+    return null;
+  }
+}
+
+//---------------------------------------Excluir notícia
+Future<void> excluirNoticia(String idNoticia) async {
+  Database db = await basededados;
+  await db.delete(
+    'noticias',
+    where: 'id_noticia = ?',
+    whereArgs: [idNoticia],
+  );
+}
+
+//---------------------------------------AJUDAS CUSTO-----------------------------------------
+
+//---------------------------------------Criar tabela de ajudas_custo
+Future<void> criarTabelaAjudasCusto(Database db) async {
+  await db.execute('''
+    CREATE TABLE ajudas_custo (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id_custo TEXT UNIQUE NOT NULL,
+      custo REAL,
+      descricao TEXT,
+      comprovativo TEXT,
+      id_user TEXT,
+      sincronizado INTEGER DEFAULT 0
+    )
+  ''');
+}
+
+//---------------------------------------Inserir ajuda de custo
+Future<void> inserirAjudaCusto(Map<String, dynamic> ajudaCusto) async {
+  Database db = await basededados;
+  await db.insert(
+    'ajudas_custo',
+    ajudaCusto,
+    conflictAlgorithm: ConflictAlgorithm.replace,
+  );
+}
+
+//---------------------------------------Atualizar ajuda de custo
+Future<void> atualizarAjudaCusto(String idCusto, Map<String, dynamic> ajudaCusto) async {
+  Database db = await basededados;
+  await db.update(
+    'ajudas_custo',
+    ajudaCusto,
+    where: 'id_custo = ?',
+    whereArgs: [idCusto],
+  );
+}
+
+//---------------------------------------Listar todas as ajudas de custo
+Future<List<Map<String, dynamic>>> listarTodasAjudasCusto() async {
+  Database db = await basededados;
+  return await db.query('ajudas_custo');
+}
+
+//---------------------------------------Listar ajuda de custo por id
+Future<Map<String, dynamic>?> listarAjudaCustoPorId(String idCusto) async {
+  Database db = await basededados;
+  List<Map<String, dynamic>> resultados = await db.query(
+    'ajudas_custo',
+    where: 'id_custo = ?',
+    whereArgs: [idCusto],
+  );
+
+  if (resultados.isNotEmpty) {
+    return resultados.first;
+  } else {
+    return null;
+  }
+}
+
+//---------------------------------------Excluir ajuda de custo
+Future<void> excluirAjudaCusto(String idCusto) async {
+  Database db = await basededados;
+  await db.delete(
+    'ajudas_custo',
+    where: 'id_custo = ?',
+    whereArgs: [idCusto],
+  );
+}
+
+
+//---------------------------------------DESPESAS VIATURA PESSOAL-----------------------------------------
+
+//---------------------------------------Criar tabela de despesas_viatura_pessoal
+Future<void> criarTabelaDespesasViaturaPessoal(Database db) async {
+  await db.execute('''
+    CREATE TABLE despesas_viatura_pessoal (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id_despesa TEXT UNIQUE NOT NULL,
+      km REAL,
+      ponto_partida TEXT,
+      ponto_chegada TEXT,
+      preco_portagens REAL,
+      comprovativo TEXT,
+      id_user TEXT,
+      sincronizado INTEGER DEFAULT 0
+    )
+  ''');
+}
+
+//---------------------------------------Inserir despesa de viatura pessoal
+Future<void> inserirDespesaViaturaPessoal(Map<String, dynamic> despesaViatura) async {
+  Database db = await basededados;
+  await db.insert(
+    'despesas_viatura_pessoal',
+    despesaViatura,
+    conflictAlgorithm: ConflictAlgorithm.replace,
+  );
+}
+
+//---------------------------------------Atualizar despesa de viatura pessoal
+Future<void> atualizarDespesaViaturaPessoal(String idDespesa, Map<String, dynamic> despesaViatura) async {
+  Database db = await basededados;
+  await db.update(
+    'despesas_viatura_pessoal',
+    despesaViatura,
+    where: 'id_despesa = ?',
+    whereArgs: [idDespesa],
+  );
+}
+
+//---------------------------------------Listar todas as despesas de viatura pessoal
+Future<List<Map<String, dynamic>>> listarTodasDespesasViaturaPessoal() async {
+  Database db = await basededados;
+  return await db.query('despesas_viatura_pessoal');
+}
+
+//---------------------------------------Listar despesa de viatura pessoal por id
+Future<Map<String, dynamic>?> listarDespesaViaturaPessoalPorId(String idDespesa) async {
+  Database db = await basededados;
+  List<Map<String, dynamic>> resultados = await db.query(
+    'despesas_viatura_pessoal',
+    where: 'id_despesa = ?',
+    whereArgs: [idDespesa],
+  );
+
+  if (resultados.isNotEmpty) {
+    return resultados.first;
+  } else {
+    return null;
+  }
+}
+
+//---------------------------------------Excluir despesa de viatura pessoal
+Future<void> excluirDespesaViaturaPessoal(String idDespesa) async {
+  Database db = await basededados;
+  await db.delete(
+    'despesas_viatura_pessoal',
+    where: 'id_despesa = ?',
+    whereArgs: [idDespesa],
+  );
+}
+
+
+//---------------------------------------FALTAS-----------------------------------------
+
+//---------------------------------------Criar tabela de faltas
+Future<void> criarTabelaFaltas(Database db) async {
+  await db.execute('''
+    CREATE TABLE faltas (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id_falta TEXT UNIQUE NOT NULL,
+      data TEXT,
+      id_user TEXT,
+      sincronizado INTEGER DEFAULT 0
+    )
+  ''');
+}
+
+//---------------------------------------Inserir falta
+Future<void> inserirFalta(Map<String, dynamic> falta) async {
+  Database db = await basededados;
+  await db.insert(
+    'faltas',
+    falta,
+    conflictAlgorithm: ConflictAlgorithm.replace,
+  );
+}
+
+//---------------------------------------Atualizar falta
+Future<void> atualizarFalta(String idFalta, Map<String, dynamic> falta) async {
+  Database db = await basededados;
+  await db.update(
+    'faltas',
+    falta,
+    where: 'id_falta = ?',
+    whereArgs: [idFalta],
+  );
+}
+
+//---------------------------------------Listar todas as faltas
+Future<List<Map<String, dynamic>>> listarTodasFaltas() async {
+  Database db = await basededados;
+  return await db.query('faltas');
+}
+
+//---------------------------------------Listar falta por id
+Future<Map<String, dynamic>?> listarFaltaPorId(String idFalta) async {
+  Database db = await basededados;
+  List<Map<String, dynamic>> resultados = await db.query(
+    'faltas',
+    where: 'id_falta = ?',
+    whereArgs: [idFalta],
+  );
+
+  if (resultados.isNotEmpty) {
+    return resultados.first;
+  } else {
+    return null;
+  }
+}
+
+//---------------------------------------Excluir falta
+Future<void> excluirFalta(String idFalta) async {
+  Database db = await basededados;
+  await db.delete(
+    'faltas',
+    where: 'id_falta = ?',
+    whereArgs: [idFalta],
+  );
+}
+
+
+//---------------------------------------HORAS-----------------------------------------
+
+//---------------------------------------Criar tabela de horas
+Future<void> criarTabelaHoras(Database db) async {
+  await db.execute('''
+    CREATE TABLE horas (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id_horas TEXT UNIQUE NOT NULL,
+      horas REAL,
+      id_user TEXT,
+      sincronizado INTEGER DEFAULT 0
+    )
+  ''');
+}
+
+//---------------------------------------Inserir horas
+Future<void> inserirHoras(Map<String, dynamic> hora) async {
+  Database db = await basededados;
+  await db.insert(
+    'horas',
+    hora,
+    conflictAlgorithm: ConflictAlgorithm.replace,
+  );
+}
+
+//---------------------------------------Atualizar horas
+Future<void> atualizarHoras(String idHoras, Map<String, dynamic> hora) async {
+  Database db = await basededados;
+  await db.update(
+    'horas',
+    hora,
+    where: 'id_horas = ?',
+    whereArgs: [idHoras],
+  );
+}
+
+//---------------------------------------Listar todas as horas
+Future<List<Map<String, dynamic>>> listarTodasHoras() async {
+  Database db = await basededados;
+  return await db.query('horas');
+}
+
+//---------------------------------------Listar horas por id
+Future<Map<String, dynamic>?> listarHorasPorId(String idHoras) async {
+  Database db = await basededados;
+  List<Map<String, dynamic>> resultados = await db.query(
+    'horas',
+    where: 'id_horas = ?',
+    whereArgs: [idHoras],
+  );
+
+  if (resultados.isNotEmpty) {
+    return resultados.first;
+  } else {
+    return null;
+  }
+}
+
+//---------------------------------------Excluir horas
+Future<void> excluirHoras(String idHoras) async {
+  Database db = await basededados;
+  await db.delete(
+    'horas',
+    where: 'id_horas = ?',
+    whereArgs: [idHoras],
+  );
+}
+
+//---------------------------------------REUNIÕES-----------------------------------------
+
+//---------------------------------------Criar tabela de reuniões
+Future<void> criarTabelaReunioes(Database db) async {
+  await db.execute('''
+    CREATE TABLE reunioes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id_reuniao TEXT UNIQUE NOT NULL,
+      titulo TEXT,
+      descricao TEXT,
+      data TEXT,
+      id_user TEXT,
+      sincronizado INTEGER DEFAULT 0
+    )
+  ''');
+}
+
+//---------------------------------------Inserir reunião
+Future<void> inserirReuniao(Map<String, dynamic> reuniao) async {
+  Database db = await basededados;
+  await db.insert(
+    'reunioes',
+    reuniao,
+    conflictAlgorithm: ConflictAlgorithm.replace,
+  );
+}
+
+//---------------------------------------Atualizar reunião
+Future<void> atualizarReuniao(String idReuniao, Map<String, dynamic> reuniao) async {
+  Database db = await basededados;
+  await db.update(
+    'reunioes',
+    reuniao,
+    where: 'id_reuniao = ?',
+    whereArgs: [idReuniao],
+  );
+}
+
+//---------------------------------------Listar todas as reuniões
+Future<List<Map<String, dynamic>>> listarTodasReunioes() async {
+  Database db = await basededados;
+  return await db.query('reunioes');
+}
+
+//---------------------------------------Listar reunião por id
+Future<Map<String, dynamic>?> listarReuniaoPorId(String idReuniao) async {
+  Database db = await basededados;
+  List<Map<String, dynamic>> resultados = await db.query(
+    'reunioes',
+    where: 'id_reuniao = ?',
+    whereArgs: [idReuniao],
+  );
+
+  if (resultados.isNotEmpty) {
+    return resultados.first;
+  } else {
+    return null;
+  }
+}
+
+//---------------------------------------Excluir reunião
+Future<void> excluirReuniao(String idReuniao) async {
+  Database db = await basededados;
+  await db.delete(
+    'reunioes',
+    where: 'id_reuniao = ?',
+    whereArgs: [idReuniao],
+  );
+}
 
 
 }
