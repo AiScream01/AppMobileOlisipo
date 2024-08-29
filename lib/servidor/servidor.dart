@@ -112,12 +112,12 @@ class Servidor {
     });
 
     var bd = Basededados();
-    bd.InsertFerias(ferias);
-    bd.inserirAjudaCusto(ajudas);
-    bd.inserirHoras(horas);
-    bd.inserirReuniao(reunioes);
-    bd.inserirDespesaViaturaPessoal(despesasViatura);
-    bd.inserirFalta(faltas);
+    //bd.InsertFerias(ferias);
+    //bd.inserirAjudaCusto(ajudas);
+    //bd.inserirHoras(horas);
+    //bd.inserirReuniao(reunioes);
+    //bd.inserirDespesaViaturaPessoal(despesasViatura);
+    //bd.inserirFalta(faltas);
   }
 
 
