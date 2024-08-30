@@ -28,8 +28,7 @@ class Basededados {
 
   //---------------------------------------
   Future _onCreate(Database db, int version) async {
-    await criatabelaUtilizadores(
-        db); // Chama o método para criar a tabela de utilizadores
+    await criatabelaUtilizadores(db); // Chama o método para criar a tabela de utilizadores
     await criatabelaFerias(db); // Chama o método para criar a tabela de férias
   }
 
@@ -95,28 +94,27 @@ class Basededados {
   //---------------------------------------FÉRIAS-----------------------------------------
 
 //---------------------------------------Criar tabela de férias
-  Future<void> criatabelaFerias(Database db) async {
+Future<void> criatabelaFerias(Database db) async {
+    await db.execute('DROP TABLE IF EXISTS ferias');
     await db.execute('''
     CREATE TABLE ferias (
       id_ferias INTEGER PRIMARY KEY AUTOINCREMENT,
       data_inicio TEXT,
-      data_fim TEXT,
-      id_user INTEGER,
-      FOREIGN KEY (id_user) REFERENCES utilizadores (id_user)
+      data_fim TEXT
     )
-  ''');
+    ''');
   }
 
 //---------------------------------------Inserir férias
   Future<void> inserirFerias(
-  List<(String, String, String)> feriasData
+  List<(String, String)> feriasData
   ) async{
     Database db = await basededados;
     await db.delete('ferias');
-    for(final (data_inicio, data_fim, estado) in feriasData){
+    for(final (data_inicio, data_fim) in feriasData){
       await db.rawInsert(
-        'insert into ferias(data_inicio, data_fim, estado) values(?,?,?)',
-        [data_inicio, data_fim, estado],
+        'insert into ferias(data_inicio, data_fim) values(?,?)',
+        [data_inicio, data_fim],
       );
     }
   }
@@ -127,54 +125,50 @@ class Basededados {
     return await db.query('ferias');
   }
 
-//---------------------------------------Listar férias pelo id
-  Future<Map<String, dynamic>?> listarFeriasPorId(int id) async {
-    Database db = await basededados;
-    List<Map<String, dynamic>> resultados = await db.query(
-      'ferias',
-      where: 'id_ferias = ?',
-      whereArgs: [id],
-    );
-
-    if (resultados.isNotEmpty) {
-      return resultados
-          .first; // Retorna o primeiro (e único) registro encontrado
-    } else {
-      return null; // Retorna null se nenhum registro for encontrado
-    }
-  }
-
-  Future<bool> enviarPedidoFeriasParaServidor({
-    required DateTime dataInicio,
-    required DateTime dataFim,
-    required int idUser,
-  }) async {
-    final url = Uri.parse(
-        'https://seuservidor.com/api/ferias'); // Substitua pela URL real do seu servidor
-
-    // Faz a requisição POST
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type':
-            'application/json', // Define o tipo de conteúdo como JSON
-      },
-      body: jsonEncode({
-        'data_inicio': dataInicio.toIso8601String(),
-        'data_fim': dataFim.toIso8601String(),
-        'id_user': idUser,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      // Se o servidor retornar status 200, significa que a operação foi bem-sucedida
-      return true;
-    } else {
-      // Caso contrário, exibe o erro no console
-      print('Erro ao enviar dados para o servidor: ${response.statusCode}');
-      return false;
-    }
-  }
+////---------------------------------------Listar férias pelo id
+//  Future<Map<String, dynamic>?> listarFeriasPorId(int id) async {
+//    Database db = await basededados;
+//    List<Map<String, dynamic>> resultados = await db.query(
+//      'ferias',
+//      where: 'id_ferias = ?',
+//      whereArgs: [id],
+//    );//
+//    if (resultados.isNotEmpty) {
+//      return resultados
+//          .first; // Retorna o primeiro (e único) registro encontrado
+//    } else {
+//      return null; // Retorna null se nenhum registro for encontrado
+//    }
+//  }//
+//  Future<bool> enviarPedidoFeriasParaServidor({
+//    required DateTime dataInicio,
+//    required DateTime dataFim,
+//    required int idUser,
+//  }) async {
+//    final url = Uri.parse(
+//        'https://seuservidor.com/api/ferias'); // Substitua pela URL real do seu servidor//
+//    // Faz a requisição POST
+//    final response = await http.post(
+//      url,
+//      headers: {
+//        'Content-Type':
+//            'application/json', // Define o tipo de conteúdo como JSON
+//      },
+//      body: jsonEncode({
+//        'data_inicio': dataInicio.toIso8601String(),
+//        'data_fim': dataFim.toIso8601String(),
+//        'id_user': idUser,
+//      }),
+//    );//
+//    if (response.statusCode == 200) {
+//      // Se o servidor retornar status 200, significa que a operação foi bem-sucedida
+//      return true;
+//    } else {
+//      // Caso contrário, exibe o erro no console
+//      print('Erro ao enviar dados para o servidor: ${response.statusCode}');
+//      return false;
+//    }
+//  }
 
     //---------------------------------------PARCERIAS-----------------------------------------
 

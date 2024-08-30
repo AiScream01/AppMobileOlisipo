@@ -42,7 +42,7 @@ class Servidor {
   Future<void> getDadosServidor(String idUser) async {
     url = '$baseURL/appmobile/$idUser';
 
-    List<(String, String, String)> ferias = [];
+    List<(String, String)> ferias = [];
     List<(String, String, String)> ajudas = [];
     List<(String, String)> horas = [];
     List<(String, String, String)> reunioes = [];
@@ -53,11 +53,8 @@ class Servidor {
 
     var listaFerias = jsonDecode(result.body)['ferias'];
     listaFerias.forEach((linha) {
-      ferias.add((
-        linha['data_inicio'].toString(),
-        linha['data_fim'].toString(),
-        linha['estado'].toString()
-      ));
+      ferias
+          .add((linha['data_inicio'].toString(), linha['data_fim'].toString()));
     });
 
     var listaAjudas = jsonDecode(result.body)['ajudas'];
@@ -71,10 +68,7 @@ class Servidor {
 
     var listaHoras = jsonDecode(result.body)['horas'];
     listaHoras.forEach((linha) {
-      horas.add((
-        linha['estado'].toString(),
-        linha['horas'].toString()
-      ));
+      horas.add((linha['estado'].toString(), linha['horas'].toString()));
     });
 
     var listaReunioes = jsonDecode(result.body)['reunioes'];
@@ -112,11 +106,48 @@ class Servidor {
     bd.inserirReuniao(reunioes);
     bd.inserirDespesaViaturaPessoal(despesasViatura);
     bd.inserirFalta(faltas);
+
+    //Isererir utilizador falta
   }
 
+  Future<void> insertFerias(
+  String idUser,
+  String dataInicio,
+  String dataFim,
+) async {
+  if (idUser.isEmpty || dataInicio.isEmpty || dataFim.isEmpty) {
+    throw Exception('Dados inválidos: um ou mais parâmetros são nulos ou vazios.');
+  }
 
+  var url = '$baseURL/ferias/create';
 
+  // Converta as datas para o formato ISO 8601
+  var dataInicioIso = DateTime.parse(dataInicio).toIso8601String();
+  var dataFimIso = DateTime.parse(dataFim).toIso8601String();
 
+  var response = await http.post(
+    Uri.parse(url),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, dynamic>{
+      'data_inicio': dataInicioIso,
+      'data_fim': dataFimIso,
+      'id_user': idUser
+    }),
+  );
+
+  // Imprima o status code e o corpo da resposta para depuração
+  print('Status code: ${response.statusCode}');
+  print('Response body: ${response.body}');
+
+  if (response.statusCode == 200) {
+    print('Férias inseridas com sucesso!');
+  } else {
+    print('Erro ao inserir férias: ${response.statusCode}');
+    throw Exception('Falha ao inserir férias: ${response.body}');
+  }
+}
 
 
 // =========================

@@ -5,6 +5,7 @@ import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
 import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
 
 import '../../servidor/basedados.dart';
+import '../../servidor/servidor.dart';
 
 class PedidoFeriasScreen extends StatefulWidget {
   const PedidoFeriasScreen({Key? key}) : super(key: key);
@@ -14,9 +15,11 @@ class PedidoFeriasScreen extends StatefulWidget {
 }
 
 class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
-  DateTime? _startDate;
-  DateTime? _endDate;
-  final Basededados _basededados = Basededados();
+  DateTime? _startDate; // Inicialize como null
+  DateTime? _endDate; // Inicialize como null
+
+  var se = Servidor();
+  var bd = Basededados();
 
   @override
   Widget build(BuildContext context) {
@@ -166,10 +169,14 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
                   label: "Data Início",
                   selectedDate: _startDate,
                   onPressed: () async {
+                    DateTime firstDate = DateTime.now().add(Duration(days: 7));
+                    DateTime initialDate = _endDate ?? firstDate;
                     DateTime? pickedDate = await showDatePicker(
                       context: context,
-                      initialDate: _startDate ?? DateTime.now(),
-                      firstDate: DateTime(2000),
+                      initialDate: initialDate.isBefore(firstDate)
+                          ? firstDate
+                          : initialDate,
+                      firstDate: firstDate,
                       lastDate: DateTime(2101),
                     );
                     if (pickedDate != null) {
@@ -184,10 +191,12 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
                   label: "Data Fim",
                   selectedDate: _endDate,
                   onPressed: () async {
+                    DateTime firstDate = _startDate != null ? _startDate!.add(Duration(days: 1)) : DateTime.now().add(Duration(days: 7));
+                    DateTime initialDate = _endDate ?? firstDate;
                     DateTime? pickedDate = await showDatePicker(
                       context: context,
-                      initialDate: _endDate ?? DateTime.now(),
-                      firstDate: DateTime(2000),
+                      initialDate: initialDate.isBefore(firstDate) ? firstDate : initialDate,
+                      firstDate: firstDate,
                       lastDate: DateTime(2101),
                     );
                     if (pickedDate != null) {
@@ -261,41 +270,45 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
     );
   }
 
-void onTapEnviar(BuildContext context) async {
-  if (_startDate == null || _endDate == null) {
-    // Verifica se as datas foram selecionadas
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text('Erro'),
-        content: Text('Por favor, selecione as datas de início e fim.'),
-        actions: [
-          TextButton(
-            child: Text('OK'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
-    );
-    return;
-  }
+  void onTapEnviar(BuildContext context) async {
+    if (_startDate == null || _endDate == null) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text('Erro'),
+          content: Text('Por favor, selecione as datas de início e fim.'),
+          actions: [
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
-  int idUser = 1; // Substitua pelo ID real do usuário
+    int idUser = 2; // Substitua pelo ID real do usuário
 
-  try {
-    // Inserir na base de dados local
-    //await _basededados.InsertFerias(_startDate!, _endDate!, idUser);
+    try {
+      // Inserir na base de dados local
+      await bd.inserirFerias([
+        (
+          DateFormat('yyyy-MM-dd').format(_startDate!),
+          DateFormat('yyyy-MM-dd').format(_endDate!)
+        )
+      ]);
 
-    // Enviar para o servidor
-    bool sucesso = await _basededados.enviarPedidoFeriasParaServidor(
-      dataInicio: _startDate!,
-      dataFim: _endDate!,
-      idUser: idUser,
-    );
+      // Enviar para o servidor
+      await se.insertFerias(
+        idUser.toString(),
+        DateFormat('yyyy-MM-dd').format(_startDate!),
+        DateFormat('yyyy-MM-dd').format(_endDate!),
+      );
 
-    if (sucesso) {
+      // Se chegar aqui, as operações foram bem-sucedidas
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
@@ -305,12 +318,12 @@ void onTapEnviar(BuildContext context) async {
           insetPadding: const EdgeInsets.only(left: 0),
         ),
       );
-    } else {
+    } catch (e) {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
           title: Text('Erro'),
-          content: Text('Não foi possível enviar o pedido de férias para o servidor.'),
+          content: Text('Ocorreu um erro: $e'),
           actions: [
             TextButton(
               child: Text('OK'),
@@ -322,65 +335,48 @@ void onTapEnviar(BuildContext context) async {
         ),
       );
     }
-  } catch (e) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text('Erro'),
-        content: Text('Ocorreu um erro ao processar o pedido de férias.'),
-        actions: [
-          TextButton(
-            child: Text('OK'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
-    );
   }
-}
 
-
-  /// Função para verificar as férias registradas na base de dados
   void _verificarFerias() async {
-    List<Map<String, dynamic>> ferias = await _basededados.listarTodasFerias();
-    if (ferias.isNotEmpty) {
+    try {
+      int idUser = 1; // Substitua pelo ID real do usuário
+
+      // Recupera as férias do usuário da base de dados local
+      var ferias = await bd.listarTodasFerias();
+
+      // Exibir informações das férias
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
           title: Text('Férias Registradas'),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: ListView.builder(
-              itemCount: ferias.length,
-              itemBuilder: (context, index) {
-                final feriasItem = ferias[index];
-                return ListTile(
-                  title: Text('Início: ${formatDate(DateTime.parse(feriasItem['data_inicio']))}'),
-                  subtitle: Text('Fim: ${formatDate(DateTime.parse(feriasItem['data_fim']))}'),
-                );
-              },
-            ),
-          ),
+          content: ferias.isNotEmpty
+              ? Text(ferias
+                  .map((f) =>
+                      'Início: ${formatDate(DateTime.parse(f['data_inicio']))}, Fim: ${formatDate(DateTime.parse(f['data_fim']))}')
+                  .join('\n'))
+              : Text('Nenhuma férias registrada.'),
           actions: [
             TextButton(
               child: Text('OK'),
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
             ),
           ],
         ),
       );
-    } else {
+    } catch (e) {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: Text('Nenhuma Férias Registrada'),
-          content: Text('Não há férias registradas na base de dados.'),
+          title: Text('Erro'),
+          content: Text('Ocorreu um erro ao verificar as férias: $e'),
           actions: [
             TextButton(
               child: Text('OK'),
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
             ),
           ],
         ),
@@ -388,4 +384,3 @@ void onTapEnviar(BuildContext context) async {
     }
   }
 }
-
