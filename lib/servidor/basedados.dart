@@ -108,18 +108,17 @@ class Basededados {
   }
 
 //---------------------------------------Inserir férias
-  Future<void> InsertFerias(
-      DateTime dataInicio, DateTime dataFim, int idUser) async {
+  Future<void> inserirFerias(
+  List<(String, String, String)> feriasData
+  ) async{
     Database db = await basededados;
-    await db.insert(
-      'ferias',
-      {
-        'data_inicio': dataInicio.toIso8601String(),
-        'data_fim': dataFim.toIso8601String(),
-        'id_user': idUser,
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    await db.delete('ferias');
+    for(final (data_inicio, data_fim, estado) in feriasData){
+      await db.rawInsert(
+        'insert into ferias(data_inicio, data_fim, estado) values(?,?,?)',
+        [data_inicio, data_fim, estado],
+      );
+    }
   }
 
 //---------------------------------------Listar todas as férias
@@ -182,9 +181,8 @@ class Basededados {
     //---------------------------------------Criar tabela de parcerias
 Future<void> criatabelaParcerias(Database db) async {
   await db.execute('''
-    CREATE TABLE parcerias (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      idParceria TEXT UNIQUE NOT NULL,
+    CREATE TABLE protocolos_parcerias (
+      id_parceria INTEGER PRIMARY KEY AUTOINCREMENT,
       nome TEXT,
       descricao TEXT,
       dataCriacao TEXT,
@@ -223,7 +221,7 @@ Future<void> criatabelaParcerias(Database db) async {
 Future<void> atualizarParceria(String idParceria, Map<String, dynamic> parceria) async {
   Database db = await basededados;
   await db.update(
-    'parcerias',
+    'protocolos_parcerias',
     parceria,
     where: 'idParceria = ?',
     whereArgs: [idParceria],
@@ -233,15 +231,15 @@ Future<void> atualizarParceria(String idParceria, Map<String, dynamic> parceria)
 //---------------------------------------Listar todas as parcerias
 Future<List<Map<String, dynamic>>> listarTodasParcerias() async {
   Database db = await basededados;
-  return await db.query('parcerias');
+  return await db.query('protocolos_parcerias');
 }
 
 //---------------------------------------Listar parceria por id
 Future<Map<String, dynamic>?> listarParceriaPorId(String idParceria) async {
   Database db = await basededados;
   List<Map<String, dynamic>> resultados = await db.query(
-    'parcerias',
-    where: 'idParceria = ?',
+    'protocolos_parcerias',
+    where: 'id_parceria = ?',
     whereArgs: [idParceria],
   );
 
@@ -256,8 +254,8 @@ Future<Map<String, dynamic>?> listarParceriaPorId(String idParceria) async {
 Future<void> excluirParceria(String idParceria) async {
   Database db = await basededados;
   await db.delete(
-    'parcerias',
-    where: 'idParceria = ?',
+    'protocolos_parcerias',
+    where: 'id_parceria = ?',
     whereArgs: [idParceria],
   );
 }
@@ -269,8 +267,7 @@ Future<void> excluirParceria(String idParceria) async {
 Future<void> criarTabelaNoticias(Database db) async {
   await db.execute('''
     CREATE TABLE noticias (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      id_noticia TEXT UNIQUE NOT NULL,
+      id_noticia INTEGER PRIMARY KEY AUTOINCREMENT,
       titulo TEXT,
       descricao TEXT,
       data TEXT,
@@ -285,7 +282,7 @@ Future<void> inserirNoticia(
       List<(String, String, String, String)> noticiaData) async {
     Database db = await basededados;
 
-    await db.delete('parcerias');
+    await db.delete('noticias');
 
     for (final (
           titulo,
@@ -294,7 +291,7 @@ Future<void> inserirNoticia(
           imagem,
         ) in noticiaData) {
       await db.rawInsert(
-          ' INSERT INTO parcerias ( titulo, descricao,data,imagem) VALUES (?,?,?,?)',
+          ' INSERT INTO noticias ( titulo, descricao,data,imagem) VALUES (?,?,?,?)',
           [
             titulo,
             descricao,
@@ -354,8 +351,7 @@ Future<void> excluirNoticia(String idNoticia) async {
 Future<void> criarTabelaAjudasCusto(Database db) async {
   await db.execute('''
     CREATE TABLE ajudas_custo (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      id_custo TEXT UNIQUE NOT NULL,
+      id_custo INTEGER PRIMARY KEY AUTOINCREMENT,
       custo REAL,
       descricao TEXT,
       comprovativo TEXT,
@@ -366,13 +362,15 @@ Future<void> criarTabelaAjudasCusto(Database db) async {
 }
 
 //---------------------------------------Inserir ajuda de custo
-Future<void> inserirAjudaCusto(Map<String, dynamic> ajudaCusto) async {
+Future<void> inserirAjudaCusto(List<(String,String,String)> ajudasData) async {
   Database db = await basededados;
-  await db.insert(
-    'ajudas_custo',
-    ajudaCusto,
-    conflictAlgorithm: ConflictAlgorithm.replace,
+  await db.delete('ajudas_custo');
+  for (final (custo, descricao, estado) in ajudasData){
+    await db.rawInsert(
+        'insert into ajudas_custo(custo, descricao, estado) values(?,?,?)',
+        [custo, descricao, estado]
   );
+  }
 }
 
 //---------------------------------------Atualizar ajuda de custo
@@ -425,8 +423,7 @@ Future<void> excluirAjudaCusto(String idCusto) async {
 Future<void> criarTabelaDespesasViaturaPessoal(Database db) async {
   await db.execute('''
     CREATE TABLE despesas_viatura_pessoal (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      id_despesa TEXT UNIQUE NOT NULL,
+      id_despesa INTEGER PRIMARY KEY AUTOINCREMENT,
       km REAL,
       ponto_partida TEXT,
       ponto_chegada TEXT,
@@ -498,8 +495,7 @@ Future<void> excluirDespesaViaturaPessoal(String idDespesa) async {
 Future<void> criarTabelaFaltas(Database db) async {
   await db.execute('''
     CREATE TABLE faltas (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      id_falta TEXT UNIQUE NOT NULL,
+      id_falta INTEGER PRIMARY KEY AUTOINCREMENT,
       data TEXT,
       id_user TEXT,
       sincronizado INTEGER DEFAULT 0
@@ -567,8 +563,7 @@ Future<void> excluirFalta(String idFalta) async {
 Future<void> criarTabelaHoras(Database db) async {
   await db.execute('''
     CREATE TABLE horas (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      id_horas TEXT UNIQUE NOT NULL,
+      id_horas INTEGER PRIMARY KEY AUTOINCREMENT,
       horas REAL,
       id_user TEXT,
       sincronizado INTEGER DEFAULT 0
@@ -577,12 +572,13 @@ Future<void> criarTabelaHoras(Database db) async {
 }
 
 //---------------------------------------Inserir horas
-Future<void> inserirHoras(Map<String, dynamic> hora) async {
+Future<void> inserirHoras(List<(String, String)> horasData) async {
   Database db = await basededados;
-  await db.insert(
-    'horas',
-    hora,
-    conflictAlgorithm: ConflictAlgorithm.replace,
+  await db.delete('horas');
+    for (final (horas, estado) in horasData){
+    await db.rawInsert(
+        'insert into horas(horas, estado) values(?,?)',
+        [horas, estado]
   );
 }
 
@@ -635,8 +631,7 @@ Future<void> excluirHoras(String idHoras) async {
 Future<void> criarTabelaReunioes(Database db) async {
   await db.execute('''
     CREATE TABLE reunioes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      id_reuniao TEXT UNIQUE NOT NULL,
+      id_reuniao INTEGER PRIMARY KEY AUTOINCREMENT,
       titulo TEXT,
       descricao TEXT,
       data TEXT,
@@ -647,14 +642,17 @@ Future<void> criarTabelaReunioes(Database db) async {
 }
 
 //---------------------------------------Inserir reunião
-Future<void> inserirReuniao(Map<String, dynamic> reuniao) async {
+Future<void> inserirReuniao(List<(String,String,String)> reuniaoData) async {
   Database db = await basededados;
-  await db.insert(
-    'reunioes',
-    reuniao,
-    conflictAlgorithm: ConflictAlgorithm.replace,
-  );
+  await db.delete('reunioes');
+  for (final (titulo, descricao, estado) in reuniaoData){
+    await db.rawInsert(
+        'insert into reunioes(custo, descricao, estado) values(?,?,?)',
+        [titulo, descricao, estado]
+    );
+  }
 }
+
 
 //---------------------------------------Atualizar reunião
 Future<void> atualizarReuniao(String idReuniao, Map<String, dynamic> reuniao) async {
@@ -700,4 +698,5 @@ Future<void> excluirReuniao(String idReuniao) async {
 }
 
 
+}
 }

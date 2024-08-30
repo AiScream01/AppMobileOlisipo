@@ -198,45 +198,45 @@ class _AjudasScreen extends State<AjudasScreen> {
                           return;
                         }
 
-                        try {
-                          await servidor.inserirAjudaCusto(
-                              await servidor.obterTokenLocalmente(),
-                              double.parse(custoController.text),
-                              descricaoController.text,
-                              // faturaController.text, // Aqui você pode usar filePath ou lógica para lidar com faturas
-                              'fatura.pdf'
-                              //false,
-                              );
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content:
-                                  Text('Ajudas de Custo enviadas com sucesso!'),
-                            ),
-                          );
-                        } catch (e) {
-                          print('Erro ao enviar ajudas de custo: $e');
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text('Erro ao enviar Ajudas de Custo!'),
-                                content: Text(
-                                  'Dados inválidos para a submissão de ajudas de custo.',
-                                  style: TextStyle(fontSize: 17),
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text('OK'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        }
+                        //try {
+                        //  await servidor.inserirAjudaCusto(
+                        //      await servidor.obterTokenLocalmente(),
+                        //      double.parse(custoController.text),
+                        //      descricaoController.text,
+                        //      // faturaController.text, // Aqui você pode usar filePath ou lógica para lidar com faturas
+                        //      'fatura.pdf'
+                        //      //false,
+                        //      );
+//
+                        //  ScaffoldMessenger.of(context).showSnackBar(
+                        //    SnackBar(
+                        //      content:
+                        //          Text('Ajudas de Custo enviadas com sucesso!'),
+                        //    ),
+                        //  );
+                        //} catch (e) {
+                        //  print('Erro ao enviar ajudas de custo: $e');
+                        //  showDialog(
+                        //    context: context,
+                        //    builder: (BuildContext context) {
+                        //      return AlertDialog(
+                        //        title: Text('Erro ao enviar Ajudas de Custo!'),
+                        //        content: Text(
+                        //          'Dados inválidos para a submissão de ajudas de custo.',
+                        //          style: TextStyle(fontSize: 17),
+                        //        ),
+                        //        actions: <Widget>[
+                        //          TextButton(
+                        //            onPressed: () {
+                        //              Navigator.of(context).pop();
+                        //            },
+                        //            child: Text('OK'),
+                        //          ),
+                        //        ],
+                        //      );
+                        //    },
+                        //  );
+                        //}
                       },
                     )
                   ])))
