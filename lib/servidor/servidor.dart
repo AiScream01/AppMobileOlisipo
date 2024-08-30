@@ -111,43 +111,159 @@ class Servidor {
   }
 
   Future<void> insertFerias(
-  String idUser,
-  String dataInicio,
-  String dataFim,
-) async {
-  if (idUser.isEmpty || dataInicio.isEmpty || dataFim.isEmpty) {
-    throw Exception('Dados inválidos: um ou mais parâmetros são nulos ou vazios.');
+    String idUser,
+    String dataInicio,
+    String dataFim,
+  ) async {
+    if (idUser.isEmpty || dataInicio.isEmpty || dataFim.isEmpty) {
+      throw Exception(
+          'Dados inválidos: um ou mais parâmetros são nulos ou vazios.');
+    }
+
+    var url = '$baseURL/ferias/create';
+
+    // Converta as datas para o formato ISO 8601
+    var dataInicioIso = DateTime.parse(dataInicio).toIso8601String();
+    var dataFimIso = DateTime.parse(dataFim).toIso8601String();
+
+    var response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'data_inicio': dataInicioIso,
+        'data_fim': dataFimIso,
+        'id_user': idUser
+      }),
+    );
+
+    // Imprima o status code e o corpo da resposta para depuração
+    print('Status code: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 201) {
+      print('Férias inseridas com sucesso!');
+    } else {
+      print('Erro ao inserir férias: ${response.statusCode}');
+      throw Exception('Falha ao inserir férias: ${response.body}');
+    }
   }
 
-  var url = '$baseURL/ferias/create';
+  Future<void> insertAjudasCusto(
+    String idUser,
+    String custo,
+    String descricao,
+    String comprovativo,
+  ) async {
+    // Verifica se os parâmetros obrigatórios não estão vazios
+    if (idUser.isEmpty || custo.isEmpty) {
+      throw Exception('Dados inválidos: idUser e custo são obrigatórios.');
+    }
 
-  // Converta as datas para o formato ISO 8601
-  var dataInicioIso = DateTime.parse(dataInicio).toIso8601String();
-  var dataFimIso = DateTime.parse(dataFim).toIso8601String();
+    // Define a URL base e o endpoint para inserir as ajudas de custo
+    var url = '$baseURL/ajudascusto/create';
 
-  var response = await http.post(
-    Uri.parse(url),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(<String, dynamic>{
-      'data_inicio': dataInicioIso,
-      'data_fim': dataFimIso,
-      'id_user': idUser
-    }),
-  );
+    // Prepara a requisição HTTP POST
+    var response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'custo': custo,
+        'descricao': descricao,
+        'comprovativo': comprovativo,
+        'id_user': idUser,
+      }),
+    );
 
-  // Imprima o status code e o corpo da resposta para depuração
-  print('Status code: ${response.statusCode}');
-  print('Response body: ${response.body}');
+    // Imprime o status code e o corpo da resposta para depuração
+    print('Status code: ${response.statusCode}');
+    print('Response body: ${response.body}');
 
-  if (response.statusCode == 201) {
-    print('Férias inseridas com sucesso!');
-  } else {
-    print('Erro ao inserir férias: ${response.statusCode}');
-    throw Exception('Falha ao inserir férias: ${response.body}');
+    // Verifica o status da resposta
+    if (response.statusCode == 201) {
+      print('Ajuda de custo inserida com sucesso!');
+    } else {
+      print('Erro ao inserir ajuda de custo: ${response.statusCode}');
+      throw Exception('Falha ao inserir ajuda de custo: ${response.body}');
+    }
   }
+
+Future<void> insertDespesasViaturaPessoal(
+    String idUser,
+    double km,
+    String pontoPartida,
+    String pontoChegada,
+    double precoPortagens,
+    String comprovativo,
+  ) async {
+    // Verifica se os parâmetros obrigatórios não estão vazios
+    if (idUser.isEmpty || pontoPartida.isEmpty || pontoChegada.isEmpty) {
+      throw Exception('Dados inválidos: idUser, pontoPartida e pontoChegada são obrigatórios.');
+    }
+
+    // Define a URL base e o endpoint para inserir as despesas de viatura pessoal
+    var url = '$baseURL/despesasviatura/create';
+
+    // Prepara a requisição HTTP POST
+    var response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'km': km,
+        'ponto_partida': pontoPartida,
+        'ponto_chegada': pontoChegada,
+        'preco_portagens': precoPortagens,
+        'comprovativo': comprovativo,
+        'id_user': idUser,
+      }),
+    );
+
+    // Imprime o status code e o corpo da resposta para depuração
+    print('Status code: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    // Verifica o status da resposta
+    if (response.statusCode == 201) {
+      print('Despesa de viatura pessoal inserida com sucesso!');
+    } else {
+      print('Erro ao inserir despesa de viatura pessoal: ${response.statusCode}');
+      throw Exception('Falha ao inserir despesa de viatura pessoal: ${response.body}');
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // =========================
@@ -943,4 +1059,3 @@ class Servidor {
   //    return false;
   //  }
   //}
-}

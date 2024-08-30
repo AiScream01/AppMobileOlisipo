@@ -3,6 +3,7 @@ import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_elevated_button.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_text_form_field.dart';
+import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart'; // Importe o PushNotificationDialog
 import 'package:rui_pedro_s_application11/servidor/servidor.dart';
 
 class AjudasScreen extends StatefulWidget {
@@ -39,13 +40,10 @@ class _AjudasScreen extends State<AjudasScreen> {
             resizeToAvoidBottomInset: false,
             appBar: AppBar(
               actions: [
-                // Adicione o IconButton do perfil aqui
                 IconButton(
-                  icon: Icon(Icons.account_circle), // Ícone do perfil
+                  icon: Icon(Icons.account_circle),
                   iconSize: 40.0,
                   onPressed: () {
-                    // Adicione a lógica que deseja executar ao clicar no ícone do perfil
-                    // Por exemplo, abrir a tela de perfil
                     Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
                   },
                 ),
@@ -188,55 +186,60 @@ class _AjudasScreen extends State<AjudasScreen> {
                     CustomOutlinedButton(
                       text: "Enviar",
                       onPressed: () async {
-                        if (!custoController.text.isNotEmpty ||
-                            !descricaoController.text.isNotEmpty) {
+                        if (custoController.text.isEmpty) {
                           final snackBar = SnackBar(
-                            content: Text(
-                                'Preencha todos os campos antes de enviar.'),
+                            content: Text('O campo "Custo" é obrigatório.'),
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           return;
                         }
 
-                        //try {
-                        //  await servidor.inserirAjudaCusto(
-                        //      await servidor.obterTokenLocalmente(),
-                        //      double.parse(custoController.text),
-                        //      descricaoController.text,
-                        //      // faturaController.text, // Aqui você pode usar filePath ou lógica para lidar com faturas
-                        //      'fatura.pdf'
-                        //      //false,
-                        //      );
-//
-                        //  ScaffoldMessenger.of(context).showSnackBar(
-                        //    SnackBar(
-                        //      content:
-                        //          Text('Ajudas de Custo enviadas com sucesso!'),
-                        //    ),
-                        //  );
-                        //} catch (e) {
-                        //  print('Erro ao enviar ajudas de custo: $e');
-                        //  showDialog(
-                        //    context: context,
-                        //    builder: (BuildContext context) {
-                        //      return AlertDialog(
-                        //        title: Text('Erro ao enviar Ajudas de Custo!'),
-                        //        content: Text(
-                        //          'Dados inválidos para a submissão de ajudas de custo.',
-                        //          style: TextStyle(fontSize: 17),
-                        //        ),
-                        //        actions: <Widget>[
-                        //          TextButton(
-                        //            onPressed: () {
-                        //              Navigator.of(context).pop();
-                        //            },
-                        //            child: Text('OK'),
-                        //          ),
-                        //        ],
-                        //      );
-                        //    },
-                        //  );
-                        //}
+                        int idUser = 2; // Substitua pelo ID real do usuário
+                        try {
+                          await servidor.insertAjudasCusto(
+                            idUser.toString(),
+                            custoController.text,
+                            descricaoController.text.isNotEmpty
+                                ? descricaoController.text
+                                : "",
+                            faturaController.text.isNotEmpty
+                                ? faturaController.text
+                                : "",
+                          );
+
+                          // Mostrar o PushNotificationDialog após sucesso
+                          showDialog(
+                            context: context,
+                            builder: (_) => AlertDialog(
+                              content: PushNotificationDialog(),
+                              backgroundColor: Colors.transparent,
+                              contentPadding: EdgeInsets.zero,
+                              insetPadding: const EdgeInsets.only(left: 0),
+                            ),
+                          );
+                        } catch (e) {
+                          print('Erro ao enviar ajudas de custo: $e');
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Erro ao enviar Ajudas de Custo!'),
+                                content: Text(
+                                  'Ocorreu um erro ao tentar enviar as ajudas de custo. Verifique os dados e tente novamente.\nErro: $e',
+                                  style: TextStyle(fontSize: 17),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text('OK'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
                       },
                     )
                   ])))

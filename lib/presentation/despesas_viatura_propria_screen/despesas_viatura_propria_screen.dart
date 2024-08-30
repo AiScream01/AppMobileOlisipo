@@ -1,24 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
+import 'package:rui_pedro_s_application11/widgets/custom_elevated_button.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
+import 'package:rui_pedro_s_application11/widgets/custom_text_form_field.dart'; // Certifique-se de ter isso importado
 import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
+import 'package:rui_pedro_s_application11/servidor/servidor.dart'; // Certifique-se de que Servidor é importado
 
-// ignore: must_be_immutable
-class DespesasViaturaPropriaScreen extends StatelessWidget {
-  DespesasViaturaPropriaScreen({Key? key}) : super(key: key);
+class DespesasViaturaPropriaScreen extends StatefulWidget {
+  const DespesasViaturaPropriaScreen({Key? key}) : super(key: key);
 
-  TextEditingController partidaController = TextEditingController();
-  TextEditingController chegadaController = TextEditingController();
-  TextEditingController kmController = TextEditingController();
-  TextEditingController portagensController = TextEditingController();
+  @override
+  _DespesasViaturaPropriaScreenState createState() =>
+      _DespesasViaturaPropriaScreenState();
+}
+
+class _DespesasViaturaPropriaScreenState
+    extends State<DespesasViaturaPropriaScreen> {
+  final TextEditingController partidaController = TextEditingController();
+  final TextEditingController chegadaController = TextEditingController();
+  final TextEditingController kmController = TextEditingController();
+  final TextEditingController portagensController = TextEditingController();
+  final TextEditingController comprovativoController = TextEditingController();
+
+  final Servidor servidor = Servidor();
+
+  @override
+  void dispose() {
+    partidaController.dispose();
+    chegadaController.dispose();
+    kmController.dispose();
+    portagensController.dispose();
+    comprovativoController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        extendBody: true,
-        extendBodyBehindAppBar: true,
-        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           actions: [
             IconButton(
@@ -80,7 +99,7 @@ class DespesasViaturaPropriaScreen extends StatelessWidget {
               ListTile(
                 title: const Text('Horas'),
                 onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
+                  Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
                 },
               ),
               ListTile(
@@ -92,46 +111,39 @@ class DespesasViaturaPropriaScreen extends StatelessWidget {
             ],
           ),
         ),
-        body: Container(
-          width: SizeUtils.width,
-          height: SizeUtils.height,
-          decoration: BoxDecoration(
-            color: theme.colorScheme.onPrimaryContainer,
-            boxShadow: [
-              BoxShadow(
-                color: appTheme.black900.withOpacity(0.3),
-                spreadRadius: 2.h,
-                blurRadius: 2.h,
-                offset: Offset(10, 10),
-              ),
-            ],
-            image: DecorationImage(
-              image: AssetImage(ImageConstant.imgLogin),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: Center(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 25.v),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(height: 20.v),
-                    Text(
-                      "Viatura",
-                      style: theme.textTheme.displayMedium,
-                    ),
-                    SizedBox(height: 20.v),
-                    _buildInputSection(context),
-                    SizedBox(height: 20.v),
-                    _buildEnviarButton(context),
-                  ],
+        body: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(ImageConstant.imgLogin),
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
-          ),
+            Center(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 20.h, vertical: 10.v),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(height: 10.v),
+                      Text(
+                        "Despesas Viatura Própria",
+                        style: theme.textTheme.displayMedium,
+                      ),
+                      SizedBox(height: 20.v),
+                      _buildInputSection(context),
+                      SizedBox(height: 20.v),
+                      _buildEnviarButton(context),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -140,48 +152,55 @@ class DespesasViaturaPropriaScreen extends StatelessWidget {
   Widget _buildInputSection(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 21.v),
-      decoration: AppDecoration.outlineGray.copyWith(
-        borderRadius: BorderRadiusStyle.roundedBorder35,
-        color: Colors.white.withOpacity(0.8),
+      decoration: BoxDecoration(
+        color: Colors.white, // Fundo branco para a caixa de entrada
+        borderRadius: BorderRadius.circular(35), // Bordas arredondadas
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildRowWithInputField(
-            context,
+          _buildInputField(
             title: "Ponto de partida",
             controller: partidaController,
             hintText: "Insira o ponto de partida",
+            keyboardType: TextInputType.text,
           ),
           SizedBox(height: 10.v),
-          _buildRowWithInputField(
-            context,
+          _buildInputField(
             title: "Ponto de chegada",
             controller: chegadaController,
             hintText: "Insira o ponto de chegada",
+            keyboardType: TextInputType.text,
           ),
           SizedBox(height: 10.v),
-          _buildRowWithInputField(
-            context,
-            title: "Kilometros",
+          _buildInputField(
+            title: "Kilómetros",
             controller: kmController,
             hintText: "Insira a distância em km",
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
           ),
           SizedBox(height: 10.v),
-          _buildRowWithInputField(
-            context,
+          _buildInputField(
             title: "Portagens",
             controller: portagensController,
             hintText: "Insira o custo das portagens",
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
           ),
           SizedBox(height: 10.v),
-          _buildRowWithButton(
-            context,
+          _buildUploadButton(
             title: "Comprovativo",
             buttonText: "Adicionar PDF",
             onPressed: () {
-              // adicionar ação para adicionar PDF
+              // Adicionar ação para adicionar PDF
             },
           ),
         ],
@@ -189,62 +208,57 @@ class DespesasViaturaPropriaScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRowWithInputField(
-    BuildContext context, {
+  Widget _buildInputField({
     required String title,
     required TextEditingController controller,
     required String hintText,
+    required TextInputType keyboardType,
   }) {
     return Padding(
       padding: EdgeInsets.only(left: 1.h),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: EdgeInsets.only(top: 3.v),
-            child: Text(
-              title,
-              style: theme.textTheme.titleLarge,
-            ),
+          Text(
+            title,
+            style: theme.textTheme.titleLarge,
           ),
-          SizedBox(
-            width: 126.h,
-            child: TextField(
-              controller: controller,
-              decoration: InputDecoration(
-                hintText: hintText,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+          SizedBox(height: 5.v),
+          TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              hintText: hintText,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
               ),
+              filled: true,
+              fillColor: Colors.transparent, // Cor do fundo dos campos de input
             ),
+            keyboardType: keyboardType,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildRowWithButton(
-    BuildContext context, {
+  Widget _buildUploadButton({
     required String title,
     required String buttonText,
     required void Function() onPressed,
   }) {
     return Padding(
       padding: EdgeInsets.only(left: 1.h),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: EdgeInsets.only(top: 3.v),
-            child: Text(
-              title,
-              style: theme.textTheme.titleLarge,
-            ),
+          Text(
+            title,
+            style: theme.textTheme.titleLarge,
           ),
+          SizedBox(height: 5.v),
           CustomOutlinedButton(
             height: 32.v,
-            width: 126.h,
+            width: double.infinity,
             text: buttonText,
             onPressed: onPressed,
             buttonStyle: CustomButtonStyles.outlinePrimary,
@@ -256,26 +270,65 @@ class DespesasViaturaPropriaScreen extends StatelessWidget {
   }
 
   Widget _buildEnviarButton(BuildContext context) {
-    return Center(
-      child: CustomOutlinedButton(
-        width: 144.h,
-        text: "Enviar",
-        onPressed: () {
-          onTapEnviarButton(context);
-        },
-      ),
+    return CustomElevatedButton(
+      width: double.infinity,
+      text: "Enviar",
+      onPressed: () {
+        onTapEnviarButton(context);
+      },
     );
   }
 
-  void onTapEnviarButton(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        content: PushNotificationDialog(),
-        backgroundColor: Colors.transparent,
-        contentPadding: EdgeInsets.zero,
-        insetPadding: const EdgeInsets.only(left: 0),
-      ),
-    );
+  void onTapEnviarButton(BuildContext context) async {
+    try {
+      double km = double.parse(kmController.text);
+      String pontoPartida = partidaController.text;
+      String pontoChegada = chegadaController.text;
+      double precoPortagens = double.parse(portagensController.text);
+      String comprovativo = comprovativoController.text.isNotEmpty
+          ? comprovativoController.text
+          : '';
+
+      // Envia os dados para o servidor
+      await servidor.insertDespesasViaturaPessoal(
+        '2', // Substitua pelo ID real do usuário
+        km,
+        pontoPartida,
+        pontoChegada,
+        precoPortagens,
+        comprovativo,
+      );
+
+      // Exibe o diálogo de notificação de sucesso
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          content: PushNotificationDialog(),
+          backgroundColor: Colors.transparent,
+          contentPadding: EdgeInsets.zero,
+          insetPadding: const EdgeInsets.only(left: 0),
+        ),
+      );
+    } catch (e) {
+      print('Erro ao enviar despesas: $e');
+      // Exibe o diálogo de erro
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Erro'),
+            content: Text('Ocorreu um erro ao enviar as despesas. Erro: $e'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }
