@@ -141,7 +141,7 @@ class Servidor {
   print('Status code: ${response.statusCode}');
   print('Response body: ${response.body}');
 
-  if (response.statusCode == 200) {
+  if (response.statusCode == 201) {
     print('Férias inseridas com sucesso!');
   } else {
     print('Erro ao inserir férias: ${response.statusCode}');

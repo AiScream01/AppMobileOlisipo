@@ -226,13 +226,6 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
                     onTapEnviar(context);
                   },
                 ),
-                CustomOutlinedButton(
-                  width: 144,
-                  text: "Verificar Férias",
-                  onPressed: () {
-                    _verificarFerias();
-                  },
-                ),
               ],
             ),
           ),
@@ -337,50 +330,4 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
     }
   }
 
-  void _verificarFerias() async {
-    try {
-      int idUser = 1; // Substitua pelo ID real do usuário
-
-      // Recupera as férias do usuário da base de dados local
-      var ferias = await bd.listarTodasFerias();
-
-      // Exibir informações das férias
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: Text('Férias Registradas'),
-          content: ferias.isNotEmpty
-              ? Text(ferias
-                  .map((f) =>
-                      'Início: ${formatDate(DateTime.parse(f['data_inicio']))}, Fim: ${formatDate(DateTime.parse(f['data_fim']))}')
-                  .join('\n'))
-              : Text('Nenhuma férias registrada.'),
-          actions: [
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
-      );
-    } catch (e) {
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: Text('Erro'),
-          content: Text('Ocorreu um erro ao verificar as férias: $e'),
-          actions: [
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
-      );
-    }
-  }
 }

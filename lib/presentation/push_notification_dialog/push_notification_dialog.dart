@@ -35,7 +35,7 @@ class PushNotificationDialog extends StatelessWidget {
               children: [
                 SizedBox(height: 26.v),
                 Text(
-                  "A enviar Documentos...",
+                  "Sucesso",
                   style: CustomTextStyles.headlineSmallInter,
                 ),
                 SizedBox(height: 76.v),
@@ -43,7 +43,7 @@ class PushNotificationDialog extends StatelessWidget {
                   width: 260.h,
                   margin: EdgeInsets.symmetric(horizontal: 25.h),
                   child: Text(
-                    "O seu documento foi enviado com sucesso!",
+                    "O seu pedido foi efetuado com sucesso!",
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
@@ -56,7 +56,11 @@ class PushNotificationDialog extends StatelessWidget {
                   text: "Ir para página principal",
                   buttonStyle: CustomButtonStyles.fillPrimary,
                   buttonTextStyle: theme.textTheme.titleMedium!,
+                  onPressed: (){
+                    Navigator.pushNamed(context, AppRoutes.paginaPrincipalScreen);
+                  },
                 ),
+                
               ],
             ),
           ),
