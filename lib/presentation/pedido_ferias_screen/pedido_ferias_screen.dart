@@ -147,7 +147,7 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
           Container(
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: theme.colorScheme.background,
+              color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(

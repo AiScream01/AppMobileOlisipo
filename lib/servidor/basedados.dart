@@ -436,13 +436,15 @@ Future<void> criarTabelaDespesasViaturaPessoal(Database db) async {
 }
 
 //---------------------------------------Inserir despesa de viatura pessoal
-Future<void> inserirDespesaViaturaPessoal(Map<String, dynamic> despesaViatura) async {
+Future<void> inserirDespesaViaturaPessoal(List<(String,String ,String,String)> despesaViaturaData) async {
   Database db = await basededados;
-  await db.insert(
-    'despesas_viatura_pessoal',
-    despesaViatura,
-    conflictAlgorithm: ConflictAlgorithm.replace,
+  await db.delete('despesas_viatura_pessoal');
+    for (final (ponto_partida,ponto_chegada,km, estado) in despesaViaturaData){
+    await db.rawInsert(
+        'insert into despesas_viatura_pessoal(ponto_partida, ponto_chegada, km, estado) values(?,?,?,?)',
+        [ponto_partida, ponto_chegada,km,estado]
   );
+    }
 }
 
 //---------------------------------------Atualizar despesa de viatura pessoal
@@ -504,13 +506,15 @@ Future<void> criarTabelaFaltas(Database db) async {
 }
 
 //---------------------------------------Inserir falta
-Future<void> inserirFalta(Map<String, dynamic> falta) async {
+Future<void> inserirFalta(List<(String, String, String)> faltaData) async {
   Database db = await basededados;
-  await db.insert(
-    'faltas',
-    falta,
-    conflictAlgorithm: ConflictAlgorithm.replace,
+  await db.delete('faltas');
+    for (final (data, estado,id_falta) in faltaData){
+    await db.rawInsert(
+        'insert into faltas(data, estado,id_falta) values(?,?,?)',
+        [data, estado, id_falta]
   );
+}
 }
 
 //---------------------------------------Atualizar falta
@@ -580,6 +584,7 @@ Future<void> inserirHoras(List<(String, String)> horasData) async {
         'insert into horas(horas, estado) values(?,?)',
         [horas, estado]
   );
+}
 }
 
 //---------------------------------------Atualizar horas
@@ -698,5 +703,4 @@ Future<void> excluirReuniao(String idReuniao) async {
 }
 
 
-}
 }

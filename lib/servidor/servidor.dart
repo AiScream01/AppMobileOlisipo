@@ -1,9 +1,6 @@
-import 'dart:ffi';
-import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'basedados.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Servidor {
   final String baseURL = 'https://pi4-api.onrender.com'; // URL base principal
@@ -113,8 +110,8 @@ class Servidor {
     bd.inserirAjudaCusto(ajudas);
     bd.inserirHoras(horas);
     bd.inserirReuniao(reunioes);
-    //bd.inserirDespesaViaturaPessoal(despesasViatura);
-    //bd.inserirFalta(faltas);
+    bd.inserirDespesaViaturaPessoal(despesasViatura);
+    bd.inserirFalta(faltas);
   }
 
 
