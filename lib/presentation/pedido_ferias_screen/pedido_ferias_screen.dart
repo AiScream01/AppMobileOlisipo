@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
+import 'package:rui_pedro_s_application11/widgets/custom_elevated_button.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
 import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
-
-import '../../servidor/basedados.dart';
-import '../../servidor/servidor.dart';
+import 'package:rui_pedro_s_application11/servidor/servidor.dart';
+import 'package:rui_pedro_s_application11/servidor/basedados.dart'; // Certifique-se de que Basededados é importado
 
 class PedidoFeriasScreen extends StatefulWidget {
   const PedidoFeriasScreen({Key? key}) : super(key: key);
@@ -15,11 +15,11 @@ class PedidoFeriasScreen extends StatefulWidget {
 }
 
 class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
-  DateTime? _startDate; // Inicialize como null
-  DateTime? _endDate; // Inicialize como null
+  DateTime? _startDate;
+  DateTime? _endDate;
 
-  var se = Servidor();
-  var bd = Basededados();
+  final Servidor servidor = Servidor();
+  final Basededados bd = Basededados();
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +36,6 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
             ),
           ],
         ),
-        extendBody: true,
-        extendBodyBehindAppBar: true,
         drawer: Drawer(
           child: ListView(
             padding: EdgeInsets.zero,
@@ -57,8 +55,7 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
               ListTile(
                 title: const Text('Despesas viatura própria'),
                 onTap: () {
-                  Navigator.pushNamed(
-                      context, AppRoutes.despesasViaturaPropriaScreen);
+                  Navigator.pushNamed(context, AppRoutes.despesasViaturaPropriaScreen);
                 },
               ),
               ListTile(
@@ -68,9 +65,9 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
                 },
               ),
               ListTile(
-                title: const Text('Noticias'),
+                title: const Text('Notícias'),
                 onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.noticiaScreen);
+                  Navigator.pushNamed(context, AppRoutes.noticiasScreen);
                 },
               ),
               ListTile(
@@ -80,7 +77,7 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
                 },
               ),
               ListTile(
-                title: const Text('Ferias'),
+                title: const Text('Férias'),
                 onTap: () {
                   Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
                 },
@@ -101,111 +98,26 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
           ),
         ),
         body: Container(
-          width: double.infinity,
-          height: double.infinity,
           decoration: BoxDecoration(
-            color: theme.colorScheme.onPrimaryContainer,
-            boxShadow: [
-              BoxShadow(
-                color: appTheme.black900.withOpacity(0.3),
-                spreadRadius: 2,
-                blurRadius: 2,
-                offset: Offset(10, 10),
-              ),
-            ],
             image: DecorationImage(
               image: AssetImage(ImageConstant.imgLogin),
               fit: BoxFit.cover,
             ),
           ),
-          child: Column(
-            children: [
-              SizedBox(height: 50),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(horizontal: 21),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(height: 50),
-                      _buildFiftySixStack(context),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFiftySixStack(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              borderRadius: BorderRadius.circular(15),
-              boxShadow: [
-                BoxShadow(
-                  color: appTheme.black900.withOpacity(0.2),
-                  spreadRadius: 2,
-                  blurRadius: 4,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 20),
-                _buildDatePickerRow(
-                  label: "Data Início",
-                  selectedDate: _startDate,
-                  onPressed: () async {
-                    DateTime firstDate = DateTime.now().add(Duration(days: 7));
-                    DateTime initialDate = _endDate ?? firstDate;
-                    DateTime? pickedDate = await showDatePicker(
-                      context: context,
-                      initialDate: initialDate.isBefore(firstDate)
-                          ? firstDate
-                          : initialDate,
-                      firstDate: firstDate,
-                      lastDate: DateTime(2101),
-                    );
-                    if (pickedDate != null) {
-                      setState(() {
-                        _startDate = pickedDate;
-                      });
-                    }
-                  },
+                Center(
+                  child: Text(
+                    "Férias",
+                    style: theme.textTheme.displayMedium,
+                  ),
                 ),
                 SizedBox(height: 20),
-                _buildDatePickerRow(
-                  label: "Data Fim",
-                  selectedDate: _endDate,
-                  onPressed: () async {
-                    DateTime firstDate = _startDate != null ? _startDate!.add(Duration(days: 1)) : DateTime.now().add(Duration(days: 7));
-                    DateTime initialDate = _endDate ?? firstDate;
-                    DateTime? pickedDate = await showDatePicker(
-                      context: context,
-                      initialDate: initialDate.isBefore(firstDate) ? firstDate : initialDate,
-                      firstDate: firstDate,
-                      lastDate: DateTime(2101),
-                    );
-                    if (pickedDate != null) {
-                      setState(() {
-                        _endDate = pickedDate;
-                      });
-                    }
-                  },
-                ),
+                _buildDatePickers(context),
                 SizedBox(height: 20),
                 if (_startDate != null && _endDate != null)
                   Padding(
@@ -219,8 +131,8 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
                     ),
                   ),
                 SizedBox(height: 20),
-                CustomOutlinedButton(
-                  width: 144,
+                CustomElevatedButton(
+                  width: double.infinity,
                   text: "Enviar",
                   onPressed: () {
                     onTapEnviar(context);
@@ -229,14 +141,72 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
 
-  String formatDate(DateTime date) {
-    final DateFormat formatter = DateFormat('dd/MM/yyyy');
-    return formatter.format(date);
+  Widget _buildDatePickers(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 21),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildDatePickerRow(
+            label: "Data Início",
+            selectedDate: _startDate,
+            onPressed: () async {
+              DateTime firstDate = DateTime.now().add(Duration(days: 7));
+              DateTime initialDate = _endDate ?? firstDate;
+              DateTime? pickedDate = await showDatePicker(
+                context: context,
+                initialDate: initialDate.isBefore(firstDate) ? firstDate : initialDate,
+                firstDate: firstDate,
+                lastDate: DateTime(2101),
+              );
+              if (pickedDate != null) {
+                setState(() {
+                  _startDate = pickedDate;
+                });
+              }
+            },
+          ),
+          SizedBox(height: 20),
+          _buildDatePickerRow(
+            label: "Data Fim",
+            selectedDate: _endDate,
+            onPressed: () async {
+              DateTime firstDate = _startDate != null ? _startDate!.add(Duration(days: 1)) : DateTime.now().add(Duration(days: 7));
+              DateTime initialDate = _endDate ?? firstDate;
+              DateTime? pickedDate = await showDatePicker(
+                context: context,
+                initialDate: initialDate.isBefore(firstDate) ? firstDate : initialDate,
+                firstDate: firstDate,
+                lastDate: DateTime(2101),
+              );
+              if (pickedDate != null) {
+                setState(() {
+                  _endDate = pickedDate;
+                });
+              }
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildDatePickerRow({
@@ -263,6 +233,11 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
     );
   }
 
+  String formatDate(DateTime date) {
+    final DateFormat formatter = DateFormat('dd/MM/yyyy');
+    return formatter.format(date);
+  }
+
   void onTapEnviar(BuildContext context) async {
     if (_startDate == null || _endDate == null) {
       showDialog(
@@ -283,10 +258,9 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
       return;
     }
 
-    int idUser = 2; // Substitua pelo ID real do usuário
+    int idUser = 2;
 
     try {
-      // Inserir na base de dados local
       await bd.inserirFerias([
         (
           DateFormat('yyyy-MM-dd').format(_startDate!),
@@ -294,14 +268,12 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
         )
       ]);
 
-      // Enviar para o servidor
-      await se.insertFerias(
+      await servidor.insertFerias(
         idUser.toString(),
         DateFormat('yyyy-MM-dd').format(_startDate!),
         DateFormat('yyyy-MM-dd').format(_endDate!),
       );
 
-      // Se chegar aqui, as operações foram bem-sucedidas
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
@@ -329,5 +301,4 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
       );
     }
   }
-
 }

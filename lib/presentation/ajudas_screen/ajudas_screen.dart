@@ -3,7 +3,7 @@ import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_elevated_button.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_text_form_field.dart';
-import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart'; // Importe o PushNotificationDialog
+import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
 import 'package:rui_pedro_s_application11/servidor/servidor.dart';
 
 class AjudasScreen extends StatefulWidget {
@@ -15,7 +15,6 @@ class AjudasScreen extends StatefulWidget {
   State<AjudasScreen> createState() => _AjudasScreen();
 }
 
-// ignore_for_file: must_be_immutable
 class _AjudasScreen extends State<AjudasScreen> {
   final TextEditingController custoController = TextEditingController();
   final TextEditingController descricaoController = TextEditingController();
@@ -29,225 +28,270 @@ class _AjudasScreen extends State<AjudasScreen> {
     super.dispose();
   }
 
-  var servidor = Servidor();
+  final Servidor servidor = Servidor();
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Scaffold(
-            extendBody: true,
-            extendBodyBehindAppBar: true,
-            resizeToAvoidBottomInset: false,
-            appBar: AppBar(
-              actions: [
-                IconButton(
-                  icon: Icon(Icons.account_circle),
-                  iconSize: 40.0,
-                  onPressed: () {
-                    Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
-                  },
-                ),
-              ],
+      child: Scaffold(
+        appBar: AppBar(
+          actions: [
+            IconButton(
+              icon: Icon(Icons.account_circle),
+              iconSize: 40.0,
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
+              },
             ),
-            drawer: Drawer(
-              child: ListView(
-                padding: EdgeInsets.zero,
+          ],
+        ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                ),
+                child: Text('Menu de Navegação'),
+              ),
+              ListTile(
+                title: const Text('Ajudas de Custo'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.ajudasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Despesas viatura própria'),
+                onTap: () {
+                  Navigator.pushNamed(
+                      context, AppRoutes.despesasViaturaPropriaScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Faltas'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.faltasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Notícias'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.noticiasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Parcerias'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.parceriasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Férias'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Horas'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Reuniões'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.reunioesScreen);
+                },
+              ),
+            ],
+          ),
+        ),
+        body: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(ImageConstant.imgLogin),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 10.v),
+              child: Column(
                 children: [
-                  const DrawerHeader(
-                    decoration: BoxDecoration(
-                      color: Colors.green,
-                    ),
-                    child: Text('Menu de Navegação'),
+                  SizedBox(height: 10.v),
+                  Text(
+                    "Ajudas de Custo",
+                    style: theme.textTheme.displayMedium,
                   ),
-                  ListTile(
-                    title: const Text('Ajudas de Custo'),
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.ajudasScreen);
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('Despesas viatura própria'),
-                    onTap: () {
-                      Navigator.pushNamed(
-                          context, AppRoutes.despesasViaturaPropriaScreen);
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('Faltas'),
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.faltasScreen);
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('Noticias'),
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.noticiaScreen);
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('Parcerias'),
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.parceriasScreen);
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('Ferias'),
-                    onTap: () {
-                      Navigator.pushNamed(
-                          context, AppRoutes.pedidoFeriasScreen);
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('Horas'),
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('Reuniões'),
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.reunioesScreen);
-                    },
-                  ),
+                  SizedBox(height: 20.v),
+                  _buildInputSection(context),
+                  SizedBox(height: 20.v),
+                  _buildEnviarButton(context),
                 ],
               ),
             ),
-            body: Container(
-                width: SizeUtils.width,
-                height: SizeUtils.height,
-                decoration: BoxDecoration(
-                    color: theme.colorScheme.onPrimaryContainer,
-                    boxShadow: [
-                      BoxShadow(
-                          color: appTheme.black900.withOpacity(0.3),
-                          spreadRadius: 2.h,
-                          blurRadius: 2.h,
-                          offset: Offset(10, 10))
-                    ],
-                    image: DecorationImage(
-                        image: AssetImage(ImageConstant.imgLogin),
-                        fit: BoxFit.cover)),
-                child: Container(
-                    width: double.maxFinite,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 20.h, vertical: 10.v),
-                    child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      SizedBox(height: 70.v),
-                      Text("Ajudas de custo",
-                          style: theme.textTheme.displayMedium),
-                      SizedBox(height: 1.v),
-                      _buildSixtySixStack(context)
-                    ])))));
+          ],
+        ),
+      ),
+    );
   }
 
-  /// Section Widget
-  Widget _buildSixtySixStack(BuildContext context) {
-    return SizedBox(
-        height: 570.v,
-        width: 370.h,
-        child: Stack(alignment: Alignment.center, children: [
-          Align(
-              alignment: Alignment.center,
-              child: Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 27.h, vertical: 30.v),
-                  decoration: AppDecoration.outlineGray.copyWith(
-                      borderRadius: BorderRadiusStyle.roundedBorder35),
-                  child: Column(mainAxisSize: MainAxisSize.min, children: [
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child:
-                            Text("Custo", style: theme.textTheme.titleLarge)),
-                    SizedBox(height: 15.v),
-                    CustomTextFormField(controller: custoController),
-                    SizedBox(height: 32.v),
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text("Descrição",
-                            style: theme.textTheme.titleLarge)),
-                    SizedBox(height: 15.v),
-                    CustomTextFormField(controller: descricaoController),
-                    SizedBox(height: 32.v),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Fatura", style: theme.textTheme.titleLarge),
-                          SizedBox(height: 15.v),
-                          CustomElevatedButton(
-                            onPressed: () {},
-                            text: ('Upload Documento'),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 32.v),
-                    CustomOutlinedButton(
-                      text: "Enviar",
-                      onPressed: () async {
-                        if (custoController.text.isEmpty) {
-                          final snackBar = SnackBar(
-                            content: Text('O campo "Custo" é obrigatório.'),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          return;
-                        }
-
-                        int idUser = 2; // Substitua pelo ID real do usuário
-                        try {
-                          await servidor.insertAjudasCusto(
-                            idUser.toString(),
-                            custoController.text,
-                            descricaoController.text.isNotEmpty
-                                ? descricaoController.text
-                                : "",
-                            faturaController.text.isNotEmpty
-                                ? faturaController.text
-                                : "",
-                          );
-
-                          // Mostrar o PushNotificationDialog após sucesso
-                          showDialog(
-                            context: context,
-                            builder: (_) => AlertDialog(
-                              content: PushNotificationDialog(),
-                              backgroundColor: Colors.transparent,
-                              contentPadding: EdgeInsets.zero,
-                              insetPadding: const EdgeInsets.only(left: 0),
-                            ),
-                          );
-                        } catch (e) {
-                          print('Erro ao enviar ajudas de custo: $e');
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text('Erro ao enviar Ajudas de Custo!'),
-                                content: Text(
-                                  'Ocorreu um erro ao tentar enviar as ajudas de custo. Verifique os dados e tente novamente.\nErro: $e',
-                                  style: TextStyle(fontSize: 17),
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text('OK'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        }
-                      },
-                    )
-                  ])))
-        ]));
+  Widget _buildInputSection(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 21.v),
+      decoration: BoxDecoration(
+        color: Colors.white, // Fundo branco para a caixa de entrada
+        borderRadius: BorderRadius.circular(35), // Bordas arredondadas
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildInputField(
+            title: "Custo",
+            controller: custoController,
+            hintText: "Insira o custo",
+          ),
+          SizedBox(height: 10.v),
+          _buildInputField(
+            title: "Descrição",
+            controller: descricaoController,
+            hintText: "Insira a descrição",
+          ),
+          SizedBox(height: 10.v),
+          _buildUploadButton(
+            title: "Fatura",
+            buttonText: "Upload Documento",
+            onPressed: () {
+              // Adicionar ação para upload do documento
+            },
+          ),
+        ],
+      ),
+    );
   }
 
-  /// Navigates to the paginaPerfilScreen when the action is triggered.
-  onTapImgDoUtilizador(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
+  Widget _buildInputField({
+    required String title,
+    required TextEditingController controller,
+    required String hintText,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(left: 1.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: theme.textTheme.titleLarge,
+          ),
+          SizedBox(height: 5.v),
+          CustomTextFormField(
+            controller: controller,
+            hintText: hintText,
+            // Removido o parâmetro keyboardType
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUploadButton({
+    required String title,
+    required String buttonText,
+    required void Function() onPressed,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(left: 1.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: theme.textTheme.titleLarge,
+          ),
+          SizedBox(height: 5.v),
+          CustomOutlinedButton(
+            height: 32.v,
+            width: double.infinity,
+            text: buttonText,
+            onPressed: onPressed,
+            buttonStyle: CustomButtonStyles.outlinePrimary,
+            buttonTextStyle: theme.textTheme.titleLarge!,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEnviarButton(BuildContext context) {
+    return CustomElevatedButton(
+      width: double.infinity,
+      text: "Enviar",
+      onPressed: () {
+        onTapEnviarButton(context);
+      },
+    );
+  }
+
+  void onTapEnviarButton(BuildContext context) async {
+    if (custoController.text.isEmpty) {
+      final snackBar = SnackBar(
+        content: Text('O campo "Custo" é obrigatório.'),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return;
+    }
+
+    try {
+      await servidor.insertAjudasCusto(
+        '2', // Substitua pelo ID real do usuário
+        custoController.text,
+        descricaoController.text.isNotEmpty ? descricaoController.text : "",
+        faturaController.text.isNotEmpty ? faturaController.text : "",
+      );
+
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          content: PushNotificationDialog(),
+          backgroundColor: Colors.transparent,
+          contentPadding: EdgeInsets.zero,
+          insetPadding: const EdgeInsets.only(left: 0),
+        ),
+      );
+    } catch (e) {
+      print('Erro ao enviar ajudas de custo: $e');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Erro ao enviar Ajudas de Custo!'),
+            content: Text(
+              'Ocorreu um erro ao tentar enviar as ajudas de custo. Verifique os dados e tente novamente.\nErro: $e',
+              style: TextStyle(fontSize: 17),
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }
