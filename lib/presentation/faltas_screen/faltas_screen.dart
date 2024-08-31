@@ -1,14 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
-import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
-import 'package:rui_pedro_s_application11/widgets/custom_text_form_field.dart';
+import 'package:rui_pedro_s_application11/widgets/custom_elevated_button.dart';
+import 'package:rui_pedro_s_application11/servidor/servidor.dart';
 import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
 
-class FaltasScreen extends StatelessWidget {
-  FaltasScreen({Key? key}) : super(key: key);
 
+class FaltasScreen extends StatefulWidget {
+  const FaltasScreen({Key? key}) : super(key: key);
+
+  @override
+  _FaltasScreenState createState() => _FaltasScreenState();
+}
+
+class _FaltasScreenState extends State<FaltasScreen> {
   final TextEditingController dateController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
+  final Servidor servidor = Servidor();
+
+  @override
+  void dispose() {
+    dateController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,32 +38,39 @@ class FaltasScreen extends StatelessWidget {
           ],
         ),
         drawer: _buildDrawer(context),
-        body: Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: BoxDecoration(
-            color: theme.colorScheme.onPrimaryContainer,
-            image: DecorationImage(
-              image: AssetImage(ImageConstant.imgLogin),
-              fit: BoxFit.cover,
+        body: Stack(
+          children: [
+            Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.onPrimaryContainer,
+                image: DecorationImage(
+                  image: AssetImage(ImageConstant.imgLogin),
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 29),
-            child: Column(
-              children: [
-                _buildPageTitle(),
-                SizedBox(height: 12),
-                _buildFaltasForm(context),
-              ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 10.v),
+                  _buildPageTitle(),
+                  SizedBox(height: 20.v),
+                  _buildInputSection(context),
+                  SizedBox(height: 20.v),
+                  _buildEnviarButton(context),
+                ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 
-  /// Drawer with menu options similar to the previous screen.
   Widget _buildDrawer(BuildContext context) {
     return Drawer(
       child: ListView(
@@ -72,8 +91,7 @@ class FaltasScreen extends StatelessWidget {
           ListTile(
             title: const Text('Despesas viatura própria'),
             onTap: () {
-              Navigator.pushNamed(
-                  context, AppRoutes.despesasViaturaPropriaScreen);
+              Navigator.pushNamed(context, AppRoutes.despesasViaturaPropriaScreen);
             },
           ),
           ListTile(
@@ -103,7 +121,7 @@ class FaltasScreen extends StatelessWidget {
           ListTile(
             title: const Text('Horas'),
             onTap: () {
-              Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
+              Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
             },
           ),
           ListTile(
@@ -117,7 +135,6 @@ class FaltasScreen extends StatelessWidget {
     );
   }
 
-  /// Builds the title section for the Faltas page.
   Widget _buildPageTitle() {
     return Text(
       "Faltas",
@@ -125,107 +142,131 @@ class FaltasScreen extends StatelessWidget {
     );
   }
 
-  /// Builds the form for submitting a "Falta".
-  Widget _buildFaltasForm(BuildContext context) {
+  Widget _buildInputSection(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 21),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(20),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(35),
         boxShadow: [
           BoxShadow(
-            color: Colors.black26,
-            blurRadius: 10,
-            offset: Offset(0, 4),
+            color: Colors.black.withOpacity(0.3),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: Offset(0, 2),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildFormLabel("Data"),
-          CustomTextFormField(
-            controller: dateController,
-            hintText: 'DD/MM/YYYY',
-            textInputAction: TextInputAction.next,
-          ),
-          SizedBox(height: 20),
-          _buildFormLabel("Descrição"),
-          CustomTextFormField(
-            controller: descriptionController,
-            hintText: 'Descrição da falta',
-            textInputAction: TextInputAction.done,
-            maxLines: 4,
-          ),
-          SizedBox(height: 20),
-          _buildProofUploadSection(context),
-          SizedBox(height: 20),
-          _buildEnviarButton(context),
+          _buildDateInputField(context),
         ],
       ),
     );
   }
 
-  /// Builds the label for form fields.
-  Widget _buildFormLabel(String labelText) {
+  Widget _buildDateInputField(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 10),
-      child: Text(
-        labelText,
-        style: theme.textTheme.titleLarge,
-      ),
-    );
-  }
-
-  /// Builds the section for uploading a proof document.
-  Widget _buildProofUploadSection(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text("Comprovativo", style: theme.textTheme.titleLarge),
-        TextButton(
-          onPressed: () {
-            // Implement file upload
-          },
-          child: Text(
-            "PDF",
-            style: TextStyle(
-              color: theme.colorScheme.primary,
-              decoration: TextDecoration.underline,
+      padding: EdgeInsets.only(left: 1.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Data",
+            style: theme.textTheme.titleLarge,
+          ),
+          SizedBox(height: 5.v),
+          GestureDetector(
+            onTap: () async {
+              DateTime? pickedDate = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(2000),
+                lastDate: DateTime(2101),
+              );
+              if (pickedDate != null) {
+                setState(() {
+                  dateController.text = pickedDate.toString().split(" ")[0];
+                });
+              }
+            },
+            child: AbsorbPointer(
+              child: TextField(
+                controller: dateController,
+                decoration: InputDecoration(
+                  hintText: "DD/MM/YYYY",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  filled: true,
+                  fillColor: Colors.transparent,
+                  suffixIcon: Icon(Icons.calendar_today),
+                ),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  /// Builds the send button.
   Widget _buildEnviarButton(BuildContext context) {
-    return Center(
-      child: CustomOutlinedButton(
-        text: "Enviar",
-        onPressed: () {
-          onTapEnviar(context);
+    return CustomElevatedButton(
+      width: double.infinity,
+      text: "Enviar",
+      onPressed: () {
+        onTapEnviar(context);
+      },
+    );
+  }
+
+  void onTapEnviar(BuildContext context) async {
+    if (dateController.text.isEmpty) {
+      final snackBar = SnackBar(
+        content: Text('O campo "Data" é obrigatório.'),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return;
+    }
+
+    try {
+      await servidor.insertFalta(
+        '2', // Substitua pelo ID real do usuário
+        DateTime.parse(dateController.text),
+      );
+
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          content: PushNotificationDialog(),
+          backgroundColor: Colors.transparent,
+          contentPadding: EdgeInsets.zero,
+          insetPadding: const EdgeInsets.only(left: 0),
+        ),
+      );
+    } catch (e) {
+      print('Erro ao enviar falta: $e');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Erro ao enviar Falta!'),
+            content: Text(
+              'Ocorreu um erro ao tentar enviar a falta. Verifique os dados e tente novamente.\nErro: $e',
+              style: TextStyle(fontSize: 17),
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
         },
-      ),
-    );
-  }
-
-  /// Navigates to the paginaPerfilScreen when the action is triggered.
-  void onTapImgDoUtilizador(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
-  }
-
-  /// Displays a dialog with the PushNotificationDialog content.
-  void onTapEnviar(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        content: PushNotificationDialog(),
-        backgroundColor: Colors.transparent,
-        contentPadding: EdgeInsets.zero,
-        insetPadding: const EdgeInsets.only(left: 0),
-      ),
-    );
+      );
+    }
   }
 }

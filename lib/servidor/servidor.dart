@@ -236,7 +236,42 @@ Future<void> insertDespesasViaturaPessoal(
     }
   }
 
+Future<void> insertFalta(
+    String idUser,
+    DateTime data,
+  ) async {
+    // Verifica se os parâmetros obrigatórios não estão vazios
+    if (idUser.isEmpty || data == null) {
+      throw Exception('Dados inválidos: idUser e data são obrigatórios.');
+    }
 
+    // Define a URL base e o endpoint para inserir a falta
+    var url = '$baseURL/faltas/create';
+
+    // Prepara a requisição HTTP POST
+    var response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'id_user': idUser,
+        'data': data.toIso8601String(),
+      }),
+    );
+
+    // Imprime o status code e o corpo da resposta para depuração
+    print('Status code: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    // Verifica o status da resposta
+    if (response.statusCode == 201) {
+      print('Falta inserida com sucesso!');
+    } else {
+      print('Erro ao inserir falta: ${response.statusCode}');
+      throw Exception('Falha ao inserir falta: ${response.body}');
+    }
+  }
 
 
 
