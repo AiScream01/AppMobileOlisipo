@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
           theme: theme,
           title: 'rui_pedro_s_application11',
           debugShowCheckedModeBanner: false,
-          initialRoute: AppRoutes.faltasScreen,
+          initialRoute: AppRoutes.pedidoHorasScreen,
           //initialRoute: AppRoutes.loginScreen,
           routes: AppRoutes.routes,
         );

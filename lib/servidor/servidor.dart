@@ -273,6 +273,42 @@ Future<void> insertFalta(
     }
   }
 
+Future<void> insertHoras(
+  String idUser,
+  String horas,
+) async {
+  // Verifica se os parâmetros obrigatórios não estão vazios
+  if (idUser.isEmpty || horas.isEmpty) {
+    throw Exception('Dados inválidos: idUser e horas são obrigatórios.');
+  }
+
+  // Define a URL base e o endpoint para inserir as horas
+  var url = '$baseURL/horas/create';
+
+  // Prepara a requisição HTTP POST
+  var response = await http.post(
+    Uri.parse(url),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, dynamic>{
+      'id_user': idUser,
+      'horas': horas,
+    }),
+  );
+
+  // Imprime o status code e o corpo da resposta para depuração
+  print('Status code: ${response.statusCode}');
+  print('Response body: ${response.body}');
+
+  // Verifica o status da resposta
+  if (response.statusCode == 201) {
+    print('Horas inseridas com sucesso!');
+  } else {
+    print('Erro ao inserir horas: ${response.statusCode}');
+    throw Exception('Falha ao inserir horas: ${response.body}');
+  }
+}
 
 
 

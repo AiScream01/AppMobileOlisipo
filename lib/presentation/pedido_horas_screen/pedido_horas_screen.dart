@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
-import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
-import 'package:rui_pedro_s_application11/widgets/custom_text_form_field.dart';
+import 'package:rui_pedro_s_application11/widgets/custom_elevated_button.dart';
+import 'package:rui_pedro_s_application11/servidor/servidor.dart';
 import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
 
-// ignore: must_be_immutable
-class PedidoHorasScreen extends StatelessWidget {
-  PedidoHorasScreen({Key? key}) : super(key: key);
+class PedidoHorasScreen extends StatefulWidget {
+  const PedidoHorasScreen({Key? key}) : super(key: key);
 
-  TextEditingController descricaoController = TextEditingController();
-  TextEditingController tempoController = TextEditingController();
+  @override
+  _PedidoHorasScreenState createState() => _PedidoHorasScreenState();
+}
+
+class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
+  final Servidor servidor = Servidor();
+  int selectedHours = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -47,8 +51,7 @@ class PedidoHorasScreen extends StatelessWidget {
               ListTile(
                 title: const Text('Despesas viatura própria'),
                 onTap: () {
-                  Navigator.pushNamed(
-                      context, AppRoutes.despesasViaturaPropriaScreen);
+                  Navigator.pushNamed(context, AppRoutes.despesasViaturaPropriaScreen);
                 },
               ),
               ListTile(
@@ -58,7 +61,7 @@ class PedidoHorasScreen extends StatelessWidget {
                 },
               ),
               ListTile(
-                title: const Text('Noticias'),
+                title: const Text('Notícias'),
                 onTap: () {
                   Navigator.pushNamed(context, AppRoutes.noticiaScreen);
                 },
@@ -70,7 +73,7 @@ class PedidoHorasScreen extends StatelessWidget {
                 },
               ),
               ListTile(
-                title: const Text('Ferias'),
+                title: const Text('Férias'),
                 onTap: () {
                   Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
                 },
@@ -90,48 +93,48 @@ class PedidoHorasScreen extends StatelessWidget {
             ],
           ),
         ),
-        body: Container(
-          width: SizeUtils.width,
-          height: SizeUtils.height,
-          decoration: BoxDecoration(
-            color: theme.colorScheme.onPrimaryContainer,
-            boxShadow: [
-              BoxShadow(
-                color: appTheme.black900.withOpacity(0.3),
-                spreadRadius: 2.h,
-                blurRadius: 2.h,
-                offset: Offset(10, 10),
+        body: Stack(
+          children: [
+            Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.onPrimaryContainer,
+                image: DecorationImage(
+                  image: AssetImage(ImageConstant.imgLogin),
+                  fit: BoxFit.cover,
+                ),
               ),
-            ],
-            image: DecorationImage(
-              image: AssetImage(ImageConstant.imgLogin),
-              fit: BoxFit.cover,
             ),
-          ),
-          child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 30.v),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 80
-                      .v, // Espaçamento para descer o conteúdo abaixo da AppBar
-                ),
-                Text(
-                  "Horas",
-                  style: theme.textTheme.displayMedium?.copyWith(
-                    fontSize: 32.h,
-                    fontWeight: FontWeight.bold,
-                    color: const Color.fromARGB(255, 0, 0, 0),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 30.v),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: 80.v),
+                  Text(
+                    "Horas",
+                    style: theme.textTheme.displayMedium?.copyWith(
+                      fontSize: 32.h,
+                      fontWeight: FontWeight.bold,
+                      color: const Color.fromARGB(255, 0, 0, 0),
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 20.v),
-                _buildPedidoHoras(context),
-              ],
+                  SizedBox(height: 20.v),
+                  _buildPedidoHoras(context),
+                  SizedBox(height: 20.v),
+                  CustomElevatedButton(
+                    width: double.infinity,
+                    text: "Enviar",
+                    onPressed: () {
+                      onTapEnviar(context);
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -141,7 +144,7 @@ class PedidoHorasScreen extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(20.h),
       decoration: BoxDecoration(
-        color: Colors.white, // Caixa branca
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20.h),
         boxShadow: [
           BoxShadow(
@@ -167,52 +170,41 @@ class PedidoHorasScreen extends StatelessWidget {
               ),
               SizedBox(
                 width: 120.h,
-                child: CustomTextFormField(
-                  controller: tempoController,
-                  hintText: "HH:MM", // Sugere o formato de entrada
-                  textInputAction: TextInputAction.done,
-                  borderDecoration: TextFormFieldStyleHelper.outlineBlackTL10,
-                  filled: true,
-                  fillColor:
-                      theme.colorScheme.onPrimaryContainer.withOpacity(0.9),
+                child: DropdownButtonFormField<int>(
+                  value: selectedHours,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  items: List.generate(50, (index) => index + 1)
+                      .map((value) => DropdownMenuItem(
+                            value: value,
+                            child: Text("$value"),
+                          ))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedHours = value!;
+                    });
+                  },
                 ),
               ),
             ],
-          ),
-          SizedBox(height: 20.v),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              "Descrição",
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontSize: 20.h,
-                color: theme.colorScheme.primary,
-              ),
-            ),
-          ),
-          SizedBox(height: 10.v),
-          CustomTextFormField(
-            controller: descricaoController,
-            textInputAction: TextInputAction.done,
-            maxLines: 5, // Aumentando o campo de descrição
-            borderDecoration: TextFormFieldStyleHelper.outlineBlackTL10,
-            filled: true,
-            fillColor: theme.colorScheme.onPrimaryContainer.withOpacity(0.9),
-          ),
-          SizedBox(height: 20.v),
-          CustomOutlinedButton(
-            width: 144.h,
-            text: "Enviar",
-            onPressed: () {
-              onTapEnviar(context);
-            },
           ),
         ],
       ),
     );
   }
 
-  void onTapEnviar(BuildContext context) {
+  void onTapEnviar(BuildContext context) async {
+  try {
+    String userId = '2'; // Substitua pelo ID real do usuário
+    String horas = selectedHours.toString();
+    
+    // Apenas chama a função sem atribuir a uma variável
+    await servidor.insertHoras(userId, horas);
+
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -222,5 +214,28 @@ class PedidoHorasScreen extends StatelessWidget {
         insetPadding: const EdgeInsets.only(left: 0),
       ),
     );
+  } catch (e) {
+    print('Erro ao enviar horas: $e');
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Erro ao enviar Horas!'),
+          content: Text(
+            'Ocorreu um erro ao tentar enviar as horas. Verifique os dados e tente novamente.\nErro: $e',
+            style: TextStyle(fontSize: 17),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
+}
 }
