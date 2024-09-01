@@ -1,9 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
 
-class ParceriasPormenorOneScreen extends StatelessWidget {
-  const ParceriasPormenorOneScreen({Key? key}) : super(key: key);
+class ParceriasPormenorOneScreen extends StatefulWidget {
+  final String? logotipo;
+  final String? titulo;
+  final String? descricao;
+  final String? categoria;
 
+  const ParceriasPormenorOneScreen({
+    Key? key,
+    this.logotipo,
+    this.titulo,
+    this.descricao,
+    this.categoria,
+  }) : super(key: key);
+
+  @override
+  _ParceriasPormenorOneScreenState createState() =>
+      _ParceriasPormenorOneScreenState();
+}
+
+class _ParceriasPormenorOneScreenState
+    extends State<ParceriasPormenorOneScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -21,68 +39,7 @@ class ParceriasPormenorOneScreen extends StatelessWidget {
         ),
         extendBody: true,
         extendBodyBehindAppBar: true,
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                ),
-                child: Text('Menu de Navegação'),
-              ),
-              ListTile(
-                title: const Text('Ajudas de Custo'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.ajudasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Despesas viatura própria'),
-                onTap: () {
-                  Navigator.pushNamed(
-                      context, AppRoutes.despesasViaturaPropriaScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Faltas'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.faltasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Noticias'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.noticiaScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Parcerias'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.parceriasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Ferias'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Horas'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Reuniões'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.reunioesScreen);
-                },
-              ),
-            ],
-          ),
-        ),
+        drawer: _buildDrawer(context),
         body: Container(
           width: SizeUtils.width,
           height: SizeUtils.height,
@@ -132,7 +89,7 @@ class ParceriasPormenorOneScreen extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  "Nome parceria",
+                                  widget.titulo ?? 'Nome da Parceria',
                                   style: theme.textTheme.headlineLarge,
                                   textAlign: TextAlign.center,
                                 ),
@@ -143,30 +100,32 @@ class ParceriasPormenorOneScreen extends StatelessWidget {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 9.h, vertical: 12.v),
-                                        decoration: AppDecoration.fillGray
-                                            .copyWith(
-                                                borderRadius: BorderRadiusStyle
-                                                    .roundedBorder8),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Icon(Icons.arrow_back_ios),
-                                            Icon(Icons.arrow_forward_ios),
-                                          ],
-                                        ),
-                                      ),
+                                      //Container(
+                                      //  padding: EdgeInsets.symmetric(
+                                      //      horizontal: 9.h, vertical: 12.v),
+                                      //  decoration: AppDecoration.fillGray
+                                      //      .copyWith(
+                                      //          borderRadius: BorderRadiusStyle
+                                      //              .roundedBorder8),
+                                      //  child: Row(
+                                      //    mainAxisAlignment:
+                                      //        MainAxisAlignment.spaceBetween,
+                                      //    children: [
+                                      //      Icon(Icons.arrow_back_ios),
+                                      //      Icon(Icons.arrow_forward_ios),
+                                      //    ],
+                                      //  ),
+                                      //),
                                       SizedBox(height: 10.v),
-                                      Text("Parceria",
+                                      Text(
+                                          'Categoria: ${widget.categoria ?? 'Não especificado'}',
                                           style: theme.textTheme.titleMedium),
                                       SizedBox(height: 11.v),
                                       Container(
                                         width: double.infinity,
                                         child: Text(
-                                          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                                          widget.descricao ??
+                                              'Descrição não disponível.',
                                           maxLines: 9,
                                           overflow: TextOverflow.ellipsis,
                                           style: CustomTextStyles
@@ -189,6 +148,71 @@ class ParceriasPormenorOneScreen extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDrawer(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          const DrawerHeader(
+            decoration: BoxDecoration(
+              color: Colors.green,
+            ),
+            child: Text('Menu de Navegação'),
+          ),
+          ListTile(
+            title: const Text('Ajudas de Custo'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.ajudasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Despesas viatura própria'),
+            onTap: () {
+              Navigator.pushNamed(
+                  context, AppRoutes.despesasViaturaPropriaScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Faltas'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.faltasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Notícias'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.noticiasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Parcerias'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.parceriasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Férias'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Horas'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Reuniões'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.reunioesScreen);
+            },
+          ),
+        ],
       ),
     );
   }

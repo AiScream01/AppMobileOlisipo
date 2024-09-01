@@ -1,3 +1,5 @@
+import 'package:rui_pedro_s_application11/presentation/parcerias_pormenor_one_screen/parcerias_pormenor_one_screen.dart';
+
 import '../parcerias_screen/widgets/parceriasgrid_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
@@ -180,7 +182,8 @@ class _ParceriasScreenState extends State<ParceriasScreen> {
           ListTile(
             title: const Text('Despesas viatura própria'),
             onTap: () {
-              Navigator.pushNamed(context, AppRoutes.despesasViaturaPropriaScreen);
+              Navigator.pushNamed(
+                  context, AppRoutes.despesasViaturaPropriaScreen);
             },
           ),
           ListTile(
@@ -225,42 +228,53 @@ class _ParceriasScreenState extends State<ParceriasScreen> {
   }
 
   Widget _buildParceriasGrid(BuildContext context) {
-  // Verifica se já há parcerias carregadas
-  if (parcerias.isEmpty) {
-    return Center(child: CircularProgressIndicator());
+    // Verifica se já há parcerias carregadas
+    if (parcerias.isEmpty) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 10.v),
+      child: GridView.builder(
+        shrinkWrap: true,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          mainAxisExtent: 120.v,
+          crossAxisCount: 2,
+          mainAxisSpacing: 16.h,
+          crossAxisSpacing: 16.h,
+        ),
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: parcerias.length,
+        itemBuilder: (context, index) {
+          // Desestrutura a tupla
+          var (logotipo, titulo, descricao, categoria) = parcerias[index];
+          return ParceriasgridItemWidget(
+            titulo: titulo,
+            onTapWidget: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ParceriasPormenorOneScreen(
+                    logotipo: logotipo,
+                    titulo: titulo,
+                    descricao: descricao,
+                    categoria: categoria,
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
   }
 
-  return Padding(
-    padding: EdgeInsets.symmetric(vertical: 10.v),
-    child: GridView.builder(
-      shrinkWrap: true,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        mainAxisExtent: 120.v,
-        crossAxisCount: 2,
-        mainAxisSpacing: 16.h,
-        crossAxisSpacing: 16.h,
-      ),
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: parcerias.length,
-      itemBuilder: (context, index) {
-        // Desestrutura a tupla
-        var (_, titulo, _, _) = parcerias[index];
-        return ParceriasgridItemWidget(
-          titulo: titulo,
-          onTapWidget: () {
-            onTapWidget(context, index.toString()); // Usa o índice ou ID correspondente
-          },
-        );
-      },
-    ),
-  );
-}
-
-  void onTapWidget(BuildContext context, String idParceria) {
+  void onTapWidget(BuildContext context, int index) {
+    var parceria = parcerias[index];
     Navigator.pushNamed(
       context,
       AppRoutes.parceriasPormenorOneScreen,
-      arguments: idParceria,
+      arguments: parceria,
     );
   }
 
