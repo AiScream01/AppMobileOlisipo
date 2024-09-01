@@ -12,16 +12,12 @@ class ParceriasScreen extends StatefulWidget {
 
 class ParceriasgridItemWidget extends StatelessWidget {
   final String titulo;
-  final String logotipo;
   final VoidCallback onTapWidget;
-  final VoidCallback onTapImgImageThree;
 
   const ParceriasgridItemWidget({
     Key? key,
-    required this.logotipo,
     required this.titulo,
     required this.onTapWidget,
-    required this.onTapImgImageThree,
   }) : super(key: key);
 
   @override
@@ -29,15 +25,20 @@ class ParceriasgridItemWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onTapWidget,
       child: Card(
-        child: Column(
-          children: [
-            Image.network(logotipo), // ou outro tipo de imagem
-            Text(titulo),
-            IconButton(
-              icon: Icon(Icons.image),
-              onPressed: onTapImgImageThree,
+        color: Colors.white, // Cor de fundo branca
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.all(16.0), // Adiciona algum padding
+            child: Text(
+              titulo,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0, // Tamanho do texto, ajuste conforme necessário
+                color: Colors.black, // Cor do texto
+              ),
+              textAlign: TextAlign.center, // Alinha o texto ao centro
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -90,20 +91,7 @@ class _ParceriasScreenState extends State<ParceriasScreen> {
         ),
         extendBody: true,
         extendBodyBehindAppBar: true,
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                ),
-                child: Text('Menu de Navegação'),
-              ),
-              // Menu Items...
-            ],
-          ),
-        ),
+        drawer: _buildDrawer(context),
         body: Container(
           width: SizeUtils.width,
           height: SizeUtils.height,
@@ -172,42 +160,101 @@ class _ParceriasScreenState extends State<ParceriasScreen> {
     );
   }
 
-  Widget _buildParceriasGrid(BuildContext context) {
-    // Verifica se já há parcerias carregadas
-    if (parcerias.isEmpty) {
-      return Center(child: CircularProgressIndicator());
-    }
-
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.v),
-      child: GridView.builder(
-        shrinkWrap: true,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          mainAxisExtent: 120.v,
-          crossAxisCount: 2,
-          mainAxisSpacing: 16.h,
-          crossAxisSpacing: 16.h,
-        ),
-        physics: NeverScrollableScrollPhysics(),
-        itemCount: parcerias.length,
-        itemBuilder: (context, index) {
-          // Desestrutura a tupla
-          var (logotipo, titulo, descricao, categoria) = parcerias[index];
-          return ParceriasgridItemWidget(
-            titulo: titulo,
-            logotipo: logotipo,
-            onTapWidget: () {
-              onTapWidget(context,
-                  index.toString()); // Usa o índice ou ID correspondente
+  Widget _buildDrawer(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          const DrawerHeader(
+            decoration: BoxDecoration(
+              color: Colors.green,
+            ),
+            child: Text('Menu de Navegação'),
+          ),
+          ListTile(
+            title: const Text('Ajudas de Custo'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.ajudasScreen);
             },
-            onTapImgImageThree: () {
-              onTapImgImageThree(context, index.toString());
+          ),
+          ListTile(
+            title: const Text('Despesas viatura própria'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.despesasViaturaPropriaScreen);
             },
-          );
-        },
+          ),
+          ListTile(
+            title: const Text('Faltas'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.faltasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Notícias'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.noticiasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Parcerias'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.parceriasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Férias'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Horas'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Reuniões'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.reunioesScreen);
+            },
+          ),
+        ],
       ),
     );
   }
+
+  Widget _buildParceriasGrid(BuildContext context) {
+  // Verifica se já há parcerias carregadas
+  if (parcerias.isEmpty) {
+    return Center(child: CircularProgressIndicator());
+  }
+
+  return Padding(
+    padding: EdgeInsets.symmetric(vertical: 10.v),
+    child: GridView.builder(
+      shrinkWrap: true,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        mainAxisExtent: 120.v,
+        crossAxisCount: 2,
+        mainAxisSpacing: 16.h,
+        crossAxisSpacing: 16.h,
+      ),
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: parcerias.length,
+      itemBuilder: (context, index) {
+        // Desestrutura a tupla
+        var (_, titulo, _, _) = parcerias[index];
+        return ParceriasgridItemWidget(
+          titulo: titulo,
+          onTapWidget: () {
+            onTapWidget(context, index.toString()); // Usa o índice ou ID correspondente
+          },
+        );
+      },
+    ),
+  );
+}
 
   void onTapWidget(BuildContext context, String idParceria) {
     Navigator.pushNamed(
