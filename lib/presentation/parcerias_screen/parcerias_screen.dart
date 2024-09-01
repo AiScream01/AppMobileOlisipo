@@ -1,9 +1,77 @@
 import '../parcerias_screen/widgets/parceriasgrid_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
+import '../../servidor/basedados.dart';
 
-class ParceriasScreen extends StatelessWidget {
+class ParceriasScreen extends StatefulWidget {
   const ParceriasScreen({Key? key}) : super(key: key);
+
+  @override
+  _ParceriasScreenState createState() => _ParceriasScreenState();
+}
+
+class ParceriasgridItemWidget extends StatelessWidget {
+  final String titulo;
+  final String logotipo;
+  final VoidCallback onTapWidget;
+  final VoidCallback onTapImgImageThree;
+
+  const ParceriasgridItemWidget({
+    Key? key,
+    required this.logotipo,
+    required this.titulo,
+    required this.onTapWidget,
+    required this.onTapImgImageThree,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTapWidget,
+      child: Card(
+        child: Column(
+          children: [
+            Image.network(logotipo), // ou outro tipo de imagem
+            Text(titulo),
+            IconButton(
+              icon: Icon(Icons.image),
+              onPressed: onTapImgImageThree,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ParceriasScreenState extends State<ParceriasScreen> {
+  var bd = Basededados();
+
+  // Lista de tuplas para armazenar as parcerias
+  final List<(String, String, String, String)> parcerias = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchParcerias();
+  }
+
+  // Função para buscar as parcerias do banco de dados
+  Future<void> _fetchParcerias() async {
+    var resultado = await bd.listarTodasParcerias();
+
+    setState(() {
+      parcerias.clear(); // Limpa a lista antes de adicionar novos resultados
+      for (var parceria in resultado) {
+        parcerias.add((
+          parceria['logotipo'] as String,
+          parceria['titulo'] as String,
+          parceria['descricao'] as String,
+          parceria['categoria'] as String
+        ));
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,55 +100,7 @@ class ParceriasScreen extends StatelessWidget {
                 ),
                 child: Text('Menu de Navegação'),
               ),
-              ListTile(
-                title: const Text('Ajudas de Custo'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.ajudasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Despesas viatura própria'),
-                onTap: () {
-                  Navigator.pushNamed(
-                      context, AppRoutes.despesasViaturaPropriaScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Faltas'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.faltasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Noticias'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.noticiaScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Parcerias'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.parceriasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Ferias'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Horas'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Reuniões'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.reunioesScreen);
-                },
-              ),
+              // Menu Items...
             ],
           ),
         ),
@@ -113,7 +133,7 @@ class ParceriasScreen extends StatelessWidget {
                   padding: EdgeInsets.all(16.h),
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/images/background_pattern.png'),
+                      image: AssetImage(ImageConstant.imgLogin),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -153,6 +173,11 @@ class ParceriasScreen extends StatelessWidget {
   }
 
   Widget _buildParceriasGrid(BuildContext context) {
+    // Verifica se já há parcerias carregadas
+    if (parcerias.isEmpty) {
+      return Center(child: CircularProgressIndicator());
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 10.v),
       child: GridView.builder(
@@ -164,14 +189,19 @@ class ParceriasScreen extends StatelessWidget {
           crossAxisSpacing: 16.h,
         ),
         physics: NeverScrollableScrollPhysics(),
-        itemCount: 20,
+        itemCount: parcerias.length,
         itemBuilder: (context, index) {
+          // Desestrutura a tupla
+          var (logotipo, titulo, descricao, categoria) = parcerias[index];
           return ParceriasgridItemWidget(
+            titulo: titulo,
+            logotipo: logotipo,
             onTapWidget: () {
-              onTapWidget(context);
+              onTapWidget(context,
+                  index.toString()); // Usa o índice ou ID correspondente
             },
             onTapImgImageThree: () {
-              onTapImgImageThree(context);
+              onTapImgImageThree(context, index.toString());
             },
           );
         },
@@ -179,11 +209,19 @@ class ParceriasScreen extends StatelessWidget {
     );
   }
 
-  void onTapWidget(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.parceriasPormenorOneScreen);
+  void onTapWidget(BuildContext context, String idParceria) {
+    Navigator.pushNamed(
+      context,
+      AppRoutes.parceriasPormenorOneScreen,
+      arguments: idParceria,
+    );
   }
 
-  void onTapImgImageThree(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.parceriasPormenorOneScreen);
+  void onTapImgImageThree(BuildContext context, String idParceria) {
+    Navigator.pushNamed(
+      context,
+      AppRoutes.parceriasPormenorOneScreen,
+      arguments: idParceria,
+    );
   }
 }

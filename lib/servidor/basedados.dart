@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'dart:convert'; // Para usar jsonEncode
-import 'package:http/http.dart' as http; // Para usar http.post
 
 class Basededados {
   static const nomebd = "bdadm.db";
@@ -169,15 +167,15 @@ class Basededados {
   //---------------------------------------PARCERIAS-----------------------------------------
 
   //---------------------------------------Criar tabela de parcerias
-  Future<void> criatabelaParcerias(Database db) async {
+  Future<void> criatabelaParcerias() async {
+    Database db = await basededados;
     await db.execute('''
     CREATE TABLE protocolos_parcerias (
       id_parceria INTEGER PRIMARY KEY AUTOINCREMENT,
-      nome TEXT,
+      logotipo TEXT,
+      titulo TEXT,
       descricao TEXT,
-      dataCriacao TEXT,
-      ultimaAtualizacao TEXT,
-      sincronizado INTEGER DEFAULT 0
+      categoria TEXT
     )
   ''');
   }
@@ -196,7 +194,7 @@ class Basededados {
           categoria,
         ) in parceriaData) {
       await db.rawInsert(
-          ' INSERT INTO protocolos_parcerias ( logotipo, titulo,descricao,categoria) VALUES (?,?,?,?)',
+          ' INSERT INTO protocolos_parcerias (logotipo, titulo,descricao,categoria) VALUES (?,?,?,?)',
           [logotipo, titulo, descricao, categoria]);
       print(titulo);
     }
@@ -249,15 +247,15 @@ class Basededados {
 //---------------------------------------NOTICIAS-----------------------------------------
 
 //---------------------------------------Criar tabela de notícias
-  Future<void> criarTabelaNoticias(Database db) async {
+  Future<void> criarTabelaNoticias() async {
+    Database db = await basededados;
     await db.execute('''
     CREATE TABLE noticias (
       id_noticia INTEGER PRIMARY KEY AUTOINCREMENT,
       titulo TEXT,
       descricao TEXT,
       data TEXT,
-      imagem TEXT,
-      sincronizado INTEGER DEFAULT 0
+      imagem TEXT
     )
   ''');
   }
@@ -276,7 +274,7 @@ class Basededados {
           imagem,
         ) in noticiaData) {
       await db.rawInsert(
-          ' INSERT INTO noticias ( titulo, descricao,data,imagem) VALUES (?,?,?,?)',
+          ' INSERT INTO noticias (titulo, descricao,data,imagem) VALUES (?,?,?,?)',
           [titulo, descricao, data, imagem]);
       print(titulo);
     }

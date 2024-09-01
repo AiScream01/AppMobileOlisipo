@@ -191,7 +191,7 @@ class Servidor {
     }
   }
 
-Future<void> insertDespesasViaturaPessoal(
+  Future<void> insertDespesasViaturaPessoal(
     String idUser,
     double km,
     String pontoPartida,
@@ -201,7 +201,8 @@ Future<void> insertDespesasViaturaPessoal(
   ) async {
     // Verifica se os parâmetros obrigatórios não estão vazios
     if (idUser.isEmpty || pontoPartida.isEmpty || pontoChegada.isEmpty) {
-      throw Exception('Dados inválidos: idUser, pontoPartida e pontoChegada são obrigatórios.');
+      throw Exception(
+          'Dados inválidos: idUser, pontoPartida e pontoChegada são obrigatórios.');
     }
 
     // Define a URL base e o endpoint para inserir as despesas de viatura pessoal
@@ -231,12 +232,14 @@ Future<void> insertDespesasViaturaPessoal(
     if (response.statusCode == 201) {
       print('Despesa de viatura pessoal inserida com sucesso!');
     } else {
-      print('Erro ao inserir despesa de viatura pessoal: ${response.statusCode}');
-      throw Exception('Falha ao inserir despesa de viatura pessoal: ${response.body}');
+      print(
+          'Erro ao inserir despesa de viatura pessoal: ${response.statusCode}');
+      throw Exception(
+          'Falha ao inserir despesa de viatura pessoal: ${response.body}');
     }
   }
 
-Future<void> insertFalta(
+  Future<void> insertFalta(
     String idUser,
     DateTime data,
   ) async {
@@ -273,52 +276,42 @@ Future<void> insertFalta(
     }
   }
 
-Future<void> insertHoras(
-  String idUser,
-  String horas,
-) async {
-  // Verifica se os parâmetros obrigatórios não estão vazios
-  if (idUser.isEmpty || horas.isEmpty) {
-    throw Exception('Dados inválidos: idUser e horas são obrigatórios.');
+  Future<void> insertHoras(
+    String idUser,
+    String horas,
+  ) async {
+    // Verifica se os parâmetros obrigatórios não estão vazios
+    if (idUser.isEmpty || horas.isEmpty) {
+      throw Exception('Dados inválidos: idUser e horas são obrigatórios.');
+    }
+
+    // Define a URL base e o endpoint para inserir as horas
+    var url = '$baseURL/horas/create';
+
+    // Prepara a requisição HTTP POST
+    var response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'id_user': idUser,
+        'horas': horas,
+      }),
+    );
+
+    // Imprime o status code e o corpo da resposta para depuração
+    print('Status code: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    // Verifica o status da resposta
+    if (response.statusCode == 201) {
+      print('Horas inseridas com sucesso!');
+    } else {
+      print('Erro ao inserir horas: ${response.statusCode}');
+      throw Exception('Falha ao inserir horas: ${response.body}');
+    }
   }
-
-  // Define a URL base e o endpoint para inserir as horas
-  var url = '$baseURL/horas/create';
-
-  // Prepara a requisição HTTP POST
-  var response = await http.post(
-    Uri.parse(url),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(<String, dynamic>{
-      'id_user': idUser,
-      'horas': horas,
-    }),
-  );
-
-  // Imprime o status code e o corpo da resposta para depuração
-  print('Status code: ${response.statusCode}');
-  print('Response body: ${response.body}');
-
-  // Verifica o status da resposta
-  if (response.statusCode == 201) {
-    print('Horas inseridas com sucesso!');
-  } else {
-    print('Erro ao inserir horas: ${response.statusCode}');
-    throw Exception('Falha ao inserir horas: ${response.body}');
-  }
-}
-
-
-
-
-
-
-
-
-
-
 }
 
 
