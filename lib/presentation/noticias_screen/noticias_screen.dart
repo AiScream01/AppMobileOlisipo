@@ -25,45 +25,6 @@ class NoticiasScreen extends StatefulWidget {
   _NoticiasScreenState createState() => _NoticiasScreenState();
 }
 
-class NoticiasgridItemWidget extends StatelessWidget {
-  final String titulo;
-  final VoidCallback onTapWidget;
-
-  const NoticiasgridItemWidget({
-    Key? key,
-    required this.titulo,
-    required this.onTapWidget,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTapWidget,
-      child: Card(
-        elevation: 5.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        color: Colors.white,
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              titulo,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16.0,
-                color: Colors.black87,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _NoticiasScreenState extends State<NoticiasScreen> {
   final Basededados bd = Basededados();
 
@@ -130,12 +91,13 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
               fit: BoxFit.cover,
             ),
           ),
-          child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
+          child: Padding(
+            padding: EdgeInsets.all(20.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment:
+                  CrossAxisAlignment.center, // Alinhar tudo no centro
               children: [
-                SizedBox(height: 100),
+                SizedBox(height: 100), // Espaço para o AppBar
                 Text(
                   "Notícias",
                   style: TextStyle(
@@ -152,7 +114,9 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
                   ),
                 ),
                 SizedBox(height: 20),
-                _buildNoticiasGrid(context),
+                Expanded(
+                  child: _buildNoticiasTable(context),
+                ),
               ],
             ),
           ),
@@ -168,7 +132,7 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
         children: [
           const DrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.green,
+              color: Colors.green, // Cor verde usada no menu
             ),
             child: Text('Menu de Navegação',
                 style: TextStyle(color: Colors.white, fontSize: 24)),
@@ -227,42 +191,103 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
     );
   }
 
-  Widget _buildNoticiasGrid(BuildContext context) {
+  Widget _buildNoticiasTable(BuildContext context) {
     if (noticias.isEmpty) {
       return Center(child: CircularProgressIndicator());
     }
 
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.0),
-      child: GridView.builder(
-        shrinkWrap: true,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          mainAxisExtent: 140.0,
-          crossAxisCount: 2,
-          mainAxisSpacing: 16.0,
-          crossAxisSpacing: 16.0,
+    return SingleChildScrollView(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.3),
+              spreadRadius: 2,
+              blurRadius: 8,
+              offset: Offset(0, 3),
+            ),
+          ],
         ),
-        physics: NeverScrollableScrollPhysics(),
-        itemCount: noticias.length,
-        itemBuilder: (context, index) {
-          var noticia = noticias[index];
-          return NoticiasgridItemWidget(
-            titulo: noticia.titulo,
-            onTapWidget: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NoticiaScreen(
-                    titulo: noticia.titulo,
-                    descricao: noticia.descricao,
-                    imagem: noticia.imagem,
-                    data: noticia.data,
+        child: DataTable(
+          columnSpacing: 24.0,
+          headingRowColor: MaterialStateColor.resolveWith(
+            (states) => Colors.green, // Verde usado no cabeçalho
+          ),
+          headingTextStyle: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+          dataRowColor: MaterialStateColor.resolveWith(
+            (states) => Colors.white,
+          ),
+          dividerThickness: 2,
+          columns: [
+            DataColumn(
+              label: Expanded(
+                child: Text(
+                  'Título',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+            DataColumn(
+              label: Expanded(
+                child: Text(
+                  'Data',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ],
+          rows: noticias.map((noticia) {
+            return DataRow(
+              cells: [
+                DataCell(
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => NoticiaScreen(
+                            titulo: noticia.titulo,
+                            descricao: noticia.descricao,
+                            imagem: noticia.imagem,
+                            data: noticia.data,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(12.0),
+                      child: Text(
+                        noticia.titulo,
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          color: Colors.black87,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   ),
                 ),
-              );
-            },
-          );
-        },
+                DataCell(
+                  Container(
+                    padding: EdgeInsets.all(12.0),
+                    child: Text(
+                      noticia.data,
+                      style: TextStyle(fontSize: 14.0, color: Colors.black54),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }).toList(),
+        ),
       ),
     );
   }
