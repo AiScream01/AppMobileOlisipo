@@ -106,8 +106,6 @@ class Servidor {
     bd.inserirReuniao(reunioes);
     bd.inserirDespesaViaturaPessoal(despesasViatura);
     bd.inserirFalta(faltas);
-
-    //Isererir utilizador falta
   }
 
   Future<void> insertFerias(
@@ -312,17 +310,42 @@ class Servidor {
       throw Exception('Falha ao inserir horas: ${response.body}');
     }
   }
+
+//LOGIN
+  Future<void> login(String username, String password) async {
+    if (username.isEmpty || password.isEmpty) {
+      throw Exception('Dados inválidos: username e password são obrigatórios.');
+    }
+
+    var url = '$baseURL/utilizador/login';
+
+    try {
+      var response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'username': username,
+          'password': password,
+        }),
+      );
+
+      print('Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        print('Login bem-sucedido: ${data}');
+      } else {
+        print('Erro ao realizar login: ${response.statusCode}');
+        throw Exception('Falha ao realizar login: ${response.body}');
+      }
+    } catch (e) {
+      print('Erro ao realizar login: $e');
+    }
+  }
 }
-
-
-
-
-
-
-
-
-
-
 
 
 

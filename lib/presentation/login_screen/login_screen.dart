@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
+import 'package:rui_pedro_s_application11/widgets/custom_elevated_button.dart';
 //import 'package:rui_pedro_s_application11/widgets/custom_elevated_button.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_text_form_field.dart';
 import 'package:rui_pedro_s_application11/servidor/servidor.dart';
@@ -108,28 +109,29 @@ class LoginScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: 50),
-          //CustomElevatedButton(
-          //  height: 60,
-          //  width: 155,
-          //  text: "Login",
-          //  onPressed: () async {
-          //    String? token = await servidor.login(
-          //      emailController.text,
-          //      passwordController.text,
-          //    );
-          //    if (token != null) {
-          //      await servidor.saveToken(token);
-          //      Navigator.pushReplacementNamed(
-          //          context, '/pagina_principal_screen');
-          //    } else {
-          //      ScaffoldMessenger.of(context).showSnackBar(
-          //        SnackBar(
-          //          content: Text('Credenciais inválidas'),
-          //        ),
-          //      );
-          //    }
-          //  },
-          //),
+          CustomElevatedButton(
+            height: 60,
+            width: 155,
+            text: "Login",
+            onPressed: () async {
+              try {
+                await servidor.login(
+                  emailController.text,
+                  passwordController.text,
+                );
+                Navigator.pushReplacementNamed(
+                  context,
+                  '/pagina_principal_screen', // ou o nome da rota que você deseja navegar
+                );
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Credenciais inválidas'),
+                  ),
+                );
+              }
+            },
+          ),
           SizedBox(height: 19),
           GestureDetector(
             onTap: () {
