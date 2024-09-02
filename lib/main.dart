@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
       ser.getNoticiasEParcerias();
       //bd.criatabelaParcerias();
       //bd.criarTabelaNoticias();
+      //bd.criatabelaUtilizadores();
     }
 
     servidor_basededados();
@@ -36,7 +37,7 @@ class MyApp extends StatelessWidget {
           theme: theme,
           title: 'rui_pedro_s_application11',
           debugShowCheckedModeBanner: false,
-          initialRoute: AppRoutes.parceriasScreen,
+          initialRoute: AppRoutes.paginaPerfilScreen,
           //initialRoute: AppRoutes.loginScreen,
           routes: AppRoutes.routes,
         );

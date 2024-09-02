@@ -30,7 +30,7 @@ class Basededados {
   //---------------------------------------UTILIZADORES-----------------------------------------
 
   //---------------------------------------Criar tabela de utilizadores
-  Future<void> criatabelaUtilizadores(Database db) async {
+  Future<void> criatabelaUtilizadores() async {
     Database db = await basededados;
     await db.execute('''
       CREATE TABLE utilizadores (
@@ -87,6 +87,10 @@ class Basededados {
     );
   }
 
+  Future<List<Map<String, dynamic>>> listarTodosUtilizadores() async {
+    Database db = await basededados;
+    return await db.query('utilizadores');
+  }
   //---------------------------------------FÉRIAS-----------------------------------------
 
 //---------------------------------------Criar tabela de férias
