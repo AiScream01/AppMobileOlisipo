@@ -55,7 +55,7 @@ class ReunioesScreen extends StatelessWidget {
               ListTile(
                 title: const Text('Noticias'),
                 onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.noticiaScreen);
+                  Navigator.pushNamed(context, AppRoutes.noticiasScreen);
                 },
               ),
               ListTile(

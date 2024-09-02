@@ -62,7 +62,12 @@ class AppRoutes {
   static Map<String, WidgetBuilder> routes = {
     loginScreen: (context) => LoginScreen(),
     paginaPrincipalScreen: (context) => PaginaPrincipalScreen(),
-    noticiaScreen: (context) => NoticiaScreen(),
+    noticiaScreen: (context) => NoticiaScreen(
+          titulo: '',
+          descricao: '',
+          imagem: '',
+          data: '',
+        ),
     registoScreen: (context) => RegistoScreen(),
     recuperarPasswordEmailScreen: (context) => RecuperarPasswordEmailScreen(),
     recuperarPasswordConfirmarPasswordScreen: (context) =>

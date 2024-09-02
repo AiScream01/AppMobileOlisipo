@@ -1,175 +1,159 @@
 import 'package:flutter/material.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
+import 'package:rui_pedro_s_application11/presentation/noticia_screen/noticia_screen.dart';
+import '../../servidor/basedados.dart';
 
-class NoticiasScreen extends StatelessWidget {
+// Modelo de Noticia
+class Noticia {
+  final String data;
+  final String titulo;
+  final String descricao;
+  final String imagem;
+
+  Noticia({
+    required this.data,
+    required this.titulo,
+    required this.descricao,
+    required this.imagem,
+  });
+}
+
+class NoticiasScreen extends StatefulWidget {
   const NoticiasScreen({Key? key}) : super(key: key);
+
+  @override
+  _NoticiasScreenState createState() => _NoticiasScreenState();
+}
+
+class NoticiasgridItemWidget extends StatelessWidget {
+  final String titulo;
+  final VoidCallback onTapWidget;
+
+  const NoticiasgridItemWidget({
+    Key? key,
+    required this.titulo,
+    required this.onTapWidget,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTapWidget,
+      child: Card(
+        elevation: 5.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        color: Colors.white,
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              titulo,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0,
+                color: Colors.black87,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NoticiasScreenState extends State<NoticiasScreen> {
+  final Basededados bd = Basededados();
+
+  final List<Noticia> noticias = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchNoticias();
+  }
+
+  Future<void> _fetchNoticias() async {
+    final resultado = await bd.listarTodasNoticias();
+
+    setState(() {
+      noticias.clear();
+      for (var noticia in resultado) {
+        noticias.add(Noticia(
+          data: noticia['data'] as String,
+          titulo: noticia['titulo'] as String,
+          descricao: noticia['descricao'] as String,
+          imagem: noticia['imagem'] as String,
+        ));
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        extendBody: true,
-        extendBodyBehindAppBar: true,
         appBar: AppBar(
-          backgroundColor:
-              Colors.transparent, // Transparente para que o fundo seja visível
-          elevation: 0, // Remove a sombra da AppBar
           actions: [
             IconButton(
-              icon: Icon(Icons.account_circle),
-              iconSize: 40.0,
+              icon: Icon(Icons.account_circle, color: Colors.black87),
+              iconSize: 32.0,
               onPressed: () {
                 Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
               },
             ),
           ],
-        ),
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                ),
-                child: Text('Menu de Navegação'),
-              ),
-              ListTile(
-                title: const Text('Ajudas de Custo'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.ajudasScreen);
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                icon: Icon(Icons.menu, color: Colors.black87),
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
                 },
-              ),
-              ListTile(
-                title: const Text('Despesas viatura própria'),
-                onTap: () {
-                  Navigator.pushNamed(
-                      context, AppRoutes.despesasViaturaPropriaScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Faltas'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.faltasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Noticias'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.noticiaScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Parcerias'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.parceriasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Ferias'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Horas'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Reuniões'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.reunioesScreen);
-                },
-              ),
-            ],
+              );
+            },
           ),
         ),
+        extendBody: true,
+        extendBodyBehindAppBar: true,
+        drawer: _buildDrawer(context),
         body: Container(
           width: double.infinity,
           height: double.infinity,
           decoration: BoxDecoration(
-            color: theme.colorScheme.onPrimaryContainer,
-            boxShadow: [
-              BoxShadow(
-                color: appTheme.black900.withOpacity(0.3),
-                spreadRadius: 2.h,
-                blurRadius: 2.h,
-                offset: Offset(10, 10),
-              )
-            ],
             image: DecorationImage(
               image: AssetImage(ImageConstant.imgLogin),
               fit: BoxFit.cover,
             ),
           ),
-          child: Center(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 30.v),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                      height: kToolbarHeight +
-                          20.v), // Adiciona espaçamento equivalente à altura da AppBar + extra padding
-                  Text("Notícias", style: theme.textTheme.displayMedium),
-                  SizedBox(height: 20.v),
-                  Container(
-                    height: MediaQuery.of(context).size.height *
-                        0.35, // 35% da altura da tela
-                    width: MediaQuery.of(context).size.width *
-                        0.9, // 90% da largura da tela
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.onPrimaryContainer,
-                      borderRadius: BorderRadius.circular(35.h),
-                      border: Border.all(color: appTheme.gray20001, width: 1.h),
-                      boxShadow: [
-                        BoxShadow(
-                          color: appTheme.black900.withOpacity(0.2),
-                          spreadRadius: 2.h,
-                          blurRadius: 2.h,
-                          offset: Offset(0, 4),
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 15.v),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: GestureDetector(
-                      onTap: () {
-                        onTapTxtEstetextovaiconter4(context);
-                      },
-                      child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 5.h),
-                        child: RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text:
-                                    "Este texto vai conter a descrição da notícia que está acima.",
-                                style: CustomTextStyles.titleLargeff000000,
-                              ),
-                              TextSpan(text: " "),
-                              TextSpan(
-                                text: "Ver mais",
-                                style: theme.textTheme.titleSmall,
-                              ),
-                            ],
-                          ),
-                          textAlign: TextAlign.left,
-                        ),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 100),
+                Text(
+                  "Notícias",
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                    shadows: [
+                      Shadow(
+                        offset: Offset(1, 1),
+                        blurRadius: 3.0,
+                        color: Colors.grey.withOpacity(0.5),
                       ),
-                    ),
+                    ],
                   ),
-                  SizedBox(height: 14.v),
-                  _buildEightyTwoRow(context),
-                  SizedBox(height: 17.v),
-                  _buildViewRow(context),
-                ],
-              ),
+                ),
+                SizedBox(height: 20),
+                _buildNoticiasGrid(context),
+              ],
             ),
           ),
         ),
@@ -177,116 +161,109 @@ class NoticiasScreen extends StatelessWidget {
     );
   }
 
-  /// Section Widget
-  Widget _buildEightyTwoRow(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8.h),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildDrawer(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
         children: [
-          Container(
-            height: MediaQuery.of(context).size.height *
-                0.15, // 15% da altura da tela
-            width: MediaQuery.of(context).size.width *
-                0.3, // 30% da largura da tela
+          const DrawerHeader(
             decoration: BoxDecoration(
-              color: theme.colorScheme.onPrimaryContainer,
-              borderRadius: BorderRadius.circular(20.h),
-              border: Border.all(color: appTheme.gray20001, width: 1.h),
-              boxShadow: [
-                BoxShadow(
-                  color: appTheme.black900.withOpacity(0.2),
-                  spreadRadius: 2.h,
-                  blurRadius: 2.h,
-                  offset: Offset(0, 4),
-                )
-              ],
+              color: Colors.green,
             ),
+            child: Text('Menu de Navegação',
+                style: TextStyle(color: Colors.white, fontSize: 24)),
           ),
-          SizedBox(width: 17.h),
-          Expanded(
-            child: Container(
-              margin: EdgeInsets.only(top: 9.v, bottom: 23.v),
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text:
-                          "Este texto vai conter a descrição da notícia que está acima.\n",
-                      style: CustomTextStyles.titleMediumNunitoff000000,
-                    ),
-                    TextSpan(
-                      text: "Ver mais",
-                      style: theme.textTheme.titleSmall,
-                    ),
-                  ],
-                ),
-                textAlign: TextAlign.left,
-              ),
-            ),
+          ListTile(
+            title: const Text('Ajudas de Custo'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.ajudasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Despesas viatura própria'),
+            onTap: () {
+              Navigator.pushNamed(
+                  context, AppRoutes.despesasViaturaPropriaScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Faltas'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.faltasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Notícias'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.noticiasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Parcerias'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.parceriasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Férias'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Horas'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Reuniões'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.reunioesScreen);
+            },
           ),
         ],
       ),
     );
   }
 
-  /// Section Widget
-  Widget _buildViewRow(BuildContext context) {
+  Widget _buildNoticiasGrid(BuildContext context) {
+    if (noticias.isEmpty) {
+      return Center(child: CircularProgressIndicator());
+    }
+
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8.h),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: MediaQuery.of(context).size.height *
-                0.15, // 15% da altura da tela
-            width: MediaQuery.of(context).size.width *
-                0.3, // 30% da largura da tela
-            decoration: BoxDecoration(
-              color: theme.colorScheme.onPrimaryContainer,
-              borderRadius: BorderRadius.circular(20.h),
-              border: Border.all(color: appTheme.gray20001, width: 1.h),
-              boxShadow: [
-                BoxShadow(
-                  color: appTheme.black900.withOpacity(0.2),
-                  spreadRadius: 2.h,
-                  blurRadius: 2.h,
-                  offset: Offset(0, 4),
-                )
-              ],
-            ),
-          ),
-          SizedBox(width: 17.h),
-          Expanded(
-            child: Container(
-              margin: EdgeInsets.only(top: 9.v, bottom: 23.v),
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text:
-                          "Este texto vai conter a descrição da notícia que está acima.\n",
-                      style: CustomTextStyles.titleMediumNunitoff000000,
-                    ),
-                    TextSpan(
-                      text: "Ver mais",
-                      style: theme.textTheme.titleSmall,
-                    ),
-                  ],
+      padding: EdgeInsets.symmetric(vertical: 10.0),
+      child: GridView.builder(
+        shrinkWrap: true,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          mainAxisExtent: 140.0,
+          crossAxisCount: 2,
+          mainAxisSpacing: 16.0,
+          crossAxisSpacing: 16.0,
+        ),
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: noticias.length,
+        itemBuilder: (context, index) {
+          var noticia = noticias[index];
+          return NoticiasgridItemWidget(
+            titulo: noticia.titulo,
+            onTapWidget: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NoticiaScreen(
+                    titulo: noticia.titulo,
+                    descricao: noticia.descricao,
+                    imagem: noticia.imagem,
+                    data: noticia.data,
+                  ),
                 ),
-                textAlign: TextAlign.left,
-              ),
-            ),
-          ),
-        ],
+              );
+            },
+          );
+        },
       ),
     );
-  }
-
-  /// Navigates to the noticiaScreen when the action is triggered.
-  onTapTxtEstetextovaiconter4(BuildContext context) {
-    Navigator.pushNamed(context, AppRoutes.noticiaScreen);
   }
 }

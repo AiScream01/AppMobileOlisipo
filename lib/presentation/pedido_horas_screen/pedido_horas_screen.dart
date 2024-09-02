@@ -63,7 +63,7 @@ class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
               ListTile(
                 title: const Text('Notícias'),
                 onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.noticiaScreen);
+                  Navigator.pushNamed(context, AppRoutes.noticiasScreen);
                 },
               ),
               ListTile(

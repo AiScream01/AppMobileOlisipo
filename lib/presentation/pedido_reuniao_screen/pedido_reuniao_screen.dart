@@ -163,7 +163,7 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
           ListTile(
             title: const Text('Noticias'),
             onTap: () {
-              Navigator.pushNamed(context, AppRoutes.noticiaScreen);
+              Navigator.pushNamed(context, AppRoutes.noticiasScreen);
             },
           ),
           ListTile(
