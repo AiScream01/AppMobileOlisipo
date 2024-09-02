@@ -73,6 +73,9 @@ class _PaginaPerfilScreenState extends State<PaginaPerfilScreen> {
         extendBodyBehindAppBar: true,
         drawer: _buildDrawer(context),
         body: SingleChildScrollView(
+          padding: EdgeInsets.only(
+              top:
+                  kToolbarHeight), // Adiciona padding para não sobrepor a AppBar
           child: Container(
             width: SizeUtils.width,
             height: SizeUtils.height,

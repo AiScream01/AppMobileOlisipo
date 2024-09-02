@@ -1,4 +1,5 @@
 import 'package:rui_pedro_s_application11/presentation/parcerias_pormenor_one_screen/parcerias_pormenor_one_screen.dart';
+// ignore: unused_import
 import '../parcerias_screen/widgets/parceriasgrid_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';

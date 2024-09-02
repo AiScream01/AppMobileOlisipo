@@ -212,14 +212,14 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
         ),
         child: DataTable(
           columnSpacing: 24.0,
-          headingRowColor: MaterialStateColor.resolveWith(
+          headingRowColor: WidgetStateColor.resolveWith(
             (states) => Colors.green, // Verde usado no cabeçalho
           ),
           headingTextStyle: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
-          dataRowColor: MaterialStateColor.resolveWith(
+          dataRowColor: WidgetStateColor.resolveWith(
             (states) => Colors.white,
           ),
           dividerThickness: 2,
