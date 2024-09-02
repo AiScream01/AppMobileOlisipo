@@ -123,6 +123,22 @@ class Basededados {
     return await db.query('ferias');
   }
 
+//---------------------------------------Estados
+  Future<Map<String, dynamic>?> getEstadoFerias() async {
+    Database db = await basededados;
+    List<Map<String, dynamic>> result = await db.rawQuery('''
+    SELECT data_inicio, data_fim, estado
+    FROM ferias
+    ORDER BY data_inicio DESC
+    LIMIT 1
+  ''');
+    if (result.isNotEmpty) {
+      return result.first;
+    } else {
+      return null; // Retorna null se não houver registros
+    }
+  }
+
 ////---------------------------------------Listar férias pelo id
 //  Future<Map<String, dynamic>?> listarFeriasPorId(int id) async {
 //    Database db = await basededados;
@@ -338,8 +354,7 @@ class Basededados {
       custo REAL,
       descricao TEXT,
       comprovativo TEXT,
-      id_user TEXT,
-      sincronizado INTEGER DEFAULT 0
+      id_user TEXT
     )
   ''');
   }
@@ -412,8 +427,7 @@ class Basededados {
       ponto_chegada TEXT,
       preco_portagens REAL,
       comprovativo TEXT,
-      id_user TEXT,
-      sincronizado INTEGER DEFAULT 0
+      id_user TEXT
     )
   ''');
   }

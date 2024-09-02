@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
           title: 'rui_pedro_s_application11',
           debugShowCheckedModeBanner: false,
           //initialRoute: AppRoutes.loginScreen,
-          initialRoute: AppRoutes.loginScreen,
+          initialRoute: AppRoutes.paginaPrincipalScreen,
           routes: AppRoutes.routes,
         );
       },
