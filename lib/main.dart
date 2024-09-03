@@ -21,12 +21,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     var bd = Basededados();
     var ser = Servidor();
+    const idUser = "2";
 
     void servidor_basededados() {
+      ser.getDadosServidor(idUser);
       ser.getNoticiasEParcerias();
       //bd.criatabelaParcerias();
       //bd.criarTabelaNoticias();
       //bd.criatabelaUtilizadores();
+      //bd.criarTabelaReunioes();
+      //bd.criarTabelaAjudasCusto();
+      //bd.criarTabelaHoras();
+      //bd.criarTabelaDespesasViaturaPessoal();
+      //bd.criarTabelaFaltas();
     }
 
     servidor_basededados();

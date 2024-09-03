@@ -347,27 +347,34 @@ class Basededados {
 //---------------------------------------AJUDAS CUSTO-----------------------------------------
 
 //---------------------------------------Criar tabela de ajudas_custo
-  Future<void> criarTabelaAjudasCusto(Database db) async {
+  Future<void> criarTabelaAjudasCusto() async {
+    Database db = await basededados;
     await db.execute('''
-    CREATE TABLE ajudas_custo (
+    CREATE TABLE ajudas (
       id_custo INTEGER PRIMARY KEY AUTOINCREMENT,
-      custo REAL,
+      custo TEXT,
       descricao TEXT,
       comprovativo TEXT,
-      id_user TEXT
+      estado TEXT
     )
   ''');
   }
 
+//---------------------------------------Apagar tabela de ajudas
+//Future<void> deletarTabelaAjudas() async {
+//  Database db = await basededados;
+//  await db.execute('DROP TABLE IF EXISTS ajudas');
+//}
+
 //---------------------------------------Inserir ajuda de custo
   Future<void> inserirAjudaCusto(
-      List<(String, String, String)> ajudasData) async {
+      List<(String, String, String, String)> ajudasData) async {
     Database db = await basededados;
-    await db.delete('ajudas_custo');
-    for (final (custo, descricao, estado) in ajudasData) {
+    await db.delete('ajudas');
+    for (final (custo, descricao, comprovativo, estado) in ajudasData) {
       await db.rawInsert(
-          'insert into ajudas_custo(custo, descricao, estado) values(?,?,?)',
-          [custo, descricao, estado]);
+          'insert into ajudas(custo, descricao, comprovativo, estado) values(?,?,?,?)',
+          [custo, descricao, comprovativo, estado]);
     }
   }
 
@@ -418,30 +425,45 @@ class Basededados {
 //---------------------------------------DESPESAS VIATURA PESSOAL-----------------------------------------
 
 //---------------------------------------Criar tabela de despesas_viatura_pessoal
-  Future<void> criarTabelaDespesasViaturaPessoal(Database db) async {
+  Future<void> criarTabelaDespesasViaturaPessoal() async {
+    Database db = await basededados;
     await db.execute('''
     CREATE TABLE despesas_viatura_pessoal (
       id_despesa INTEGER PRIMARY KEY AUTOINCREMENT,
-      km REAL,
       ponto_partida TEXT,
       ponto_chegada TEXT,
-      preco_portagens REAL,
+      km TEXT,
       comprovativo TEXT,
-      id_user TEXT
+      preco_portagens TEXT,
+      estado TEXT
     )
   ''');
   }
 
 //---------------------------------------Inserir despesa de viatura pessoal
   Future<void> inserirDespesaViaturaPessoal(
-      List<(String, String, String, String)> despesaViaturaData) async {
+      List<(String, String, String, String, String, String)>
+          despesaViaturaData) async {
     Database db = await basededados;
     await db.delete('despesas_viatura_pessoal');
-    for (final (ponto_partida, ponto_chegada, km, estado)
-        in despesaViaturaData) {
+    for (final (
+          ponto_partida,
+          ponto_chegada,
+          km,
+          comprovativo,
+          preco_portagens,
+          estado
+        ) in despesaViaturaData) {
       await db.rawInsert(
-          'insert into despesas_viatura_pessoal(ponto_partida, ponto_chegada, km, estado) values(?,?,?,?)',
-          [ponto_partida, ponto_chegada, km, estado]);
+          'insert into despesas_viatura_pessoal(ponto_partida, ponto_chegada, km, comprovativo, preco_portagens, estado) values(?,?,?,?,?,?)',
+          [
+            ponto_partida,
+            ponto_chegada,
+            km,
+            comprovativo,
+            preco_portagens,
+            estado
+          ]);
     }
   }
 
@@ -493,25 +515,24 @@ class Basededados {
 //---------------------------------------FALTAS-----------------------------------------
 
 //---------------------------------------Criar tabela de faltas
-  Future<void> criarTabelaFaltas(Database db) async {
+  Future<void> criarTabelaFaltas() async {
+    Database db = await basededados;
     await db.execute('''
     CREATE TABLE faltas (
       id_falta INTEGER PRIMARY KEY AUTOINCREMENT,
       data TEXT,
-      id_user TEXT,
-      sincronizado INTEGER DEFAULT 0
+      estado TEXT
     )
   ''');
   }
 
 //---------------------------------------Inserir falta
-  Future<void> inserirFalta(List<(String, String, String)> faltaData) async {
+  Future<void> inserirFalta(List<(String, String)> faltaData) async {
     Database db = await basededados;
     await db.delete('faltas');
-    for (final (data, estado, id_falta) in faltaData) {
+    for (final (data, estado) in faltaData) {
       await db.rawInsert(
-          'insert into faltas(data, estado,id_falta) values(?,?,?)',
-          [data, estado, id_falta]);
+          'insert into faltas(data, estado) values(?,?)', [data, estado]);
     }
   }
 
@@ -562,13 +583,13 @@ class Basededados {
 //---------------------------------------HORAS-----------------------------------------
 
 //---------------------------------------Criar tabela de horas
-  Future<void> criarTabelaHoras(Database db) async {
+  Future<void> criarTabelaHoras() async {
+    Database db = await basededados;
     await db.execute('''
     CREATE TABLE horas (
       id_horas INTEGER PRIMARY KEY AUTOINCREMENT,
-      horas REAL,
-      id_user TEXT,
-      sincronizado INTEGER DEFAULT 0
+      horas TEXT,
+      estado TEXT
     )
   ''');
   }
@@ -629,28 +650,34 @@ class Basededados {
 //---------------------------------------REUNIÕES-----------------------------------------
 
 //---------------------------------------Criar tabela de reuniões
-  Future<void> criarTabelaReunioes(Database db) async {
+  Future<void> criarTabelaReunioes() async {
+    Database db = await basededados;
     await db.execute('''
     CREATE TABLE reunioes (
       id_reuniao INTEGER PRIMARY KEY AUTOINCREMENT,
       titulo TEXT,
       descricao TEXT,
       data TEXT,
-      id_user TEXT,
-      sincronizado INTEGER DEFAULT 0
+      estado TEXT
     )
   ''');
   }
 
+  //---------------------------------------Apagar tabela de ajudas
+  Future<void> apagartabelaReunioes() async {
+    Database db = await basededados;
+    await db.execute('DROP TABLE IF EXISTS reunioes');
+  }
+
 //---------------------------------------Inserir reunião
   Future<void> inserirReuniao(
-      List<(String, String, String)> reuniaoData) async {
+      List<(String, String, String, String)> reuniaoData) async {
     Database db = await basededados;
     await db.delete('reunioes');
-    for (final (titulo, descricao, estado) in reuniaoData) {
+    for (final (titulo, descricao, data, estado) in reuniaoData) {
       await db.rawInsert(
-          'insert into reunioes(custo, descricao, estado) values(?,?,?)',
-          [titulo, descricao, estado]);
+          'insert into reunioes(titulo, descricao, data, estado) values(?,?,?,?)',
+          [titulo, descricao, data, estado]);
     }
   }
 
@@ -670,6 +697,17 @@ class Basededados {
   Future<List<Map<String, dynamic>>> listarTodasReunioes() async {
     Database db = await basededados;
     return await db.query('reunioes');
+  }
+
+//---------------------------------------Listar todas as reuniões com estado 'Aceite'
+  Future<List<Map<String, dynamic>>> listarReunioesAceitas() async {
+    Database db = await basededados;
+    // Adiciona a cláusula WHERE para filtrar por estado
+    return await db.query(
+      'reunioes',
+      where: 'estado = ?',
+      whereArgs: ['Aceite'],
+    );
   }
 
 //---------------------------------------Listar reunião por id

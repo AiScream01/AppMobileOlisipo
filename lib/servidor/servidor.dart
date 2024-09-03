@@ -43,11 +43,11 @@ class Servidor {
     url = '$baseURL/appmobile/$idUser';
 
     List<(String, String)> ferias = [];
-    List<(String, String, String)> ajudas = [];
+    List<(String, String, String, String)> ajudas = [];
     List<(String, String)> horas = [];
-    List<(String, String, String)> reunioes = [];
-    List<(String, String, String, String)> despesasViatura = [];
-    List<(String, String, String)> faltas = [];
+    List<(String, String, String, String)> reunioes = [];
+    List<(String, String, String, String, String, String)> despesasViatura = [];
+    List<(String, String)> faltas = [];
 
     var result = await http.get(Uri.parse(url));
 
@@ -60,9 +60,10 @@ class Servidor {
     var listaAjudas = jsonDecode(result.body)['ajudas'];
     listaAjudas.forEach((linha) {
       ajudas.add((
-        linha['estado'].toString(),
         linha['custo'].toString(),
-        linha['descricao'].toString()
+        linha['descricao'].toString(),
+        linha['comprovativo'].toString(),
+        linha['estado'].toString()
       ));
     });
 
@@ -74,19 +75,22 @@ class Servidor {
     var listaReunioes = jsonDecode(result.body)['reunioes'];
     listaReunioes.forEach((linha) {
       reunioes.add((
-        linha['estado'].toString(),
         linha['titulo'].toString(),
-        linha['descricao'].toString()
+        linha['descricao'].toString(),
+        linha['data'].toString(),
+        linha['estado'].toString()
       ));
     });
 
     var listaDespesasViatura = jsonDecode(result.body)['despesasViatura'];
     listaDespesasViatura.forEach((linha) {
       despesasViatura.add((
-        linha['estado'].toString(),
         linha['ponto_partida'].toString(),
         linha['ponto_chegada'].toString(),
-        linha['km'].toString()
+        linha['km'].toString(),
+        linha['comprovativo'].toString(),
+        linha['preco_portagens'].toString(),
+        linha['estado'].toString(),
       ));
     });
 
@@ -94,8 +98,7 @@ class Servidor {
     listaFaltas.forEach((linha) {
       faltas.add((
         linha['estado'].toString(),
-        linha['data'].toString(),
-        linha['id_falta'].toString()
+        linha['data'].toString()
       ));
     });
 
