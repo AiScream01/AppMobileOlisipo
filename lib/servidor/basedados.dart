@@ -94,25 +94,32 @@ class Basededados {
   //---------------------------------------FÉRIAS-----------------------------------------
 
 //---------------------------------------Criar tabela de férias
-  Future<void> criatabelaFerias(Database db) async {
+  Future<void> criatabelaFerias() async {
+    Database db = await basededados;
     await db.execute('DROP TABLE IF EXISTS ferias');
     await db.execute('''
     CREATE TABLE ferias (
       id_ferias INTEGER PRIMARY KEY AUTOINCREMENT,
       data_inicio TEXT,
-      data_fim TEXT
+      data_fim TEXT,
+      estado TEXT
     )
     ''');
   }
 
+  Future<void> apagartabelaFerias() async {
+    Database db = await basededados;
+    await db.execute('DROP TABLE IF EXISTS ferias');
+  }
+
 //---------------------------------------Inserir férias
-  Future<void> inserirFerias(List<(String, String)> feriasData) async {
+  Future<void> inserirFerias(List<(String, String, String)> feriasData) async {
     Database db = await basededados;
     await db.delete('ferias');
-    for (final (data_inicio, data_fim) in feriasData) {
+    for (final (data_inicio, data_fim, estado) in feriasData) {
       await db.rawInsert(
-        'insert into ferias(data_inicio, data_fim) values(?,?)',
-        [data_inicio, data_fim],
+        'insert into ferias(data_inicio, data_fim, estado) values(?,?,?)',
+        [data_inicio, data_fim, estado],
       );
     }
   }
@@ -135,10 +142,69 @@ class Basededados {
     if (result.isNotEmpty) {
       return result.first;
     } else {
-      return null; // Retorna null se não houver registros
+      return null;
     }
   }
 
+  Future<Map<String, dynamic>?> getEstadoReuniao() async {
+    Database db = await basededados;
+    List<Map<String, dynamic>> result = await db.rawQuery('''
+    SELECT id_reuniao, estado
+    FROM reunioes
+    ORDER BY id_reuniao DESC
+    LIMIT 1
+  ''');
+    if (result.isNotEmpty) {
+      return result.first;
+    } else {
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>?> getEstadoAjudas() async {
+    Database db = await basededados;
+    List<Map<String, dynamic>> result = await db.rawQuery('''
+    SELECT id_custo, estado
+    FROM ajudas
+    ORDER BY id_custo DESC
+    LIMIT 1
+  ''');
+    if (result.isNotEmpty) {
+      return result.first;
+    } else {
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>?> getEstadoDespesas() async {
+    Database db = await basededados;
+    List<Map<String, dynamic>> result = await db.rawQuery('''
+    SELECT id_despesa, estado
+    FROM despesas_viatura_pessoal
+    ORDER BY id_despesa DESC
+    LIMIT 1
+  ''');
+    if (result.isNotEmpty) {
+      return result.first;
+    } else {
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>?> getEstadoHoras() async {
+    Database db = await basededados;
+    List<Map<String, dynamic>> result = await db.rawQuery('''
+    SELECT estado, id_horas
+    FROM horas
+    ORDER BY id_horas DESC
+    LIMIT 1
+  ''');
+    if (result.isNotEmpty) {
+      return result.first;
+    } else {
+      return null;
+    }
+  }
 ////---------------------------------------Listar férias pelo id
 //  Future<Map<String, dynamic>?> listarFeriasPorId(int id) async {
 //    Database db = await basededados;

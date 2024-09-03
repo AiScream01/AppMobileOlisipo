@@ -31,16 +31,17 @@ class _PaginaPrincipalScreenState extends State<PaginaPrincipalScreen> {
   int sliderIndex = 0;
   var bd = Basededados();
   final List<Noticia> noticias = [];
-  String estadoFerias = 'Carregando...';
-  String estadoReuniao = 'Carregando...';
-  String estadoAjudas = 'Carregando...';
-  String estadoContas = 'Carregando...';
+  String estadoFerias = 'A carregar';
+  String estadoReuniao = 'A carregar';
+  String estadoAjudas = 'A carregar';
+  String estadoContas = 'A carregar';
+  String estadoHoras = 'A carregar';
 
   @override
   void initState() {
     super.initState();
     _fetchNoticias();
-    //_fetchStates();
+    _fetchEstados();
   }
 
   Future<void> _fetchNoticias() async {
@@ -58,21 +59,22 @@ class _PaginaPrincipalScreenState extends State<PaginaPrincipalScreen> {
     });
   }
 
-/*
-  Future<void> _fetchStates() async {
+  Future<void> _fetchEstados() async {
     final estadoF = await bd.getEstadoFerias();
     final estadoR = await bd.getEstadoReuniao();
     final estadoA = await bd.getEstadoAjudas();
-    final estadoC = await bd.getEstadoContas();
+    final estadoC = await bd.getEstadoDespesas();
+    final estadoH = await bd.getEstadoHoras();
 
     setState(() {
-      estadoFerias = estadoF;
-      estadoReuniao = estadoR;
-      estadoAjudas = estadoA;
-      estadoContas = estadoC;
+      estadoFerias = estadoF?['estado'] ?? 'A carregar';
+      estadoReuniao = estadoR?['estado'] ?? 'A carregar';
+      estadoAjudas = estadoA?['estado'] ?? 'A carregar';
+      estadoContas = estadoC?['estado'] ?? 'A carregar';
+      estadoHoras = estadoH?['estado'] ?? 'A carregar';
     });
   }
-*/
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -164,11 +166,11 @@ class _PaginaPrincipalScreenState extends State<PaginaPrincipalScreen> {
                       radius: BorderRadius.circular(30.h),
                       alignment: Alignment.bottomCenter),
                   Align(
-                      alignment: Alignment.bottomCenter,
+                      alignment: Alignment.topCenter,
                       child: SingleChildScrollView(
                           child: Container(
                               margin: EdgeInsets.only(
-                                  left: 20.h, right: 20.h, bottom: 20.v),
+                                  left: 18.h, right: 18.h, top: 30.v),
                               decoration: BoxDecoration(
                                   borderRadius:
                                       BorderRadiusStyle.roundedBorder30),
@@ -214,7 +216,7 @@ class _PaginaPrincipalScreenState extends State<PaginaPrincipalScreen> {
                                               SizedBox(height: 10.v),
                                               Padding(
                                                   padding: EdgeInsets.symmetric(
-                                                      horizontal: 20.h),
+                                                      horizontal: 23.h),
                                                   child: Column(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
@@ -223,30 +225,37 @@ class _PaginaPrincipalScreenState extends State<PaginaPrincipalScreen> {
                                                         _buildRequestRow(
                                                             context,
                                                             pedidoDeReuniaoText:
-                                                                "Pedido de férias",
+                                                                "Pedido de Férias",
                                                             reprovadoText:
                                                                 estadoFerias),
                                                         SizedBox(height: 10.v),
                                                         _buildRequestRow(
                                                             context,
                                                             pedidoDeReuniaoText:
-                                                                "Pedido de reunião",
+                                                                "Pedido de Reunião",
                                                             reprovadoText:
                                                                 estadoReuniao),
                                                         SizedBox(height: 10.v),
                                                         _buildRequestRow(
                                                             context,
                                                             pedidoDeReuniaoText:
-                                                                "Pedido de ajudas",
+                                                                "Pedido de Ajudas",
                                                             reprovadoText:
                                                                 estadoAjudas),
                                                         SizedBox(height: 10.v),
                                                         _buildRequestRow(
                                                             context,
                                                             pedidoDeReuniaoText:
-                                                                "Pedido de Contas",
+                                                                "Pedido de Despesas",
                                                             reprovadoText:
-                                                                estadoContas)
+                                                                estadoContas),
+                                                        SizedBox(height: 10.v),
+                                                        _buildRequestRow(
+                                                            context,
+                                                            pedidoDeReuniaoText:
+                                                                "Pedido de Horas",
+                                                            reprovadoText:
+                                                                estadoHoras)
                                                       ]))
                                             ])),
                                     SizedBox(height: 10.v)
@@ -313,8 +322,8 @@ class _PaginaPrincipalScreenState extends State<PaginaPrincipalScreen> {
 
   Widget _buildUserStatusColumn(BuildContext context) {
     return Container(
-        margin: EdgeInsets.only(left: 3.h, right: 1.h),
-        padding: EdgeInsets.symmetric(horizontal: 16.h, vertical: 13.v),
+        margin: EdgeInsets.only(left: 2.h, right: 1.h),
+        padding: EdgeInsets.symmetric(horizontal: 10.h, vertical: 13.v),
         decoration: AppDecoration.fillLightGreenA
             .copyWith(borderRadius: BorderRadiusStyle.roundedBorder15),
         child: Column(
@@ -334,12 +343,12 @@ class _PaginaPrincipalScreenState extends State<PaginaPrincipalScreen> {
   }) {
     Color getStatusColor(String status) {
       switch (status.toLowerCase()) {
-        case 'aprovado':
+        case 'aceite':
           return Colors.green;
-        case 'reprovado':
+        case 'recusado':
           return Colors.red;
         case 'pendente':
-          return Colors.yellow;
+          return const Color.fromARGB(255, 202, 182, 0);
         case 'enviado':
         case 'em análise':
           return Colors.grey;
@@ -349,7 +358,7 @@ class _PaginaPrincipalScreenState extends State<PaginaPrincipalScreen> {
     }
 
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: 9.h, vertical: 7.v),
+        padding: EdgeInsets.symmetric(horizontal: 3.h, vertical: 7.v),
         decoration: AppDecoration.fillGray
             .copyWith(borderRadius: BorderRadiusStyle.roundedBorder15),
         child:

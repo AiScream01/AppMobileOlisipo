@@ -55,7 +55,8 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
               ListTile(
                 title: const Text('Despesas viatura própria'),
                 onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.despesasViaturaPropriaScreen);
+                  Navigator.pushNamed(
+                      context, AppRoutes.despesasViaturaPropriaScreen);
                 },
               ),
               ListTile(
@@ -173,7 +174,8 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
               DateTime initialDate = _endDate ?? firstDate;
               DateTime? pickedDate = await showDatePicker(
                 context: context,
-                initialDate: initialDate.isBefore(firstDate) ? firstDate : initialDate,
+                initialDate:
+                    initialDate.isBefore(firstDate) ? firstDate : initialDate,
                 firstDate: firstDate,
                 lastDate: DateTime(2101),
               );
@@ -189,11 +191,14 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
             label: "Data Fim",
             selectedDate: _endDate,
             onPressed: () async {
-              DateTime firstDate = _startDate != null ? _startDate!.add(Duration(days: 1)) : DateTime.now().add(Duration(days: 7));
+              DateTime firstDate = _startDate != null
+                  ? _startDate!.add(Duration(days: 1))
+                  : DateTime.now().add(Duration(days: 7));
               DateTime initialDate = _endDate ?? firstDate;
               DateTime? pickedDate = await showDatePicker(
                 context: context,
-                initialDate: initialDate.isBefore(firstDate) ? firstDate : initialDate,
+                initialDate:
+                    initialDate.isBefore(firstDate) ? firstDate : initialDate,
                 firstDate: firstDate,
                 lastDate: DateTime(2101),
               );
@@ -258,47 +263,74 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
       return;
     }
 
-    int idUser = 2;
+    void onTapEnviar(BuildContext context) async {
+      if (_startDate == null || _endDate == null) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text('Erro'),
+            content: Text('Por favor, selecione as datas de início e fim.'),
+            actions: [
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+        return;
+      }
 
-    try {
-      await bd.inserirFerias([
-        (
-          DateFormat('yyyy-MM-dd').format(_startDate!),
-          DateFormat('yyyy-MM-dd').format(_endDate!)
-        )
-      ]);
+      int idUser = 2;
+      String estado = 'pendente'; // Estado padrão
 
-      await servidor.insertFerias(
-        idUser.toString(),
-        DateFormat('yyyy-MM-dd').format(_startDate!),
-        DateFormat('yyyy-MM-dd').format(_endDate!),
-      );
+      try {
+        // Tenta inserir no banco de dados local (bd)
+        await bd.inserirFerias([
+          (
+            DateFormat('yyyy-MM-dd').format(_startDate!), // Data de início
+            DateFormat('yyyy-MM-dd').format(_endDate!), // Data de fim
+            estado // Estado inicial como 'pendente'
+          )
+        ]);
 
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          content: PushNotificationDialog(),
-          backgroundColor: Colors.transparent,
-          contentPadding: EdgeInsets.zero,
-          insetPadding: const EdgeInsets.only(left: 0),
-        ),
-      );
-    } catch (e) {
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: Text('Erro'),
-          content: Text('Ocorreu um erro: $e'),
-          actions: [
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
-      );
+        // Se a inserção local foi bem-sucedida, tenta enviar para o servidor
+        await servidor.insertFerias(
+            idUser.toString(),
+            DateFormat('yyyy-MM-dd').format(_startDate!),
+            DateFormat('yyyy-MM-dd').format(_endDate!),
+            estado);
+
+        // Mostra a notificação de sucesso
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            content: PushNotificationDialog(),
+            backgroundColor: Colors.transparent,
+            contentPadding: EdgeInsets.zero,
+            insetPadding: const EdgeInsets.only(left: 0),
+          ),
+        );
+      } catch (e) {
+        // Qualquer erro é capturado aqui e uma mensagem de erro é exibida
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text('Erro'),
+            content: Text('Ocorreu um erro: $e'),
+            actions: [
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      }
     }
   }
 }

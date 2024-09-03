@@ -42,7 +42,7 @@ class Servidor {
   Future<void> getDadosServidor(String idUser) async {
     url = '$baseURL/appmobile/$idUser';
 
-    List<(String, String)> ferias = [];
+    List<(String, String, String)> ferias = [];
     List<(String, String, String, String)> ajudas = [];
     List<(String, String)> horas = [];
     List<(String, String, String, String)> reunioes = [];
@@ -53,8 +53,11 @@ class Servidor {
 
     var listaFerias = jsonDecode(result.body)['ferias'];
     listaFerias.forEach((linha) {
-      ferias
-          .add((linha['data_inicio'].toString(), linha['data_fim'].toString()));
+      ferias.add((
+        linha['data_inicio'].toString(),
+        linha['data_fim'].toString(),
+        linha['estado'].toString()
+      ));
     });
 
     var listaAjudas = jsonDecode(result.body)['ajudas'];
@@ -69,7 +72,7 @@ class Servidor {
 
     var listaHoras = jsonDecode(result.body)['horas'];
     listaHoras.forEach((linha) {
-      horas.add((linha['estado'].toString(), linha['horas'].toString()));
+      horas.add((linha['horas'].toString(), linha['estado'].toString()));
     });
 
     var listaReunioes = jsonDecode(result.body)['reunioes'];
@@ -109,11 +112,11 @@ class Servidor {
   }
 
   Future<void> insertFerias(
-    String idUser,
-    String dataInicio,
-    String dataFim,
-  ) async {
-    if (idUser.isEmpty || dataInicio.isEmpty || dataFim.isEmpty) {
+      String idUser, String dataInicio, String dataFim, String estado) async {
+    if (idUser.isEmpty ||
+        dataInicio.isEmpty ||
+        dataFim.isEmpty ||
+        estado.isEmpty) {
       throw Exception(
           'Dados inválidos: um ou mais parâmetros são nulos ou vazios.');
     }
@@ -357,7 +360,6 @@ class Servidor {
       throw Exception('Falha ao criar reunião: ${response.body}');
     }
   }
-
 
 //LOGIN
   Future<void> login(String username, String password) async {

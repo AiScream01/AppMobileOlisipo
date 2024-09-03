@@ -34,6 +34,8 @@ class MyApp extends StatelessWidget {
       //bd.criarTabelaHoras();
       //bd.criarTabelaDespesasViaturaPessoal();
       //bd.criarTabelaFaltas();
+      //bd.criatabelaFerias();
+      //bd.apagartabelaFerias();
     }
 
     servidor_basededados();
