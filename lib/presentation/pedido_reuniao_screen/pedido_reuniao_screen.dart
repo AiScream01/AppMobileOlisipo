@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
+import 'package:rui_pedro_s_application11/servidor/servidor.dart';
 import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
 
 class PedidoReuniaoScreen extends StatefulWidget {
@@ -11,10 +12,11 @@ class PedidoReuniaoScreen extends StatefulWidget {
 }
 
 class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
-  final TextEditingController _recursosHumanosController =
-      TextEditingController();
+  final TextEditingController _tituloController = TextEditingController();
+  final TextEditingController _descricaoController = TextEditingController();
+  final TextEditingController _nomeUtilizadorController = TextEditingController();
   DateTime? _selectedDate;
-  TimeOfDay? _selectedTime;
+  final Servidor servidor = Servidor();
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +34,8 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
   /// Corpo principal da tela
   Widget _buildBody(BuildContext context) {
     return Container(
-      width: SizeUtils.width,
-      height: SizeUtils.height,
+      width: double.infinity,
+      height: double.infinity,
       decoration: BoxDecoration(
         color: theme.colorScheme.onPrimaryContainer,
         image: DecorationImage(
@@ -42,7 +44,7 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
         ),
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 9.v),
+        padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 30.v),
         child: Column(
           children: [
             Expanded(
@@ -50,7 +52,7 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Pedido de reunião",
+                    "Pedido de Reunião",
                     style: theme.textTheme.displayMedium?.copyWith(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
@@ -68,7 +70,7 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
                   Container(
                     width: double.infinity,
                     padding: EdgeInsets.symmetric(
-                        horizontal: 20.h, vertical: 10.v), // Redução no padding
+                        horizontal: 20.h, vertical: 10.v),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(35.h),
@@ -84,31 +86,37 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        SizedBox(
-                            height: 20.v), // Redução do espaçamento inicial
+                        SizedBox(height: 20.v),
+                        _buildEditableRowItem(
+                          context,
+                          label: "Título",
+                          child: _buildTextField(
+                              controller: _tituloController,
+                              hintText: "Digite o título"),
+                        ),
+                        SizedBox(height: 15.v),
+                        _buildEditableRowItem(
+                          context,
+                          label: "Descrição",
+                          child: _buildTextField(
+                              controller: _descricaoController,
+                              hintText: "Digite a descrição"),
+                        ),
+                        SizedBox(height: 15.v),
                         _buildEditableRowItem(
                           context,
                           label: "Com",
                           child: _buildTextField(
-                              controller: _recursosHumanosController,
-                              hintText: "Digite o nome"),
+                              controller: _nomeUtilizadorController,
+                              hintText: "Digite o nome do utilizador"), // Corrigido
                         ),
-                        SizedBox(
-                            height:
-                                15.v), // Redução do espaçamento entre os campos
+                        SizedBox(height: 20.v),
                         _buildEditableRowItem(
                           context,
                           label: "Data Reunião",
                           child: _buildDatePicker(context),
                         ),
-                        SizedBox(
-                            height:
-                                20.v), // Redução do espaçamento entre os campos
-                        _buildEditableRowItem(
-                          context,
-                          label: "Hora",
-                          child: _buildTimePicker(context),
-                        ),
+                        SizedBox(height: 20.v),
                         CustomOutlinedButton(
                           width: 144.h,
                           text: "Enviar",
@@ -116,7 +124,7 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
                             onTapEnviar(context);
                           },
                         ),
-                        SizedBox(height: 10.v), // Redução do espaçamento final
+                        SizedBox(height: 10.v),
                       ],
                     ),
                   ),
@@ -161,7 +169,7 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
             },
           ),
           ListTile(
-            title: const Text('Noticias'),
+            title: const Text('Notícias'),
             onTap: () {
               Navigator.pushNamed(context, AppRoutes.noticiasScreen);
             },
@@ -173,7 +181,7 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
             },
           ),
           ListTile(
-            title: const Text('Ferias'),
+            title: const Text('Férias'),
             onTap: () {
               Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
             },
@@ -241,7 +249,7 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
     );
   }
 
-  /// Campo de texto para o "Com"
+  /// Campo de texto para os campos editáveis
   Widget _buildTextField(
       {required TextEditingController controller, required String hintText}) {
     return Container(
@@ -277,45 +285,57 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
       child: Text(
         _selectedDate != null
             ? "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}"
-            : "Calendário",
+            : "Selecione a data",
         style: theme.textTheme.titleLarge?.copyWith(color: Colors.black),
       ),
     );
   }
 
-  /// Seletor de hora
-  Widget _buildTimePicker(BuildContext context) {
-    return InkWell(
-      onTap: () async {
-        final TimeOfDay? picked = await showTimePicker(
-          context: context,
-          initialTime: _selectedTime ?? TimeOfDay.now(),
-        );
-        if (picked != null && picked != _selectedTime) {
-          setState(() {
-            _selectedTime = picked;
-          });
-        }
-      },
-      child: Text(
-        _selectedTime != null
-            ? _selectedTime!.format(context)
-            : "10:00", // Hora padrão caso não selecionada
-        style: theme.textTheme.titleLarge?.copyWith(color: Colors.black),
-      ),
-    );
-  }
+  /// Função chamada quando o botão "Enviar" é pressionado
+  Future<void> onTapEnviar(BuildContext context) async {
+    try {
+      String userId = '2'; // ID do utilizador fixo
+      String nomeUtilizador = _nomeUtilizadorController.text;
+      String titulo = _tituloController.text;
+      String descricao = _descricaoController.text;
+      String dataReuniao = _selectedDate != null
+          ? "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}"
+          : '';
 
-  /// Exibe o diálogo de notificação push
-  onTapEnviar(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        content: PushNotificationDialog(),
-        backgroundColor: const Color.fromARGB(0, 255, 255, 255),
-        contentPadding: EdgeInsets.zero,
-        insetPadding: const EdgeInsets.all(10),
-      ),
-    );
+      // Apenas chama a função sem atribuir a uma variável
+      await servidor.insertReuniao(titulo, descricao, dataReuniao, userId, nomeUtilizador);
+
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          content: PushNotificationDialog(),
+          backgroundColor: Colors.transparent,
+          contentPadding: EdgeInsets.zero,
+          insetPadding: const EdgeInsets.only(left: 0),
+        ),
+      );
+    } catch (e) {
+      print('Erro ao enviar reunião: $e');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Erro ao enviar Reunião!'),
+            content: Text(
+              'Ocorreu um erro ao tentar enviar a reunião. Verifique os dados e tente novamente.\nErro: $e',
+              style: TextStyle(fontSize: 17),
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }

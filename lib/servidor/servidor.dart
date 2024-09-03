@@ -96,10 +96,7 @@ class Servidor {
 
     var listaFaltas = jsonDecode(result.body)['faltas'];
     listaFaltas.forEach((linha) {
-      faltas.add((
-        linha['estado'].toString(),
-        linha['data'].toString()
-      ));
+      faltas.add((linha['estado'].toString(), linha['data'].toString()));
     });
 
     var bd = Basededados();
@@ -313,6 +310,54 @@ class Servidor {
       throw Exception('Falha ao inserir horas: ${response.body}');
     }
   }
+
+  Future<void> insertReuniao(
+    String titulo,
+    String descricao,
+    String data,
+    String idUser,
+    String nomeUtilizadorReuniao,
+  ) async {
+    // Verifica se os parâmetros obrigatórios não estão vazios
+    if (titulo.isEmpty ||
+        descricao.isEmpty ||
+        data.isEmpty ||
+        idUser.isEmpty ||
+        nomeUtilizadorReuniao.isEmpty) {
+      throw Exception('Dados inválidos: todos os parâmetros são obrigatórios.');
+    }
+
+    // Define a URL base e o endpoint para criar a reunião
+    var url = '$baseURL/reunioes/create';
+
+    // Prepara a requisição HTTP POST
+    var response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'titulo': titulo,
+        'descricao': descricao,
+        'data': data,
+        'id_user': idUser,
+        'nome_utilizador_reuniao': nomeUtilizadorReuniao, // Corrigido
+      }),
+    );
+
+    // Imprime o status code e o corpo da resposta para depuração
+    print('Status code: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    // Verifica o status da resposta
+    if (response.statusCode == 201) {
+      print('Reunião criada com sucesso!');
+    } else {
+      print('Erro ao criar reunião: ${response.statusCode}');
+      throw Exception('Falha ao criar reunião: ${response.body}');
+    }
+  }
+
 
 //LOGIN
   Future<void> login(String username, String password) async {
