@@ -170,7 +170,7 @@ class _AjudasScreen extends State<AjudasScreen> {
           ),
           SizedBox(height: 10.v),
           _buildUploadButton(
-            title: "Fatura",
+            title: "Recibo",
             buttonText: "Upload Documento",
             onPressed: () {
               // Adicionar ação para upload do documento

@@ -801,4 +801,63 @@ class Basededados {
       whereArgs: [idReuniao],
     );
   }
+
+//---------------------------------------RECIBOS-----------------------------------------
+
+//---------------------------------------Criar Recibos Vencimentos
+  Future<void> CriarTabelaRecibosVencimento() async {
+    Database db = await basededados;
+    await db.execute('''
+    CREATE TABLE recibos_vencimento (
+      id_recibo INTEGER PRIMARY KEY AUTOINCREMENT,
+      recibos TEXT,
+      id_user INTEGER,
+      data TEXT,
+      hora TEXT
+    )
+  ''');
+  }
+
+//---------------------------------------Inserir Recibos Vencimentos
+  Future<void> InserirRecibosVencimento(
+      List<(String, int, String, String)> reciboData) async {
+    Database db = await basededados;
+    for (final (recibos, id_user, data, hora) in reciboData) {
+      await db.rawInsert(
+        'insert into recibos_vencimento(recibos, id_user, data, hora) values(?, ?, ?, ?)',
+        [recibos, id_user, data, hora],
+      );
+    }
+  }
+
+//---------------------------------------Mostrar Recibos Vencimentos
+  Future<List<(String, int, String, String)>> MostrarRecibosVencimento() async {
+    List<(String, int, String, String)> recibos = [];
+    Database db = await basededados;
+    List<Map<String, Object?>> resultado = await db.rawQuery(
+        'select recibos, id_user, data, hora from recibos_vencimento');
+    resultado.forEach((linha) {
+      recibos.add((
+        linha['recibos'].toString(),
+        linha['id_user'] as int,
+        linha['data'].toString(),
+        linha['hora'].toString()
+      ));
+    });
+    return recibos;
+  }
+
+//---------------------------------------Mostrar Recibos Vencimentos Mes e Ano
+  Future<String> MostrarReciboVencimento(int mes, int ano) async {
+    String linkDoc = "";
+    Database db = await basededados;
+    List<Map<String, Object?>> resultado = await db.rawQuery(
+        "SELECT recibos FROM recibos_vencimento WHERE strftime('%Y', data) = '$ano' AND strftime('%m', data) = '$mes';");
+    if (resultado.isNotEmpty) {
+      linkDoc = resultado.first['recibos'].toString();
+    }
+    print("Número de resultados: ${resultado.length}");
+    print("linkzaoo $linkDoc");
+    return linkDoc;
+  }
 }
