@@ -5,6 +5,9 @@ import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_text_form_field.dart';
 import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
 import 'package:rui_pedro_s_application11/servidor/servidor.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class AjudasScreen extends StatefulWidget {
   const AjudasScreen({Key? key, required this.title}) : super(key: key);
@@ -19,6 +22,8 @@ class _AjudasScreen extends State<AjudasScreen> {
   final TextEditingController custoController = TextEditingController();
   final TextEditingController descricaoController = TextEditingController();
   final TextEditingController faturaController = TextEditingController();
+
+  XFile? _recibo;
 
   @override
   void dispose() {
@@ -118,17 +123,17 @@ class _AjudasScreen extends State<AjudasScreen> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 10.v),
+              padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
               child: Column(
                 children: [
-                  SizedBox(height: 10.v),
+                  SizedBox(height: 10.0),
                   Text(
                     "Ajudas de Custo",
-                    style: theme.textTheme.displayMedium,
+                    style: Theme.of(context).textTheme.headlineSmall,
                   ),
-                  SizedBox(height: 20.v),
+                  SizedBox(height: 20.0),
                   _buildInputSection(context),
-                  SizedBox(height: 20.v),
+                  SizedBox(height: 20.0),
                   _buildEnviarButton(context),
                 ],
               ),
@@ -141,10 +146,10 @@ class _AjudasScreen extends State<AjudasScreen> {
 
   Widget _buildInputSection(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 21.v),
+      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 21.0),
       decoration: BoxDecoration(
-        color: Colors.white, // Fundo branco para a caixa de entrada
-        borderRadius: BorderRadius.circular(35), // Bordas arredondadas
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(35),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.3),
@@ -162,18 +167,18 @@ class _AjudasScreen extends State<AjudasScreen> {
             controller: custoController,
             hintText: "Insira o custo",
           ),
-          SizedBox(height: 10.v),
+          SizedBox(height: 10.0),
           _buildInputField(
             title: "Descrição",
             controller: descricaoController,
             hintText: "Insira a descrição",
           ),
-          SizedBox(height: 10.v),
+          SizedBox(height: 10.0),
           _buildUploadButton(
             title: "Recibo",
             buttonText: "Upload Documento",
-            onPressed: () {
-              // Adicionar ação para upload do documento
+            onPressed: () async {
+              await _pickRecibo();
             },
           ),
         ],
@@ -187,19 +192,18 @@ class _AjudasScreen extends State<AjudasScreen> {
     required String hintText,
   }) {
     return Padding(
-      padding: EdgeInsets.only(left: 1.h),
+      padding: EdgeInsets.only(left: 1.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: theme.textTheme.titleLarge,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
-          SizedBox(height: 5.v),
+          SizedBox(height: 5.0),
           CustomTextFormField(
             controller: controller,
             hintText: hintText,
-            // Removido o parâmetro keyboardType
           ),
         ],
       ),
@@ -212,22 +216,22 @@ class _AjudasScreen extends State<AjudasScreen> {
     required void Function() onPressed,
   }) {
     return Padding(
-      padding: EdgeInsets.only(left: 1.h),
+      padding: EdgeInsets.only(left: 1.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: theme.textTheme.titleLarge,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
-          SizedBox(height: 5.v),
+          SizedBox(height: 5.0),
           CustomOutlinedButton(
-            height: 32.v,
+            height: 32.0,
             width: double.infinity,
             text: buttonText,
             onPressed: onPressed,
             buttonStyle: CustomButtonStyles.outlinePrimary,
-            buttonTextStyle: theme.textTheme.titleLarge!,
+            buttonTextStyle: Theme.of(context).textTheme.titleMedium!,
           ),
         ],
       ),
@@ -259,6 +263,7 @@ class _AjudasScreen extends State<AjudasScreen> {
         custoController.text,
         descricaoController.text.isNotEmpty ? descricaoController.text : "",
         faturaController.text.isNotEmpty ? faturaController.text : "",
+        _recibo?.path, // Adicione o caminho do arquivo se disponível
       );
 
       showDialog(
@@ -291,6 +296,26 @@ class _AjudasScreen extends State<AjudasScreen> {
             ],
           );
         },
+      );
+    }
+  }
+
+  Future<void> _pickRecibo() async {
+    final status = await Permission.photos.request();
+    final cameraStatus = await Permission.camera.request();
+
+    if (status.isGranted && cameraStatus.isGranted) {
+      final pickedFile =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        setState(() {
+          _recibo = pickedFile;
+        });
+      }
+    } else {
+      // Caso as permissões não sejam concedidas, exiba uma mensagem ou peça ao usuário para permitir
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Permissões não concedidas.')),
       );
     }
   }

@@ -155,7 +155,7 @@ class Servidor {
     String idUser,
     String custo,
     String descricao,
-    String comprovativo,
+    String comprovativo, String? path,
   ) async {
     // Verifica se os parâmetros obrigatórios não estão vazios
     if (idUser.isEmpty || custo.isEmpty) {
