@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'basedados.dart';
+import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http_parser/http_parser.dart';
 
 class Servidor {
   final String baseURL = 'https://pi4-api.onrender.com'; // URL base principal
@@ -178,7 +180,7 @@ class Servidor {
     String custo,
     String descricao,
     String comprovativo,
-    String? path,
+    String? path, // O caminho do arquivo PDF
   ) async {
     // Verifica se os parâmetros obrigatórios não estão vazios
     if (idUser.isEmpty || custo.isEmpty) {
@@ -188,30 +190,31 @@ class Servidor {
     // Define a URL base e o endpoint para inserir as ajudas de custo
     var url = '$baseURL/ajudascusto/create';
 
-    // Prepara a requisição HTTP POST
-    var response = await http.post(
-      Uri.parse(url),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic>{
-        'custo': custo,
-        'descricao': descricao,
-        'comprovativo': comprovativo,
-        'id_user': idUser,
-      }),
-    );
+    // Cria o cliente HTTP
+    var request = http.MultipartRequest('POST', Uri.parse(url))
+      ..fields['id_user'] = idUser
+      ..fields['custo'] = custo
+      ..fields['descricao'] = descricao;
 
-    // Imprime o status code e o corpo da resposta para depuração
-    print('Status code: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    // Adiciona o arquivo, se o caminho não for nulo
+    if (path != null && File(path).existsSync()) {
+      var file = await http.MultipartFile.fromPath(
+        'comprovativo', // O nome do campo de arquivo no formulário
+        path,
+        contentType:
+            MediaType('application', 'pdf'), // Define o tipo MIME do arquivo
+      );
+      request.files.add(file);
+    }
 
-    // Verifica o status da resposta
+    // Envia a requisição e obtém a resposta
+    var response = await request.send();
+
+    // Processa a resposta
     if (response.statusCode == 201) {
       print('Ajuda de custo inserida com sucesso!');
     } else {
-      print('Erro ao inserir ajuda de custo: ${response.statusCode}');
-      throw Exception('Falha ao inserir ajuda de custo: ${response.body}');
+      print('Falha ao inserir ajuda de custo: ${response.statusCode}');
     }
   }
 
