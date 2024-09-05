@@ -40,24 +40,26 @@ class _PaginaPerfilScreenState extends State<PaginaPerfilScreen> {
   }
 
   Future<void> _fetchProfileData(String userId) async {
-  try {
-    // Filtrar o usuário pelo ID
-    var perfil = await bd.listarUtilizador(userId);
-    
-    if (perfil != null) {
-      setState(() {
-        nameController.text = perfil['nome'] as String? ?? '';
-        emailController.text = perfil['email'] as String? ?? '';
-        passwordController.text = perfil['password'] as String? ?? '**************';
-        userImageUrl = perfil['imagem'] as String? ?? ''; // Obtém a URL da imagem
-      });
-    } else {
-      print("Perfil não encontrado para o ID: $userId");
+    try {
+      // Filtrar o usuário pelo ID
+      var perfil = await bd.listarUtilizador(userId);
+
+      if (perfil != null) {
+        setState(() {
+          nameController.text = perfil['nome'] as String? ?? '';
+          emailController.text = perfil['email'] as String? ?? '';
+          passwordController.text =
+              perfil['password'] as String? ?? '**************';
+          userImageUrl =
+              perfil['foto'] as String? ?? ''; // Obtém a URL da imagem
+        });
+      } else {
+        print("Perfil não encontrado para o ID: $userId");
+      }
+    } catch (e) {
+      print("Erro ao buscar dados do perfil: $e");
     }
-  } catch (e) {
-    print("Erro ao buscar dados do perfil: $e");
   }
-}
 
   @override
   void dispose() {
@@ -192,67 +194,53 @@ class _PaginaPerfilScreenState extends State<PaginaPerfilScreen> {
   }
 
   Widget _buildProfileImage() {
-    return Align(
-      alignment: Alignment.center,
-      child: Stack(
-        alignment: Alignment.bottomRight,
-        children: [
-          Container(
-            height: 120,
-            width: 120,
-            decoration: BoxDecoration(
-              color: appTheme.gray300,
-              borderRadius: BorderRadius.circular(60),
-              boxShadow: [
-                BoxShadow(
-                  color: appTheme.black900.withOpacity(0.25),
-                  spreadRadius: 2,
-                  blurRadius: 2,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(60),
-              child: userImageUrl.isNotEmpty
-                  ? Image.network(
-                      userImageUrl,
-                      height: 120,
-                      width: 120,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        // Mostra um ícone de erro se a imagem falhar
-                        return Center(
-                          child: Icon(
-                            Icons.error,
-                            size: 60,
-                            color: Colors.red,
-                          ),
-                        );
-                      },
-                    )
-                  : Center(
-                      child: Icon(
-                        Icons.person,
-                        size: 60,
-                        color: Colors.grey,
-                      ),
-                    ),
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: CustomImageView(
-              imagePath: ImageConstant.imgEdit,
-              height: 19,
-              width: 19,
-            ),
+  final String baseUrl = 'https://pi4-api.onrender.com/uploads/';
+  final String imageUrl = '$baseUrl$userImageUrl';
+
+  return Align(
+    alignment: Alignment.center,
+    child: Container(
+      height: 120,
+      width: 120,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(60),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 10,
+            offset: Offset(0, 4),
           ),
         ],
+        color: Colors.grey[200], // Cor de fundo caso a imagem não carregue
       ),
-    );
-  }
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(60),
+        child: userImageUrl.isNotEmpty
+            ? Image.network(
+                imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Center(
+                    child: Icon(
+                      Icons.error,
+                      size: 60,
+                      color: Colors.red,
+                    ),
+                  );
+                },
+              )
+            : Center(
+                child: Icon(
+                  Icons.person,
+                  size: 60,
+                  color: Colors.grey,
+                ),
+              ),
+      ),
+    ),
+  );
+}
+
 
   Widget _buildProfileForm() {
     return Container(
