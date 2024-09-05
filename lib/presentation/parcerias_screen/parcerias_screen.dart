@@ -1,11 +1,9 @@
 import 'package:rui_pedro_s_application11/presentation/parcerias_pormenor_one_screen/parcerias_pormenor_one_screen.dart';
-// ignore: unused_import
 import '../parcerias_screen/widgets/parceriasgrid_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
 import '../../servidor/basedados.dart';
 import 'dart:io';
-
 
 class ParceriasScreen extends StatefulWidget {
   const ParceriasScreen({Key? key}) : super(key: key);
@@ -29,7 +27,8 @@ class ParceriasgridItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Construa a URL completa da imagem
-    final String baseUrl = 'https://pi4-api.onrender.com/uploads/'; // Substitua pela URL base real
+    final String baseUrl =
+        'https://pi4-api.onrender.com/uploads/'; // Substitua pela URL base real
     final String imageUrl = '$baseUrl$logotipo';
 
     return GestureDetector(
@@ -42,11 +41,12 @@ class ParceriasgridItemWidget extends StatelessWidget {
             // Exibe o logotipo a partir da URL completa
             Image.network(
               imageUrl,
-              height: 120,  // Ajuste a altura conforme necessário
-              width: 120,   // Ajuste a largura conforme necessário
+              height: 120, // Ajuste a altura conforme necessário
+              width: 120, // Ajuste a largura conforme necessário
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
-                return Icon(Icons.error, size: 80); // Exibe um ícone de erro se a imagem falhar
+                return Icon(Icons.error,
+                    size: 80); // Exibe um ícone de erro se a imagem falhar
               },
             ),
             SizedBox(height: 0), // Espaçamento entre a imagem e o texto

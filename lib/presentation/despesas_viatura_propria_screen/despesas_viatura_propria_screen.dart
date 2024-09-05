@@ -1,13 +1,13 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_elevated_button.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
-// ignore: unused_import
-import 'package:rui_pedro_s_application11/widgets/custom_text_form_field.dart'; // Certifique-se de ter isso importado
+import 'package:file_picker/file_picker.dart'; // Adicionado para o upload de ficheiros
 import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
-import 'package:rui_pedro_s_application11/servidor/servidor.dart'; // Certifique-se de que Servidor é importado
-import 'package:rui_pedro_s_application11/servidor/basedados.dart'; // Certifique-se de que Basededados é importado
-import 'package:shared_preferences/shared_preferences.dart'; // Certifique-se de importar o pacote
+import 'package:rui_pedro_s_application11/servidor/servidor.dart';
+import 'package:rui_pedro_s_application11/servidor/basedados.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DespesasViaturaPropriaScreen extends StatefulWidget {
   const DespesasViaturaPropriaScreen({Key? key}) : super(key: key);
@@ -23,7 +23,8 @@ class _DespesasViaturaPropriaScreenState
   final TextEditingController chegadaController = TextEditingController();
   final TextEditingController kmController = TextEditingController();
   final TextEditingController portagensController = TextEditingController();
-  final TextEditingController comprovativoController = TextEditingController();
+
+  File? comprovativo; // Variável para armazenar o ficheiro PDF
 
   final Servidor servidor = Servidor();
   final Basededados bd = Basededados();
@@ -34,7 +35,6 @@ class _DespesasViaturaPropriaScreenState
     chegadaController.dispose();
     kmController.dispose();
     portagensController.dispose();
-    comprovativoController.dispose();
     super.dispose();
   }
 
@@ -129,18 +129,18 @@ class _DespesasViaturaPropriaScreenState
               child: SingleChildScrollView(
                 child: Padding(
                   padding:
-                      EdgeInsets.symmetric(horizontal: 20.h, vertical: 10.v),
+                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SizedBox(height: 10.v),
+                      SizedBox(height: 10.0),
                       Text(
                         "Despesas Viatura Própria",
-                        style: theme.textTheme.displayMedium,
+                        style: Theme.of(context).textTheme.headlineMedium,
                       ),
-                      SizedBox(height: 20.v),
+                      SizedBox(height: 20.0),
                       _buildInputSection(context),
-                      SizedBox(height: 20.v),
+                      SizedBox(height: 20.0),
                       _buildEnviarButton(context),
                     ],
                   ),
@@ -155,10 +155,10 @@ class _DespesasViaturaPropriaScreenState
 
   Widget _buildInputSection(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 21.v),
+      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 21.0),
       decoration: BoxDecoration(
-        color: Colors.white, // Fundo branco para a caixa de entrada
-        borderRadius: BorderRadius.circular(35), // Bordas arredondadas
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(35),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.3),
@@ -178,35 +178,43 @@ class _DespesasViaturaPropriaScreenState
             hintText: "Insira o ponto de partida",
             keyboardType: TextInputType.text,
           ),
-          SizedBox(height: 10.v),
+          SizedBox(height: 10.0),
           _buildInputField(
             title: "Ponto de chegada",
             controller: chegadaController,
             hintText: "Insira o ponto de chegada",
             keyboardType: TextInputType.text,
           ),
-          SizedBox(height: 10.v),
+          SizedBox(height: 10.0),
           _buildInputField(
             title: "Kilómetros",
             controller: kmController,
             hintText: "Insira a distância em km",
             keyboardType: TextInputType.numberWithOptions(decimal: true),
           ),
-          SizedBox(height: 10.v),
+          SizedBox(height: 10.0),
           _buildInputField(
             title: "Portagens",
             controller: portagensController,
             hintText: "Insira o custo das portagens",
             keyboardType: TextInputType.numberWithOptions(decimal: true),
           ),
-          SizedBox(height: 10.v),
+          SizedBox(height: 10.0),
           _buildUploadButton(
             title: "Comprovativo",
-            buttonText: "Adicionar PDF",
-            onPressed: () {
-              // Adicionar ação para adicionar PDF
+            buttonText: "Upload de documento",
+            onPressed: () async {
+              await _pickComprovativo();
             },
           ),
+          if (comprovativo != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Text(
+                'Arquivo: ${comprovativo?.path.split('/').last}',
+                style: TextStyle(color: Colors.green),
+              ),
+            ),
         ],
       ),
     );
@@ -219,15 +227,15 @@ class _DespesasViaturaPropriaScreenState
     required TextInputType keyboardType,
   }) {
     return Padding(
-      padding: EdgeInsets.only(left: 1.h),
+      padding: EdgeInsets.only(left: 1.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: theme.textTheme.titleLarge,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
-          SizedBox(height: 5.v),
+          SizedBox(height: 5.0),
           TextField(
             controller: controller,
             decoration: InputDecoration(
@@ -236,7 +244,7 @@ class _DespesasViaturaPropriaScreenState
                 borderRadius: BorderRadius.circular(8),
               ),
               filled: true,
-              fillColor: Colors.transparent, // Cor do fundo dos campos de input
+              fillColor: Colors.transparent,
             ),
             keyboardType: keyboardType,
           ),
@@ -251,22 +259,22 @@ class _DespesasViaturaPropriaScreenState
     required void Function() onPressed,
   }) {
     return Padding(
-      padding: EdgeInsets.only(left: 1.h),
+      padding: EdgeInsets.only(left: 1.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: theme.textTheme.titleLarge,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
-          SizedBox(height: 5.v),
+          SizedBox(height: 5.0),
           CustomOutlinedButton(
-            height: 32.v,
+            height: 32.0,
             width: double.infinity,
             text: buttonText,
             onPressed: onPressed,
             buttonStyle: CustomButtonStyles.outlinePrimary,
-            buttonTextStyle: theme.textTheme.titleLarge!,
+            buttonTextStyle: Theme.of(context).textTheme.titleMedium!,
           ),
         ],
       ),
@@ -283,42 +291,61 @@ class _DespesasViaturaPropriaScreenState
     );
   }
 
+  Future<void> _pickComprovativo() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+    if (result != null && result.files.single.path != null) {
+      setState(() {
+        comprovativo = File(result.files.single.path!);
+      });
+    }
+  }
+
   void onTapEnviarButton(BuildContext context) async {
+    if (partidaController.text.isEmpty ||
+        chegadaController.text.isEmpty ||
+        kmController.text.isEmpty ||
+        portagensController.text.isEmpty) {
+      final snackBar = SnackBar(
+        content: Text('Todos os campos são obrigatórios.'),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return;
+    }
+
     try {
       double km = double.parse(kmController.text);
       String pontoPartida = partidaController.text;
       String pontoChegada = chegadaController.text;
       double precoPortagens = double.parse(portagensController.text);
-      String comprovativo = comprovativoController.text.isNotEmpty
-          ? comprovativoController.text
-          : '';
+      String comprovativoPath = comprovativo != null ? comprovativo!.path : '';
 
       final prefs = await SharedPreferences.getInstance();
-      String? idUser = prefs.getString('idUser'); // Suponho que o idUser tenha sido salvo como String
-      String estado = 'pendente'; // Estado padrão
+      String? idUser = prefs.getString('idUser');
+      String estado = 'pendente';
 
-        await bd.inserirDespesaViaturaPessoal([
-          (
-            pontoPartida.toString(),
-            pontoChegada.toString(),
-            km.toString(),
-            comprovativo.toString(),
-            precoPortagens.toString(),
-            estado // Estado inicial como 'pendente'
-          )
-        ]);
+      await bd.inserirDespesaViaturaPessoal([
+        (
+          pontoPartida.toString(),
+          pontoChegada.toString(),
+          km.toString(),
+          comprovativoPath,
+          precoPortagens.toString(),
+          estado
+        )
+      ]);
 
-      // Envia os dados para o servidor
       await servidor.insertDespesasViaturaPessoal(
         idUser.toString(),
         km,
         pontoPartida,
         pontoChegada,
         precoPortagens,
-        comprovativo,
+        comprovativoPath,
       );
 
-      // Exibe o diálogo de notificação de sucesso
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
@@ -330,7 +357,6 @@ class _DespesasViaturaPropriaScreenState
       );
     } catch (e) {
       print('Erro ao enviar despesas: $e');
-      // Exibe o diálogo de erro
       showDialog(
         context: context,
         builder: (BuildContext context) {
