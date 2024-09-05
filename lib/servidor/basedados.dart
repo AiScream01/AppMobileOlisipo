@@ -24,7 +24,7 @@ class Basededados {
     );
   }
 
-    Future<void> limparDados() async {
+  Future<void> limparDados() async {
     // Limpa as tabelas necessárias
     await limparTabela('utilizadores');
     await limparTabela('ferias');
@@ -64,17 +64,17 @@ class Basededados {
   }
 
   Future<void> apagartabelaUtilizadores() async {
-  Database db = await basededados;
-  await db.execute('DROP TABLE IF EXISTS utilizadores');
+    Database db = await basededados;
+    await db.execute('DROP TABLE IF EXISTS utilizadores');
   }
 
   //---------------------------------------Inserir utilizador
-  Future<void> inserirUtilizador(List<(
-    String, String, String, String, String, String, String, String)>
-     utilizadorData) async {
+  Future<void> inserirUtilizador(
+      List<(String, String, String, String, String, String, String, String)>
+          utilizadorData) async {
     Database db = await basededados;
 
-     await db.delete('utilizadores');
+    await db.delete('utilizadores');
 
     for (final (
           idUser,
@@ -88,59 +88,75 @@ class Basededados {
         ) in utilizadorData) {
       await db.rawInsert(
           ' INSERT INTO utilizadores (id_user, nome, email, foto, palavrapasse, declaracao_academica, declaracao_bancaria, role) VALUES (?,?,?,?,?,?,?,?)',
-          [idUser, nome, email, foto, palavrapasse, declaracao_academica, declaracao_bancaria, role]);
+          [
+            idUser,
+            nome,
+            email,
+            foto,
+            palavrapasse,
+            declaracao_academica,
+            declaracao_bancaria,
+            role
+          ]);
     }
   }
 
- //---------------------------------------Atualizar utilizador
-Future<void> atualizarUtilizador(
-    int id, String nome, String email, String foto, String palavrapasse, String declaracaoAcademica, String declaracaoBancaria, String role) async {
-  Database db = await basededados;
-  await db.update(
-    'utilizadores',
-    {
-      'nome': nome,
-      'email': email,
-      'foto': foto,
-      'palavrapasse': palavrapasse,
-      'declaracao_academica': declaracaoAcademica,
-      'declaracao_bancaria': declaracaoBancaria,
-      'role': role,
-    },
-    where: 'id_user = ?',
-    whereArgs: [id],
-  );
-}
+  //---------------------------------------Atualizar utilizador
+  Future<void> atualizarUtilizador(
+      int id,
+      String nome,
+      String email,
+      String foto,
+      String palavrapasse,
+      String declaracaoAcademica,
+      String declaracaoBancaria,
+      String role) async {
+    Database db = await basededados;
+    await db.update(
+      'utilizadores',
+      {
+        'nome': nome,
+        'email': email,
+        'foto': foto,
+        'palavrapasse': palavrapasse,
+        'declaracao_academica': declaracaoAcademica,
+        'declaracao_bancaria': declaracaoBancaria,
+        'role': role,
+      },
+      where: 'id_user = ?',
+      whereArgs: [id],
+    );
+  }
 
 //---------------------------------------Excluir utilizador
-Future<void> excluirUtilizador(int id) async {
-  Database db = await basededados;
-  await db.delete(
-    'utilizadores',
-    where: 'id_user = ?',
-    whereArgs: [id],
-  );
-}
-
-Future<List<Map<String, dynamic>>> listarTodosUtilizadores() async {
-  Database db = await basededados;
-  return await db.query('utilizadores');
-}
-
-
-Future<Map<String, dynamic>> listarUtilizador(String idUser) async {
-  // A implementação exata vai depender de como você está buscando os dados do usuário
-  // Aqui está um exemplo genérico:
-  Database db = await basededados;
-  // Substitua isso pelo código real que consulta o banco de dados
-  var resultado = await db.query('utilizadores', where: 'id_user = ?', whereArgs: [idUser]);
-
-  if (resultado.isNotEmpty) {
-    return resultado.first;
-  } else {
-    throw Exception('Perfil não encontrado');
+  Future<void> excluirUtilizador(int id) async {
+    Database db = await basededados;
+    await db.delete(
+      'utilizadores',
+      where: 'id_user = ?',
+      whereArgs: [id],
+    );
   }
-}
+
+  Future<List<Map<String, dynamic>>> listarTodosUtilizadores() async {
+    Database db = await basededados;
+    return await db.query('utilizadores');
+  }
+
+  Future<Map<String, dynamic>> listarUtilizador(String idUser) async {
+    // A implementação exata vai depender de como você está buscando os dados do usuário
+    // Aqui está um exemplo genérico:
+    Database db = await basededados;
+    // Substitua isso pelo código real que consulta o banco de dados
+    var resultado = await db
+        .query('utilizadores', where: 'id_user = ?', whereArgs: [idUser]);
+
+    if (resultado.isNotEmpty) {
+      return resultado.first;
+    } else {
+      throw Exception('Perfil não encontrado');
+    }
+  }
   //---------------------------------------FÉRIAS-----------------------------------------
 
 //---------------------------------------Criar tabela de férias

@@ -43,8 +43,8 @@ class Servidor {
   Future<void> getDadosServidor(String idUser) async {
     url = '$baseURL/appmobile/$idUser';
 
-    List<(String, String, String, String, String, String, String, String)> utilizador =
-        [];
+    List<(String, String, String, String, String, String, String, String)>
+        utilizador = [];
     List<(String, String, String)> ferias = [];
     List<(String, String, String, String)> ajudas = [];
     List<(String, String)> horas = [];
@@ -426,17 +426,84 @@ class Servidor {
     }
   }
 
-//LOGIN
-Future<String> login(String email, String palavrapasse) async {
-  if (email.isEmpty || palavrapasse.isEmpty) {
-    throw Exception('Dados inválidos: username e password são obrigatórios.');
+  Future<void> updateProfile({
+    required String idUser,
+    required String nome,
+    required String email,
+    String? fotoPath,
+    String? palavrapasse,
+    String? declaracaoAcademica,
+    String? declaracaoBancaria,
+    required String role,
+  }) async {
+    // Verifica se os parâmetros obrigatórios não estão vazios
+    if (idUser.isEmpty || nome.isEmpty || email.isEmpty || role.isEmpty) {
+      throw Exception(
+          'Dados inválidos: ID, nome, email e role são obrigatórios.');
+    }
+
+    // Prepara os dados a serem enviados
+    final updateData = <String, dynamic>{
+      'nome': nome,
+      'email': email,
+      'foto': fotoPath != null
+          ? fotoPath.split('/').last
+          : null, // Obtém o nome do arquivo da foto
+      'palavrapasse': palavrapasse != null
+          ? await _hashPassword(palavrapasse)
+          : null, // Hash da senha se fornecida
+      'declaracao_academica': declaracaoAcademica,
+      'declaracao_bancaria': declaracaoBancaria,
+      'role': role,
+    };
+
+    // Remove chaves com valores nulos
+    updateData.removeWhere((key, value) => value == null);
+
+    // Define a URL base e o endpoint para atualizar o perfil
+    var url =
+        '$baseURL/utilizador/update/$idUser'; // Ajuste o endpoint conforme necessário
+
+    // Prepara a requisição HTTP PUT
+    var response = await http.put(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(updateData),
+    );
+
+    // Imprime o status code e o corpo da resposta para depuração
+    print('Status code: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    // Verifica o status da resposta
+    if (response.statusCode == 200) {
+      print('Perfil atualizado com sucesso!');
+    } else {
+      print('Erro ao atualizar perfil: ${response.statusCode}');
+      throw Exception('Falha ao atualizar perfil: ${response.body}');
+    }
   }
 
-  var url = '$baseURL/utilizador/login';
+  // Função fictícia para hash de senha
+  Future<String> _hashPassword(String password) async {
+    // Aqui você deve adicionar o código para criptografar a senha
+    // Em uma aplicação real, você geralmente faz isso no servidor
+    return password; // Retorna a senha sem alterações para o exemplo
+  }
 
-  var response = await http.post(
-    Uri.parse(url),
-    headers: <String, String>{
+//LOGIN
+  Future<String> login(String email, String palavrapasse) async {
+    if (email.isEmpty || palavrapasse.isEmpty) {
+      throw Exception('Dados inválidos: username e password são obrigatórios.');
+    }
+
+    var url = '$baseURL/utilizador/login';
+
+    var response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, dynamic>{
@@ -460,17 +527,17 @@ Future<String> login(String email, String palavrapasse) async {
     } else {
       throw Exception('Falha ao realizar login: ${response.body}');
     }
-}
+  }
 
-Future<Map<String, dynamic>> getProfile(String idUser) async {
+  Future<Map<String, dynamic>> getProfile(String idUser) async {
     // Simulação de uma requisição para obter os dados do perfil
     // Substitua isso com a lógica real de comunicação com o servidor
-    final response = await http.get(Uri.parse('https://pi4-api.onrender.com/profile/$idUser'));
+    final response = await http
+        .get(Uri.parse('https://pi4-api.onrender.com/profile/$idUser'));
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
       throw Exception('Falha ao carregar perfil');
     }
   }
-
 }

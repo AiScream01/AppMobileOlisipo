@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
+import 'package:rui_pedro_s_application11/servidor/servidor.dart';
 import 'package:rui_pedro_s_application11/servidor/basedados.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,116 +13,175 @@ class PaginaPerfilScreen extends StatefulWidget {
 }
 
 class _PaginaPerfilScreenState extends State<PaginaPerfilScreen> {
-  late Basededados bd; // Corrigido: Agora 'bd' é inicializado corretamente
+  final Servidor servidor = Servidor();
+  final Basededados bd = Basededados();
+
+  // Controladores dos campos de texto
   late TextEditingController nameController;
   late TextEditingController passwordController;
   late TextEditingController emailController;
-  String userImageUrl = ''; // URL da imagem do utilizador
-  String? idUser; // Armazena o id do usuário
 
   @override
   void initState() {
     super.initState();
-    bd = Basededados(); // Certifique-se de inicializar 'bd' corretamente aqui
+    // Inicializando os controladores dos campos de texto
     nameController = TextEditingController();
     passwordController = TextEditingController();
     emailController = TextEditingController();
-    _getUserIdAndFetchProfileData();
+
+    // Carregar os dados do perfil ao inicializar a tela
+    _fetchProfileData();
   }
 
-  Future<void> _getUserIdAndFetchProfileData() async {
-    // Recupera o idUser das SharedPreferences
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    idUser = prefs.getString('idUser');
-
-    if (idUser != null) {
-      _fetchProfileData(idUser!);
-    }
-  }
-
-  Future<void> _fetchProfileData(String userId) async {
+  // Função para buscar os dados do perfil do banco de dados
+  Future<void> _fetchProfileData() async {
     try {
-      // Filtrar o usuário pelo ID
-      var perfil = await bd.listarUtilizador(userId);
+      // Simulação de chamada ao banco de dados para buscar o perfil do usuário
+      var listaPerfil = await bd.listarTodosUtilizadores();
 
-      if (perfil != null) {
+      // Verifica se há utilizadores na lista e usa o primeiro
+      if (listaPerfil.isNotEmpty) {
+        var perfil = listaPerfil[
+            0]; // Aqui você seleciona o primeiro utilizador da lista
+
+        // Atualiza os controladores com os dados do perfil
         setState(() {
           nameController.text = perfil['nome'] as String? ?? '';
           emailController.text = perfil['email'] as String? ?? '';
           passwordController.text =
               perfil['password'] as String? ?? '**************';
-          userImageUrl =
-              perfil['foto'] as String? ?? ''; // Obtém a URL da imagem
         });
-      } else {
-        print("Perfil não encontrado para o ID: $userId");
       }
     } catch (e) {
+      // Tratar possíveis erros, como falta de conexão com o banco de dados
       print("Erro ao buscar dados do perfil: $e");
     }
   }
 
   @override
   void dispose() {
+    // Garantir a liberação dos controladores ao descartar o widget
     nameController.dispose();
     passwordController.dispose();
     emailController.dispose();
     super.dispose();
   }
 
+  Future<void> _updateProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? idUser = prefs.getString('idUser');
+    int userId = int.tryParse(idUser ?? '') ?? 0; // Convertendo idUser para int
+
+    try {
+      // Atualiza o perfil no servidor
+      await servidor.updateProfile(
+        idUser: idUser.toString(),
+        nome: nameController.text,
+        email: emailController.text,
+        palavrapasse:
+            passwordController.text.isNotEmpty ? passwordController.text : null,
+        role: 'user', // Substitua pelo role real, se necessário
+      );
+
+      // Atualiza o perfil na base de dados local
+      await bd.atualizarUtilizador(
+          userId,
+          nameController.text,
+          emailController.text,
+          emailController
+              .text, // Aqui, a foto é o email, ajuste conforme necessário
+          passwordController.text.isNotEmpty
+              ? passwordController.text
+              : '', // Atualiza a senha somente se fornecida
+          '', // Declaracao Academica (não fornecido, colocar um valor vazio ou o valor real)
+          '', // Declaracao Bancaria (não fornecido, colocar um valor vazio ou o valor real)
+          'user' // Role
+          );
+
+      // Mostrar um diálogo de sucesso ou uma mensagem
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Perfil Atualizado!'),
+            content: Text('Seu perfil foi atualizado com sucesso.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } catch (e) {
+      // Mostrar um diálogo de erro
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Erro ao Atualizar Perfil'),
+            content: Text(
+                'Ocorreu um erro ao tentar atualizar o perfil. Verifique os dados e tente novamente.\nErro: $e'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.black87),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          title: Text(
-            'Perfil',
-            style: TextStyle(color: Colors.black87),
-          ),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.account_circle, color: Colors.black87),
-              iconSize: 40.0,
-              onPressed: () {
-                Navigator.pushNamed(context, '/paginaPerfilScreen');
-              },
-            ),
-          ],
-        ),
+        appBar: AppBar(),
         extendBody: true,
         extendBodyBehindAppBar: true,
         drawer: _buildDrawer(context),
         body: SingleChildScrollView(
-          padding: EdgeInsets.only(top: kToolbarHeight),
-          child: Column(
-            children: [
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.onPrimaryContainer,
-                  image: DecorationImage(
-                    image: AssetImage(ImageConstant.imgLogin),
-                    fit: BoxFit.cover,
-                  ),
+          padding: EdgeInsets.only(
+              top:
+                  kToolbarHeight), // Adiciona padding para não sobrepor a AppBar
+          child: Container(
+            width: SizeUtils.width,
+            height: SizeUtils.height,
+            decoration: BoxDecoration(
+              color: theme.colorScheme.onPrimaryContainer,
+              boxShadow: [
+                BoxShadow(
+                  color: appTheme.black900.withOpacity(0.3),
+                  spreadRadius: 2.h,
+                  blurRadius: 2.h,
+                  offset: Offset(10, 10),
                 ),
-                child: Column(
-                  children: [
-                    _buildProfileImage(),
-                    SizedBox(height: 50),
-                    _buildProfileForm(),
-                  ],
-                ),
+              ],
+              image: DecorationImage(
+                image: AssetImage(ImageConstant.imgLogin),
+                fit: BoxFit.cover,
               ),
-            ],
+            ),
+            child: Container(
+              width: double.maxFinite,
+              padding: EdgeInsets.symmetric(horizontal: 21.h, vertical: 28.v),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 14.v),
+                  _buildProfileImage(),
+                  SizedBox(height: 50.v),
+                  _buildProfileForm(),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -194,114 +254,96 @@ class _PaginaPerfilScreenState extends State<PaginaPerfilScreen> {
   }
 
   Widget _buildProfileImage() {
-  final String baseUrl = 'https://pi4-api.onrender.com/uploads/';
-  final String imageUrl = '$baseUrl$userImageUrl';
-
-  return Align(
-    alignment: Alignment.center,
-    child: Container(
-      height: 120,
-      width: 120,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(60),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 10,
-            offset: Offset(0, 4),
+    return Align(
+      alignment: Alignment.center,
+      child: Stack(
+        alignment: Alignment.bottomRight,
+        children: [
+          Container(
+            height: 120.v,
+            width: 120.h,
+            decoration: BoxDecoration(
+              color: appTheme.gray300,
+              borderRadius: BorderRadius.circular(60.h),
+              boxShadow: [
+                BoxShadow(
+                  color: appTheme.black900.withOpacity(0.25),
+                  spreadRadius: 2.h,
+                  blurRadius: 2.h,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Center(
+              child: CustomImageView(
+                imagePath: ImageConstant.imgDoUtilizador,
+                height: 90.adaptSize,
+                width: 90.adaptSize,
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: CustomImageView(
+              imagePath: ImageConstant.imgEdit,
+              height: 19.v,
+              width: 19.h,
+            ),
           ),
         ],
-        color: Colors.grey[200], // Cor de fundo caso a imagem não carregue
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(60),
-        child: userImageUrl.isNotEmpty
-            ? Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Center(
-                    child: Icon(
-                      Icons.error,
-                      size: 60,
-                      color: Colors.red,
-                    ),
-                  );
-                },
-              )
-            : Center(
-                child: Icon(
-                  Icons.person,
-                  size: 60,
-                  color: Colors.grey,
-                ),
-              ),
-      ),
-    ),
-  );
-}
-
+    );
+  }
 
   Widget _buildProfileForm() {
     return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 10,
-            offset: Offset(0, 4),
-          ),
-        ],
+      width: 369.h,
+      padding: EdgeInsets.symmetric(horizontal: 15.h, vertical: 15.v),
+      decoration: AppDecoration.outlineGray.copyWith(
+        borderRadius: BorderRadiusStyle.roundedBorder35,
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text("Nome",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        Text("Nome", style: CustomTextStyles.titleLargePrimary),
         TextField(
           controller: nameController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             border: UnderlineInputBorder(),
             isDense: true,
           ),
-          style: TextStyle(fontSize: 16),
+          style: theme.textTheme.bodyLarge,
         ),
-        SizedBox(height: 20),
-        Text("Password",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        SizedBox(height: 20.v),
+        Text("Senha", style: CustomTextStyles.titleLargePrimary),
         TextField(
           controller: passwordController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             border: UnderlineInputBorder(),
             isDense: true,
           ),
           obscureText: true,
-          style: TextStyle(fontSize: 16),
+          style: theme.textTheme.bodyLarge,
         ),
-        SizedBox(height: 20),
-        Text("Email",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        SizedBox(height: 20.v),
+        Text("Email", style: CustomTextStyles.titleLargePrimary),
         TextField(
           controller: emailController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             border: UnderlineInputBorder(),
             isDense: true,
           ),
-          style: TextStyle(fontSize: 16),
+          style: theme.textTheme.bodyLarge,
         ),
-        SizedBox(height: 20),
-        Text("Contrato",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        SizedBox(height: 8),
+        SizedBox(height: 8.v),
         CustomOutlinedButton(
-          height: 29,
-          width: 81,
-          text: "PDF",
-          buttonTextStyle: TextStyle(fontSize: 16),
+          height: 29.v,
+          width: 81.h,
+          text: "Editar",
+          buttonTextStyle: CustomTextStyles.bodyLarge16_1,
+          onPressed:
+              _updateProfile, // Chama a função de atualização ao pressionar o botão
         ),
-        SizedBox(height: 20),
+        SizedBox(height: 20.v),
         CustomOutlinedButton(
           height: 29,
           width: 81,

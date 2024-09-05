@@ -5,13 +5,11 @@ import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_text_form_field.dart';
 import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
 import 'package:rui_pedro_s_application11/servidor/servidor.dart';
-import 'package:rui_pedro_s_application11/servidor/basedados.dart'; // Certifique-se de que Basededados é importado
-
+import 'package:rui_pedro_s_application11/servidor/basedados.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart'; // Adiciona o File Picker
 import 'dart:io';
-import 'package:shared_preferences/shared_preferences.dart'; // Certifique-se de importar o pacote
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AjudasScreen extends StatefulWidget {
   const AjudasScreen({Key? key, required this.title}) : super(key: key);
@@ -25,20 +23,20 @@ class AjudasScreen extends StatefulWidget {
 class _AjudasScreen extends State<AjudasScreen> {
   final TextEditingController custoController = TextEditingController();
   final TextEditingController descricaoController = TextEditingController();
-  final TextEditingController faturaController = TextEditingController();
+  final TextEditingController faturaController =
+      TextEditingController(); // Novo controller para a fatura
+  File? _recibo; // Guarda o arquivo selecionado
 
-  XFile? _recibo;
+  final Servidor servidor = Servidor();
+  final Basededados bd = Basededados();
 
   @override
   void dispose() {
     custoController.dispose();
     descricaoController.dispose();
-    faturaController.dispose();
+    faturaController.dispose(); // Dispose do novo controller
     super.dispose();
   }
-
-  final Servidor servidor = Servidor();
-  final Basededados bd = Basededados();
 
   @override
   Widget build(BuildContext context) {
@@ -180,7 +178,7 @@ class _AjudasScreen extends State<AjudasScreen> {
           ),
           SizedBox(height: 10.0),
           _buildUploadButton(
-            title: "Recibo",
+            title: "comprovativo",
             buttonText: "Upload Documento",
             onPressed: () async {
               await _pickRecibo();
@@ -238,6 +236,14 @@ class _AjudasScreen extends State<AjudasScreen> {
             buttonStyle: CustomButtonStyles.outlinePrimary,
             buttonTextStyle: Theme.of(context).textTheme.titleMedium!,
           ),
+          if (_recibo != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Text(
+                'Arquivo: ${_recibo?.path.split('/').last}',
+                style: TextStyle(color: Colors.green),
+              ),
+            ),
         ],
       ),
     );
@@ -262,26 +268,28 @@ class _AjudasScreen extends State<AjudasScreen> {
       return;
     }
 
-      final prefs = await SharedPreferences.getInstance();
-      String? idUser = prefs.getString('idUser'); // Suponho que o idUser tenha sido salvo como String
-      String estado = 'pendente'; // Estado padrão
+    final prefs = await SharedPreferences.getInstance();
+    String? idUser = prefs.getString('idUser');
+    String estado = 'pendente';
 
     try {
-        await bd.inserirAjudaCusto([
-          (
-            custoController.text,
-            descricaoController.text.isNotEmpty ? descricaoController.text : "",
-            faturaController.text.isNotEmpty ? faturaController.text : "",
-            estado // Estado inicial como 'pendente'
-          )
-        ]);
+      await bd.inserirAjudaCusto([
+        (
+          custoController.text,
+          descricaoController.text.isNotEmpty ? descricaoController.text : "",
+          estado,
+          _recibo?.path ?? "",
+        )
+      ]);
 
       await servidor.insertAjudasCusto(
-        idUser.toString(), // Substitua pelo ID real do usuário
+        idUser.toString(),
         custoController.text,
         descricaoController.text.isNotEmpty ? descricaoController.text : "",
-        faturaController.text.isNotEmpty ? faturaController.text : "",
-        _recibo?.path, // Adicione o caminho do arquivo se disponível
+        faturaController.text.isNotEmpty
+            ? faturaController.text
+            : "", // Adiciona a fatura
+        _recibo?.path, // Caminho do arquivo
       );
 
       showDialog(
@@ -319,22 +327,14 @@ class _AjudasScreen extends State<AjudasScreen> {
   }
 
   Future<void> _pickRecibo() async {
-    final status = await Permission.photos.request();
-    final cameraStatus = await Permission.camera.request();
-
-    if (status.isGranted && cameraStatus.isGranted) {
-      final pickedFile =
-          await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (pickedFile != null) {
-        setState(() {
-          _recibo = pickedFile;
-        });
-      }
-    } else {
-      // Caso as permissões não sejam concedidas, exiba uma mensagem ou peça ao usuário para permitir
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Permissões não concedidas.')),
-      );
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+    if (result != null && result.files.single.path != null) {
+      setState(() {
+        _recibo = File(result.files.single.path!);
+      });
     }
   }
 }
