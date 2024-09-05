@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:rui_pedro_s_application11/core/app_export.dart';
-import 'package:rui_pedro_s_application11/widgets/custom_elevated_button.dart';
-//import 'package:rui_pedro_s_application11/widgets/custom_elevated_button.dart';
-import 'package:rui_pedro_s_application11/widgets/custom_text_form_field.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Importa shared_preferences
 import 'package:rui_pedro_s_application11/servidor/servidor.dart';
+import 'package:rui_pedro_s_application11/widgets/custom_elevated_button.dart';
+import 'package:rui_pedro_s_application11/widgets/custom_text_form_field.dart';
+import 'package:rui_pedro_s_application11/core/app_export.dart';
+import 'dart:convert'; // Adicione esta importação no início do arquivo
 
-// ignore: must_be_immutable
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key? key}) : super(key: key);
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  var servidor = Servidor();
+  final Servidor servidor = Servidor();
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +38,9 @@ class LoginScreen extends StatelessWidget {
                   SizedBox(height: 48),
                   CustomImageView(
                     imagePath: ImageConstant.imgOlisipoLogoblack,
-                    height: 118, // Mantenha o valor de altura atual ou ajuste
-                    width: 270, // Ajuste a largura se necessário
-                    fit: BoxFit
-                        .contain, // Adiciona esta linha para garantir que a imagem não seja cortada
+                    height: 118,
+                    width: 270,
+                    fit: BoxFit.contain,
                   ),
                   SizedBox(height: 33),
                   _buildLoginForm(context),
@@ -110,28 +109,41 @@ class LoginScreen extends StatelessWidget {
           ),
           SizedBox(height: 50),
           CustomElevatedButton(
-            height: 60,
-            width: 155,
-            text: "Login",
-            onPressed: () async {
-              try {
-                await servidor.login(
-                  emailController.text,
-                  passwordController.text,
-                );
-                Navigator.pushReplacementNamed(
-                  context,
-                  '/pagina_principal_screen', // ou o nome da rota que você deseja navegar
-                );
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Credenciais inválidas'),
-                  ),
-                );
-              }
-            },
-          ),
+              height: 60,
+              width: 155,
+              text: "Login",
+              onPressed: () async {
+                try {
+                  // Chama o método de login e obtém o id do usuário
+                  var idUser = await servidor.login(
+                    emailController.text,
+                    passwordController.text,
+                  );
+
+                  // Salva o idUser nas SharedPreferences
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.setString('idUser', idUser);
+
+                  // Atualize os dados do perfil aqui
+                  await updateProfileData(idUser);
+
+                  // Log para verificar o idUser
+                  print('Usuário logado com id: $idUser');
+
+                  // Redireciona para a tela principal
+                  Navigator.pushReplacementNamed(
+                    context,
+                    AppRoutes.paginaPrincipalScreen,
+                  );
+                } catch (e) {
+                  // Exibe uma mensagem de erro apropriada
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(e.toString()), // Exibe o erro completo
+                    ),
+                  );
+                }
+              }),
           SizedBox(height: 19),
           GestureDetector(
             onTap: () {
@@ -156,5 +168,15 @@ class LoginScreen extends StatelessWidget {
 
   void onTapTxtNovoAquiFazO(BuildContext context) {
     Navigator.pushNamed(context, AppRoutes.registoScreen);
+  }
+
+  Future<void> updateProfileData(String idUser) async {
+    try {
+      final profileData = await servidor.getProfile(idUser);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('profileData', jsonEncode(profileData));
+    } catch (e) {
+      print('Erro ao atualizar dados do perfil: $e');
+    }
   }
 }

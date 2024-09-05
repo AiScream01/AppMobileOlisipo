@@ -35,12 +35,32 @@ class _PaginaPrincipalScreenState extends State<PaginaPrincipalScreen> {
   String estadoAjudas = 'A carregar';
   String estadoContas = 'A carregar';
   String estadoHoras = 'A carregar';
+  bool isLoading = true;
+  bool hasError = false;
 
   @override
   void initState() {
     super.initState();
-    _fetchNoticias();
-    _fetchEstados();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    try {
+      // Fetching data
+      await Future.wait([
+        _fetchNoticias(),
+        _fetchEstados(),
+      ]);
+    } catch (e) {
+      setState(() {
+        hasError = true;
+      });
+      print('Erro ao carregar dados: $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   Future<void> _fetchNoticias() async {
@@ -76,6 +96,24 @@ class _PaginaPrincipalScreenState extends State<PaginaPrincipalScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Página Principal'),
+        ),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (hasError) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Página Principal'),
+        ),
+        body: Center(child: Text('Erro ao carregar dados')),
+      );
+    }
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(

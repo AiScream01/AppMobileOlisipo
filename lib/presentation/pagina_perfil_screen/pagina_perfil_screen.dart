@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
 import 'package:rui_pedro_s_application11/servidor/basedados.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PaginaPerfilScreen extends StatefulWidget {
   const PaginaPerfilScreen({Key? key}) : super(key: key);
@@ -11,39 +12,52 @@ class PaginaPerfilScreen extends StatefulWidget {
 }
 
 class _PaginaPerfilScreenState extends State<PaginaPerfilScreen> {
-  var bd = Basededados();
-
+  late Basededados bd; // Corrigido: Agora 'bd' é inicializado corretamente
   late TextEditingController nameController;
   late TextEditingController passwordController;
   late TextEditingController emailController;
   String userImageUrl = ''; // URL da imagem do utilizador
+  String? idUser; // Armazena o id do usuário
 
   @override
   void initState() {
     super.initState();
+    bd = Basededados(); // Certifique-se de inicializar 'bd' corretamente aqui
     nameController = TextEditingController();
     passwordController = TextEditingController();
     emailController = TextEditingController();
-    _fetchProfileData();
+    _getUserIdAndFetchProfileData();
   }
 
-  Future<void> _fetchProfileData() async {
-    try {
-      var listaPerfil = await bd.listarTodosUtilizadores();
-      if (listaPerfil.isNotEmpty) {
-        var perfil = listaPerfil[0];
-        setState(() {
-          nameController.text = perfil['nome'] as String? ?? '';
-          emailController.text = perfil['email'] as String? ?? '';
-          passwordController.text =
-              perfil['password'] as String? ?? '**************';
-          userImageUrl = perfil['imagem'] as String? ?? ''; // Obtém a URL da imagem
-        });
-      }
-    } catch (e) {
-      print("Erro ao buscar dados do perfil: $e");
+  Future<void> _getUserIdAndFetchProfileData() async {
+    // Recupera o idUser das SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    idUser = prefs.getString('idUser');
+
+    if (idUser != null) {
+      _fetchProfileData(idUser!);
     }
   }
+
+  Future<void> _fetchProfileData(String userId) async {
+  try {
+    // Filtrar o usuário pelo ID
+    var perfil = await bd.listarUtilizador(userId);
+    
+    if (perfil != null) {
+      setState(() {
+        nameController.text = perfil['nome'] as String? ?? '';
+        emailController.text = perfil['email'] as String? ?? '';
+        passwordController.text = perfil['password'] as String? ?? '**************';
+        userImageUrl = perfil['imagem'] as String? ?? ''; // Obtém a URL da imagem
+      });
+    } else {
+      print("Perfil não encontrado para o ID: $userId");
+    }
+  } catch (e) {
+    print("Erro ao buscar dados do perfil: $e");
+  }
+}
 
   @override
   void dispose() {
@@ -178,68 +192,67 @@ class _PaginaPerfilScreenState extends State<PaginaPerfilScreen> {
   }
 
   Widget _buildProfileImage() {
-  return Align(
-    alignment: Alignment.center,
-    child: Stack(
-      alignment: Alignment.bottomRight,
-      children: [
-        Container(
-          height: 120,
-          width: 120,
-          decoration: BoxDecoration(
-            color: appTheme.gray300,
-            borderRadius: BorderRadius.circular(60),
-            boxShadow: [
-              BoxShadow(
-                color: appTheme.black900.withOpacity(0.25),
-                spreadRadius: 2,
-                blurRadius: 2,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(60),
-            child: userImageUrl.isNotEmpty
-                ? Image.network(
-                    userImageUrl,
-                    height: 120,
-                    width: 120,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      // Mostra um ícone de erro se a imagem falhar
-                      return Center(
-                        child: Icon(
-                          Icons.error,
-                          size: 60,
-                          color: Colors.red,
-                        ),
-                      );
-                    },
-                  )
-                : Center(
-                    child: Icon(
-                      Icons.person,
-                      size: 60,
-                      color: Colors.grey,
+    return Align(
+      alignment: Alignment.center,
+      child: Stack(
+        alignment: Alignment.bottomRight,
+        children: [
+          Container(
+            height: 120,
+            width: 120,
+            decoration: BoxDecoration(
+              color: appTheme.gray300,
+              borderRadius: BorderRadius.circular(60),
+              boxShadow: [
+                BoxShadow(
+                  color: appTheme.black900.withOpacity(0.25),
+                  spreadRadius: 2,
+                  blurRadius: 2,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(60),
+              child: userImageUrl.isNotEmpty
+                  ? Image.network(
+                      userImageUrl,
+                      height: 120,
+                      width: 120,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        // Mostra um ícone de erro se a imagem falhar
+                        return Center(
+                          child: Icon(
+                            Icons.error,
+                            size: 60,
+                            color: Colors.red,
+                          ),
+                        );
+                      },
+                    )
+                  : Center(
+                      child: Icon(
+                        Icons.person,
+                        size: 60,
+                        color: Colors.grey,
+                      ),
                     ),
-                  ),
+            ),
           ),
-        ),
-        Positioned(
-          bottom: 0,
-          right: 0,
-          child: CustomImageView(
-            imagePath: ImageConstant.imgEdit,
-            height: 19,
-            width: 19,
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: CustomImageView(
+              imagePath: ImageConstant.imgEdit,
+              height: 19,
+              width: 19,
+            ),
           ),
-        ),
-      ],
-    ),
-  );
-}
-
+        ],
+      ),
+    );
+  }
 
   Widget _buildProfileForm() {
     return Container(
@@ -256,59 +269,70 @@ class _PaginaPerfilScreenState extends State<PaginaPerfilScreen> {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Nome", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-          TextField(
-            controller: nameController,
-            decoration: InputDecoration(
-              border: UnderlineInputBorder(),
-              isDense: true,
-            ),
-            style: TextStyle(fontSize: 16),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text("Nome",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        TextField(
+          controller: nameController,
+          decoration: InputDecoration(
+            border: UnderlineInputBorder(),
+            isDense: true,
           ),
-          SizedBox(height: 20),
-          Text("Password", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-          TextField(
-            controller: passwordController,
-            decoration: InputDecoration(
-              border: UnderlineInputBorder(),
-              isDense: true,
-            ),
-            obscureText: true,
-            style: TextStyle(fontSize: 16),
+          style: TextStyle(fontSize: 16),
+        ),
+        SizedBox(height: 20),
+        Text("Password",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        TextField(
+          controller: passwordController,
+          decoration: InputDecoration(
+            border: UnderlineInputBorder(),
+            isDense: true,
           ),
-          SizedBox(height: 20),
-          Text("Email", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-          TextField(
-            controller: emailController,
-            decoration: InputDecoration(
-              border: UnderlineInputBorder(),
-              isDense: true,
-            ),
-            style: TextStyle(fontSize: 16),
+          obscureText: true,
+          style: TextStyle(fontSize: 16),
+        ),
+        SizedBox(height: 20),
+        Text("Email",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        TextField(
+          controller: emailController,
+          decoration: InputDecoration(
+            border: UnderlineInputBorder(),
+            isDense: true,
           ),
-          SizedBox(height: 20),
-          Text("Contrato", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-          SizedBox(height: 8),
-          CustomOutlinedButton(
-            height: 29,
-            width: 81,
-            text: "PDF",
-            buttonTextStyle: TextStyle(fontSize: 16),
-          ),
-          SizedBox(height: 20),
-          CustomOutlinedButton(
-            height: 29,
-            width: 81,
-            text: "Log Out",
-            margin: EdgeInsets.only(right: 6),
-            buttonTextStyle: TextStyle(fontSize: 16),
-            alignment: Alignment.centerRight,
-          ),
-        ],
-      ),
+          style: TextStyle(fontSize: 16),
+        ),
+        SizedBox(height: 20),
+        Text("Contrato",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        SizedBox(height: 8),
+        CustomOutlinedButton(
+          height: 29,
+          width: 81,
+          text: "PDF",
+          buttonTextStyle: TextStyle(fontSize: 16),
+        ),
+        SizedBox(height: 20),
+        CustomOutlinedButton(
+          height: 29,
+          width: 81,
+          text: "Log Out",
+          margin: EdgeInsets.only(right: 6),
+          buttonTextStyle: TextStyle(fontSize: 16),
+          alignment: Alignment.centerRight,
+          onPressed: () async {
+            // Limpe os dados do perfil armazenados
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.remove('idUser');
+            await prefs.remove(
+                'profileData'); // Supondo que você armazena dados do perfil aqui
+
+            // Redirecione para a tela de login
+            Navigator.pushReplacementNamed(context, AppRoutes.loginScreen);
+          },
+        ),
+      ]),
     );
   }
 }

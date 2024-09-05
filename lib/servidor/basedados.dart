@@ -24,6 +24,23 @@ class Basededados {
     );
   }
 
+    Future<void> limparDados() async {
+    // Limpa as tabelas necessárias
+    await limparTabela('utilizadores');
+    await limparTabela('ferias');
+    await limparTabela('ajudas');
+    await limparTabela('horas');
+    await limparTabela('reunioes');
+    await limparTabela('despesas_viatura_pessoal');
+    await limparTabela('faltas');
+  }
+
+  Future<void> limparTabela(String tabela) async {
+    // Implementação para limpar uma tabela específica
+    Database db = await basededados; // obtenha sua instância de banco de dados
+    await db.delete('DELETE FROM $tabela');
+  }
+
   //---------------------------------------
   Future _onCreate(Database db, int version) async {}
 
@@ -34,7 +51,7 @@ class Basededados {
     Database db = await basededados;
     await db.execute('''
       CREATE TABLE utilizadores (
-        id_user INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_user TEXT,
         nome TEXT,
         email TEXT,
         foto TEXT,
@@ -53,13 +70,14 @@ class Basededados {
 
   //---------------------------------------Inserir utilizador
   Future<void> inserirUtilizador(List<(
-    String, String, String, String, String, String, String)>
+    String, String, String, String, String, String, String, String)>
      utilizadorData) async {
     Database db = await basededados;
 
      await db.delete('utilizadores');
 
     for (final (
+          idUser,
           nome,
           email,
           foto,
@@ -69,8 +87,8 @@ class Basededados {
           role,
         ) in utilizadorData) {
       await db.rawInsert(
-          ' INSERT INTO utilizadores (nome, email, foto, palavrapasse, declaracao_academica, declaracao_bancaria, role) VALUES (?,?,?,?,?,?,?)',
-          [nome, email, foto, palavrapasse, declaracao_academica, declaracao_bancaria, role]);
+          ' INSERT INTO utilizadores (id_user, nome, email, foto, palavrapasse, declaracao_academica, declaracao_bancaria, role) VALUES (?,?,?,?,?,?,?,?)',
+          [idUser, nome, email, foto, palavrapasse, declaracao_academica, declaracao_bancaria, role]);
     }
   }
 
@@ -107,6 +125,21 @@ Future<void> excluirUtilizador(int id) async {
 Future<List<Map<String, dynamic>>> listarTodosUtilizadores() async {
   Database db = await basededados;
   return await db.query('utilizadores');
+}
+
+
+Future<Map<String, dynamic>> listarUtilizador(String idUser) async {
+  // A implementação exata vai depender de como você está buscando os dados do usuário
+  // Aqui está um exemplo genérico:
+  Database db = await basededados;
+  // Substitua isso pelo código real que consulta o banco de dados
+  var resultado = await db.query('utilizadores', where: 'id_user = ?', whereArgs: [idUser]);
+
+  if (resultado.isNotEmpty) {
+    return resultado.first;
+  } else {
+    throw Exception('Perfil não encontrado');
+  }
 }
   //---------------------------------------FÉRIAS-----------------------------------------
 

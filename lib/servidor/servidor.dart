@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'basedados.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Servidor {
   final String baseURL = 'https://pi4-api.onrender.com'; // URL base principal
@@ -42,7 +43,8 @@ class Servidor {
   Future<void> getDadosServidor(String idUser) async {
     url = '$baseURL/appmobile/$idUser';
 
-    List<(String, String, String, String, String, String, String)> utilizador = [];
+    List<(String, String, String, String, String, String, String, String)> utilizador =
+        [];
     List<(String, String, String)> ferias = [];
     List<(String, String, String, String)> ajudas = [];
     List<(String, String)> horas = [];
@@ -55,6 +57,7 @@ class Servidor {
     var listaUtilizador = jsonDecode(result.body)['utilizador'];
     listaUtilizador.forEach((linha) {
       utilizador.add((
+        linha['id_user'].toString(),
         linha['nome'].toString(),
         linha['email'].toString(),
         linha['foto'].toString(),
@@ -117,6 +120,10 @@ class Servidor {
     });
 
     var bd = Basededados();
+
+    // Limpa dados antigos
+    await bd.limparDados();
+
     bd.inserirUtilizador(utilizador);
     bd.inserirFerias(ferias);
     bd.inserirAjudaCusto(ajudas);
@@ -170,7 +177,8 @@ class Servidor {
     String idUser,
     String custo,
     String descricao,
-    String comprovativo, String? path,
+    String comprovativo,
+    String? path,
   ) async {
     // Verifica se os parâmetros obrigatórios não estão vazios
     if (idUser.isEmpty || custo.isEmpty) {
@@ -418,39 +426,51 @@ class Servidor {
     }
   }
 
-
 //LOGIN
-  Future<void> login(String username, String password) async {
-    if (username.isEmpty || password.isEmpty) {
-      throw Exception('Dados inválidos: username e password são obrigatórios.');
-    }
+Future<String> login(String email, String palavrapasse) async {
+  if (email.isEmpty || palavrapasse.isEmpty) {
+    throw Exception('Dados inválidos: username e password são obrigatórios.');
+  }
 
-    var url = '$baseURL/utilizador/login';
+  var url = '$baseURL/utilizador/login';
 
-    try {
-      var response = await http.post(
-        Uri.parse(url),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, dynamic>{
-          'username': username,
-          'password': password,
-        }),
-      );
+  var response = await http.post(
+    Uri.parse(url),
+    headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'email': email,
+        'palavrapasse': palavrapasse,
+      }),
+    );
 
-      print('Status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
 
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        print('Login bem-sucedido: ${data}');
-      } else {
-        print('Erro ao realizar login: ${response.statusCode}');
-        throw Exception('Falha ao realizar login: ${response.body}');
+      // Verifique o tipo do campo 'id' e ajuste conforme necessário
+      var idUser = data['id'];
+      if (idUser is int) {
+        idUser = idUser.toString(); // Converte int para String
+      } else if (idUser is! String) {
+        throw Exception('Tipo inesperado para idUser');
       }
-    } catch (e) {
-      print('Erro ao realizar login: $e');
+
+      return idUser; // Retorna o idUser como String
+    } else {
+      throw Exception('Falha ao realizar login: ${response.body}');
+    }
+}
+
+Future<Map<String, dynamic>> getProfile(String idUser) async {
+    // Simulação de uma requisição para obter os dados do perfil
+    // Substitua isso com a lógica real de comunicação com o servidor
+    final response = await http.get(Uri.parse('https://pi4-api.onrender.com/profile/$idUser'));
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Falha ao carregar perfil');
     }
   }
+
 }
