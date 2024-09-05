@@ -13,51 +13,40 @@ class PaginaPerfilScreen extends StatefulWidget {
 class _PaginaPerfilScreenState extends State<PaginaPerfilScreen> {
   var bd = Basededados();
 
-  // Controladores dos campos de texto
   late TextEditingController nameController;
   late TextEditingController passwordController;
   late TextEditingController emailController;
+  String userImageUrl = ''; // URL da imagem do utilizador
 
   @override
   void initState() {
     super.initState();
-    // Inicializando os controladores dos campos de texto
     nameController = TextEditingController();
     passwordController = TextEditingController();
     emailController = TextEditingController();
-
-    // Carregar os dados do perfil ao inicializar a tela
     _fetchProfileData();
   }
 
-  // Função para buscar os dados do perfil do banco de dados
   Future<void> _fetchProfileData() async {
     try {
-      // Simulação de chamada ao banco de dados para buscar o perfil do usuário
       var listaPerfil = await bd.listarTodosUtilizadores();
-
-      // Verifica se há utilizadores na lista e usa o primeiro
       if (listaPerfil.isNotEmpty) {
-        var perfil = listaPerfil[
-            0]; // Aqui você seleciona o primeiro utilizador da lista
-
-        // Atualiza os controladores com os dados do perfil
+        var perfil = listaPerfil[0];
         setState(() {
           nameController.text = perfil['nome'] as String? ?? '';
           emailController.text = perfil['email'] as String? ?? '';
           passwordController.text =
               perfil['password'] as String? ?? '**************';
+          userImageUrl = perfil['imagem'] as String? ?? ''; // Obtém a URL da imagem
         });
       }
     } catch (e) {
-      // Tratar possíveis erros, como falta de conexão com o banco de dados
       print("Erro ao buscar dados do perfil: $e");
     }
   }
 
   @override
   void dispose() {
-    // Garantir a liberação dos controladores ao descartar o widget
     nameController.dispose();
     passwordController.dispose();
     emailController.dispose();
@@ -68,45 +57,55 @@ class _PaginaPerfilScreenState extends State<PaginaPerfilScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.black87),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          title: Text(
+            'Perfil',
+            style: TextStyle(color: Colors.black87),
+          ),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.account_circle, color: Colors.black87),
+              iconSize: 40.0,
+              onPressed: () {
+                Navigator.pushNamed(context, '/paginaPerfilScreen');
+              },
+            ),
+          ],
+        ),
         extendBody: true,
         extendBodyBehindAppBar: true,
         drawer: _buildDrawer(context),
         body: SingleChildScrollView(
-          padding: EdgeInsets.only(
-              top:
-                  kToolbarHeight), // Adiciona padding para não sobrepor a AppBar
-          child: Container(
-            width: SizeUtils.width,
-            height: SizeUtils.height,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.onPrimaryContainer,
-              boxShadow: [
-                BoxShadow(
-                  color: appTheme.black900.withOpacity(0.3),
-                  spreadRadius: 2.h,
-                  blurRadius: 2.h,
-                  offset: Offset(10, 10),
+          padding: EdgeInsets.only(top: kToolbarHeight),
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.onPrimaryContainer,
+                  image: DecorationImage(
+                    image: AssetImage(ImageConstant.imgLogin),
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ],
-              image: DecorationImage(
-                image: AssetImage(ImageConstant.imgLogin),
-                fit: BoxFit.cover,
+                child: Column(
+                  children: [
+                    _buildProfileImage(),
+                    SizedBox(height: 50),
+                    _buildProfileForm(),
+                  ],
+                ),
               ),
-            ),
-            child: Container(
-              width: double.maxFinite,
-              padding: EdgeInsets.symmetric(horizontal: 21.h, vertical: 28.v),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(height: 14.v),
-                  _buildProfileImage(),
-                  SizedBox(height: 50.v),
-                  _buildProfileForm(),
-                ],
-              ),
-            ),
+            ],
           ),
         ),
       ),
@@ -179,104 +178,133 @@ class _PaginaPerfilScreenState extends State<PaginaPerfilScreen> {
   }
 
   Widget _buildProfileImage() {
-    return Align(
-      alignment: Alignment.center,
-      child: Stack(
-        alignment: Alignment.bottomRight,
-        children: [
-          Container(
-            height: 120.v,
-            width: 120.h,
-            decoration: BoxDecoration(
-              color: appTheme.gray300,
-              borderRadius: BorderRadius.circular(60.h),
-              boxShadow: [
-                BoxShadow(
-                  color: appTheme.black900.withOpacity(0.25),
-                  spreadRadius: 2.h,
-                  blurRadius: 2.h,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Center(
-              child: CustomImageView(
-                imagePath: ImageConstant.imgDoUtilizador,
-                height: 90.adaptSize,
-                width: 90.adaptSize,
+  return Align(
+    alignment: Alignment.center,
+    child: Stack(
+      alignment: Alignment.bottomRight,
+      children: [
+        Container(
+          height: 120,
+          width: 120,
+          decoration: BoxDecoration(
+            color: appTheme.gray300,
+            borderRadius: BorderRadius.circular(60),
+            boxShadow: [
+              BoxShadow(
+                color: appTheme.black900.withOpacity(0.25),
+                spreadRadius: 2,
+                blurRadius: 2,
+                offset: Offset(0, 4),
               ),
-            ),
+            ],
           ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: CustomImageView(
-              imagePath: ImageConstant.imgEdit,
-              height: 19.v,
-              width: 19.h,
-            ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(60),
+            child: userImageUrl.isNotEmpty
+                ? Image.network(
+                    userImageUrl,
+                    height: 120,
+                    width: 120,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      // Mostra um ícone de erro se a imagem falhar
+                      return Center(
+                        child: Icon(
+                          Icons.error,
+                          size: 60,
+                          color: Colors.red,
+                        ),
+                      );
+                    },
+                  )
+                : Center(
+                    child: Icon(
+                      Icons.person,
+                      size: 60,
+                      color: Colors.grey,
+                    ),
+                  ),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: CustomImageView(
+            imagePath: ImageConstant.imgEdit,
+            height: 19,
+            width: 19,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 
   Widget _buildProfileForm() {
     return Container(
-      width: 369.h,
-      padding: EdgeInsets.symmetric(horizontal: 15.h, vertical: 15.v),
-      decoration: AppDecoration.outlineGray.copyWith(
-        borderRadius: BorderRadiusStyle.roundedBorder35,
+      width: double.infinity,
+      padding: EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Nome", style: CustomTextStyles.titleLargePrimary),
+          Text("Nome", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           TextField(
             controller: nameController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               border: UnderlineInputBorder(),
               isDense: true,
             ),
-            style: theme.textTheme.bodyLarge,
+            style: TextStyle(fontSize: 16),
           ),
-          SizedBox(height: 20.v),
-          Text("Password", style: CustomTextStyles.titleLargePrimary),
+          SizedBox(height: 20),
+          Text("Password", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           TextField(
             controller: passwordController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               border: UnderlineInputBorder(),
               isDense: true,
             ),
             obscureText: true,
-            style: theme.textTheme.bodyLarge,
+            style: TextStyle(fontSize: 16),
           ),
-          SizedBox(height: 20.v),
-          Text("Email", style: CustomTextStyles.titleLargePrimary),
+          SizedBox(height: 20),
+          Text("Email", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           TextField(
             controller: emailController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               border: UnderlineInputBorder(),
               isDense: true,
             ),
-            style: theme.textTheme.bodyLarge,
+            style: TextStyle(fontSize: 16),
           ),
-          SizedBox(height: 20.v),
-          Text("Contrato", style: CustomTextStyles.titleLargePrimary),
-          SizedBox(height: 8.v),
+          SizedBox(height: 20),
+          Text("Contrato", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          SizedBox(height: 8),
           CustomOutlinedButton(
-            height: 29.v,
-            width: 81.h,
+            height: 29,
+            width: 81,
             text: "PDF",
-            buttonTextStyle: CustomTextStyles.bodyLarge16_1,
+            buttonTextStyle: TextStyle(fontSize: 16),
           ),
-          SizedBox(height: 20.v),
+          SizedBox(height: 20),
           CustomOutlinedButton(
-            height: 29.v,
-            width: 81.h,
+            height: 29,
+            width: 81,
             text: "Log Out",
-            margin: EdgeInsets.only(right: 6.h),
-            buttonTextStyle: CustomTextStyles.bodyLarge16,
+            margin: EdgeInsets.only(right: 6),
+            buttonTextStyle: TextStyle(fontSize: 16),
             alignment: Alignment.centerRight,
           ),
         ],

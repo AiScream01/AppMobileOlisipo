@@ -46,51 +46,68 @@ class Basededados {
     ''');
   }
 
+  Future<void> apagartabelaUtilizadores() async {
+  Database db = await basededados;
+  await db.execute('DROP TABLE IF EXISTS utilizadores');
+  }
+
   //---------------------------------------Inserir utilizador
-  Future<void> inserirUtilizador(
-      String nome, String email, String palavrapasse) async {
+  Future<void> inserirUtilizador(List<(
+    String, String, String, String, String, String, String)>
+     utilizadorData) async {
     Database db = await basededados;
-    await db.insert(
-      'utilizadores',
-      {
-        'nome': nome,
-        'email': email,
-        'palavrapasse': palavrapasse,
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+
+     await db.delete('utilizadores');
+
+    for (final (
+          nome,
+          email,
+          foto,
+          palavrapasse,
+          declaracao_academica,
+          declaracao_bancaria,
+          role,
+        ) in utilizadorData) {
+      await db.rawInsert(
+          ' INSERT INTO utilizadores (nome, email, foto, palavrapasse, declaracao_academica, declaracao_bancaria, role) VALUES (?,?,?,?,?,?,?)',
+          [nome, email, foto, palavrapasse, declaracao_academica, declaracao_bancaria, role]);
+    }
   }
 
-  //---------------------------------------Atualizar utilizador
-  Future<void> atualizarUtilizador(
-      int id, String nome, String email, String palavrapasse) async {
-    Database db = await basededados;
-    await db.update(
-      'utilizadores',
-      {
-        'nome': nome,
-        'email': email,
-        'palavrapasse': palavrapasse,
-      },
-      where: 'id_user = ?',
-      whereArgs: [id],
-    );
-  }
+ //---------------------------------------Atualizar utilizador
+Future<void> atualizarUtilizador(
+    int id, String nome, String email, String foto, String palavrapasse, String declaracaoAcademica, String declaracaoBancaria, String role) async {
+  Database db = await basededados;
+  await db.update(
+    'utilizadores',
+    {
+      'nome': nome,
+      'email': email,
+      'foto': foto,
+      'palavrapasse': palavrapasse,
+      'declaracao_academica': declaracaoAcademica,
+      'declaracao_bancaria': declaracaoBancaria,
+      'role': role,
+    },
+    where: 'id_user = ?',
+    whereArgs: [id],
+  );
+}
 
-  //---------------------------------------Excluir utilizador
-  Future<void> excluirUtilizador(int id) async {
-    Database db = await basededados;
-    await db.delete(
-      'utilizadores',
-      where: 'id_user = ?',
-      whereArgs: [id],
-    );
-  }
+//---------------------------------------Excluir utilizador
+Future<void> excluirUtilizador(int id) async {
+  Database db = await basededados;
+  await db.delete(
+    'utilizadores',
+    where: 'id_user = ?',
+    whereArgs: [id],
+  );
+}
 
-  Future<List<Map<String, dynamic>>> listarTodosUtilizadores() async {
-    Database db = await basededados;
-    return await db.query('utilizadores');
-  }
+Future<List<Map<String, dynamic>>> listarTodosUtilizadores() async {
+  Database db = await basededados;
+  return await db.query('utilizadores');
+}
   //---------------------------------------FÉRIAS-----------------------------------------
 
 //---------------------------------------Criar tabela de férias

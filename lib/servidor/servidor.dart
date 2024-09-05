@@ -42,6 +42,7 @@ class Servidor {
   Future<void> getDadosServidor(String idUser) async {
     url = '$baseURL/appmobile/$idUser';
 
+    List<(String, String, String, String, String, String, String)> utilizador = [];
     List<(String, String, String)> ferias = [];
     List<(String, String, String, String)> ajudas = [];
     List<(String, String)> horas = [];
@@ -50,6 +51,19 @@ class Servidor {
     List<(String, String)> faltas = [];
 
     var result = await http.get(Uri.parse(url));
+
+    var listaUtilizador = jsonDecode(result.body)['utilizador'];
+    listaUtilizador.forEach((linha) {
+      utilizador.add((
+        linha['nome'].toString(),
+        linha['email'].toString(),
+        linha['foto'].toString(),
+        linha['palavrapasse'].toString(),
+        linha['declaracao_academica'].toString(),
+        linha['declaracao_bancaria'].toString(),
+        linha['role'].toString()
+      ));
+    });
 
     var listaFerias = jsonDecode(result.body)['ferias'];
     listaFerias.forEach((linha) {
@@ -103,6 +117,7 @@ class Servidor {
     });
 
     var bd = Basededados();
+    bd.inserirUtilizador(utilizador);
     bd.inserirFerias(ferias);
     bd.inserirAjudaCusto(ajudas);
     bd.inserirHoras(horas);

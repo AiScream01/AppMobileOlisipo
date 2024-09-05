@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
       //bd.criatabelaParcerias();
       //bd.criarTabelaNoticias();
       //bd.criatabelaUtilizadores();
+      //bd.apagartabelaUtilizadores();
       //bd.criarTabelaReunioes();
       //bd.criarTabelaAjudasCusto();
       //bd.criarTabelaHoras();

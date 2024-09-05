@@ -1,6 +1,5 @@
-import '../pagina_principal_screen/widgets/contentslider_item_widget.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:rui_pedro_s_application11/servidor/basedados.dart';
@@ -78,189 +77,190 @@ class _PaginaPrincipalScreenState extends State<PaginaPrincipalScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Scaffold(
-            appBar: AppBar(
-              actions: [
-                IconButton(
-                  icon: Icon(Icons.account_circle),
-                  iconSize: 40.0,
-                  onPressed: () {
-                    Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
-                  },
+      child: Scaffold(
+        appBar: AppBar(
+          actions: [
+            IconButton(
+              icon: Icon(Icons.account_circle),
+              iconSize: 40.0,
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
+              },
+            ),
+          ],
+        ),
+        extendBody: true,
+        extendBodyBehindAppBar: true,
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.green,
                 ),
-              ],
-            ),
-            extendBody: true,
-            extendBodyBehindAppBar: true,
-            drawer: Drawer(
-              child: ListView(
-                padding: EdgeInsets.zero,
-                children: [
-                  const DrawerHeader(
-                    decoration: BoxDecoration(
-                      color: Colors.green,
-                    ),
-                    child: Text('Menu de Navegação'),
-                  ),
-                  ListTile(
-                    title: const Text('Ajudas de Custo'),
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.ajudasScreen);
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('Despesas viatura própria'),
-                    onTap: () {
-                      Navigator.pushNamed(
-                          context, AppRoutes.despesasViaturaPropriaScreen);
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('Faltas'),
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.faltasScreen);
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('Noticias'),
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.noticiasScreen);
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('Parcerias'),
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.parceriasScreen);
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('Ferias'),
-                    onTap: () {
-                      Navigator.pushNamed(
-                          context, AppRoutes.pedidoFeriasScreen);
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('Horas'),
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('Reuniões'),
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.reunioesScreen);
-                    },
-                  ),
-                ],
+                child: Text('Menu de Navegação'),
               ),
-            ),
-            body: SizedBox(
-                height: SizeUtils.height,
-                width: double.maxFinite,
-                child: Stack(alignment: Alignment.bottomCenter, children: [
-                  CustomImageView(
-                      imagePath: ImageConstant.imgFundo,
-                      height: 893.v,
-                      width: 411.h,
-                      radius: BorderRadius.circular(30.h),
-                      alignment: Alignment.bottomCenter),
-                  Align(
-                      alignment: Alignment.topCenter,
-                      child: SingleChildScrollView(
-                          child: Container(
-                              margin: EdgeInsets.only(
-                                  left: 18.h, right: 18.h, top: 30.v),
-                              decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadiusStyle.roundedBorder30),
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+              ListTile(
+                title: const Text('Ajudas de Custo'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.ajudasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Despesas viatura própria'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.despesasViaturaPropriaScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Faltas'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.faltasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Noticias'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.noticiasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Parcerias'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.parceriasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Ferias'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Horas'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Reuniões'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.reunioesScreen);
+                },
+              ),
+            ],
+          ),
+        ),
+        body: SizedBox(
+          height: SizeUtils.height,
+          width: double.maxFinite,
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              CustomImageView(
+                imagePath: ImageConstant.imgFundo,
+                height: 893.v,
+                width: 411.h,
+                radius: BorderRadius.circular(30.h),
+                alignment: Alignment.bottomCenter,
+              ),
+              Align(
+                alignment: Alignment.topCenter,
+                child: SingleChildScrollView(
+                  child: Container(
+                    margin: EdgeInsets.only(left: 18.h, right: 18.h, top: 30.v),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadiusStyle.roundedBorder30,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 34.v),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 4.h, vertical: 11.v),
+                          decoration: AppDecoration.outlineGray.copyWith(
+                            borderRadius: BorderRadiusStyle.roundedBorder35,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "Conteúdo",
+                                style: CustomTextStyles.titleLargeInterSemiBold,
+                              ),
+                              SizedBox(height: 13.v),
+                              _buildContentSlider(context),
+                              SizedBox(height: 27.v),
+                              SizedBox(
+                                height: 8.v,
+                                child: AnimatedSmoothIndicator(
+                                  activeIndex: sliderIndex,
+                                  count: noticias.length,
+                                  axisDirection: Axis.horizontal,
+                                  effect: ScrollingDotsEffect(
+                                    spacing: 8,
+                                    activeDotColor: appTheme.green400,
+                                    dotColor: appTheme.gray200,
+                                    dotHeight: 8.v,
+                                    dotWidth: 8.h,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 13.v),
+                              _buildUserStatusColumn(context),
+                              SizedBox(height: 10.v),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 23.h),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    SizedBox(height: 34.v),
-                                    Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 4.h, vertical: 11.v),
-                                        decoration: AppDecoration.outlineGray
-                                            .copyWith(
-                                                borderRadius: BorderRadiusStyle
-                                                    .roundedBorder35),
-                                        child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text("Conteúdo",
-                                                  style: CustomTextStyles
-                                                      .titleLargeInterSemiBold),
-                                              SizedBox(height: 13.v),
-                                              _buildContentSlider(context),
-                                              SizedBox(height: 27.v),
-                                              SizedBox(
-                                                  height: 8.v,
-                                                  child: AnimatedSmoothIndicator(
-                                                      activeIndex: sliderIndex,
-                                                      count: noticias.length,
-                                                      axisDirection:
-                                                          Axis.horizontal,
-                                                      effect:
-                                                          ScrollingDotsEffect(
-                                                              spacing: 8,
-                                                              activeDotColor:
-                                                                  appTheme
-                                                                      .green400,
-                                                              dotColor: appTheme
-                                                                  .gray200,
-                                                              dotHeight: 8.v,
-                                                              dotWidth: 8.h))),
-                                              SizedBox(height: 13.v),
-                                              _buildUserStatusColumn(context),
-                                              SizedBox(height: 10.v),
-                                              Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 23.h),
-                                                  child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        _buildRequestRow(
-                                                            context,
-                                                            pedidoDeReuniaoText:
-                                                                "Pedido de Férias",
-                                                            reprovadoText:
-                                                                estadoFerias),
-                                                        SizedBox(height: 10.v),
-                                                        _buildRequestRow(
-                                                            context,
-                                                            pedidoDeReuniaoText:
-                                                                "Pedido de Reunião",
-                                                            reprovadoText:
-                                                                estadoReuniao),
-                                                        SizedBox(height: 10.v),
-                                                        _buildRequestRow(
-                                                            context,
-                                                            pedidoDeReuniaoText:
-                                                                "Pedido de Ajudas",
-                                                            reprovadoText:
-                                                                estadoAjudas),
-                                                        SizedBox(height: 10.v),
-                                                        _buildRequestRow(
-                                                            context,
-                                                            pedidoDeReuniaoText:
-                                                                "Pedido de Despesas",
-                                                            reprovadoText:
-                                                                estadoContas),
-                                                        SizedBox(height: 10.v),
-                                                        _buildRequestRow(
-                                                            context,
-                                                            pedidoDeReuniaoText:
-                                                                "Pedido de Horas",
-                                                            reprovadoText:
-                                                                estadoHoras)
-                                                      ]))
-                                            ])),
-                                    SizedBox(height: 10.v)
-                                  ]))))
-                ]))));
+                                    _buildRequestRow(
+                                      context,
+                                      pedidoDeReuniaoText: "Pedido de Férias",
+                                      reprovadoText: estadoFerias,
+                                    ),
+                                    SizedBox(height: 10.v),
+                                    _buildRequestRow(
+                                      context,
+                                      pedidoDeReuniaoText: "Pedido de Reunião",
+                                      reprovadoText: estadoReuniao,
+                                    ),
+                                    SizedBox(height: 10.v),
+                                    _buildRequestRow(
+                                      context,
+                                      pedidoDeReuniaoText: "Pedido de Ajudas",
+                                      reprovadoText: estadoAjudas,
+                                    ),
+                                    SizedBox(height: 10.v),
+                                    _buildRequestRow(
+                                      context,
+                                      pedidoDeReuniaoText: "Pedido de Despesas",
+                                      reprovadoText: estadoContas,
+                                    ),
+                                    SizedBox(height: 10.v),
+                                    _buildRequestRow(
+                                      context,
+                                      pedidoDeReuniaoText: "Pedido de Horas",
+                                      reprovadoText: estadoHoras,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 10.v),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildContentSlider(BuildContext context) {
@@ -283,6 +283,9 @@ class _PaginaPrincipalScreenState extends State<PaginaPrincipalScreen> {
         itemCount: noticias.length,
         itemBuilder: (context, index, realIndex) {
           final noticia = noticias[index];
+          final String baseUrl = 'https://pi4-api.onrender.com/uploads/'; // URL base das imagens
+          final String imageUrl = '$baseUrl${noticia.imagem}'; // URL completa da imagem
+
           return GestureDetector(
             onTap: () {
               Navigator.push(
@@ -298,20 +301,33 @@ class _PaginaPrincipalScreenState extends State<PaginaPrincipalScreen> {
               );
             },
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.h, vertical: 24.v),
+              padding: EdgeInsets.symmetric(horizontal: 16.h, vertical: 1.v),
               decoration: BoxDecoration(
                 color: Colors.white, // Personalize o fundo aqui
                 borderRadius: BorderRadius.circular(15.h),
               ),
-              child: Center(
-                child: Text(
-                  noticia.titulo,
-                  style: CustomTextStyles.titleLargeInterSemiBold.copyWith(
-                    fontSize: 20.h, // Personalize o tamanho do texto aqui
-                    color: Colors.black, // Personalize a cor do texto aqui
+              child: Column(
+                children: [
+                  // Exibe a imagem da notícia
+                  Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    height: 170.v, // Ajuste a altura conforme necessário
+                    width: double.infinity,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(Icons.error, size: 140); // Exibe um ícone de erro se a imagem falhar
+                    },
                   ),
-                  textAlign: TextAlign.center,
-                ),
+                  SizedBox(height: 16.v),
+                  Text(
+                    noticia.titulo,
+                    style: CustomTextStyles.titleLargeInterSemiBold.copyWith(
+                      fontSize: 15.h, // Personalize o tamanho do texto aqui
+                      color: Colors.black, // Personalize a cor do texto aqui
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
             ),
           );
@@ -322,18 +338,23 @@ class _PaginaPrincipalScreenState extends State<PaginaPrincipalScreen> {
 
   Widget _buildUserStatusColumn(BuildContext context) {
     return Container(
-        margin: EdgeInsets.only(left: 2.h, right: 1.h),
-        padding: EdgeInsets.symmetric(horizontal: 10.h, vertical: 13.v),
-        decoration: AppDecoration.fillLightGreenA
-            .copyWith(borderRadius: BorderRadiusStyle.roundedBorder15),
-        child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: 4.v),
-              Text("Estado das suas submissões/pedidos",
-                  style: CustomTextStyles.titleMediumNunitoOnPrimaryContainer)
-            ]));
+      margin: EdgeInsets.only(left: 2.h, right: 1.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.h, vertical: 13.v),
+      decoration: AppDecoration.fillLightGreenA.copyWith(
+        borderRadius: BorderRadiusStyle.roundedBorder15,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(height: 4.v),
+          Text(
+            "Estado das suas submissões/pedidos",
+            style: CustomTextStyles.titleMediumNunitoOnPrimaryContainer,
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildRequestRow(
@@ -358,22 +379,34 @@ class _PaginaPrincipalScreenState extends State<PaginaPrincipalScreen> {
     }
 
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: 3.h, vertical: 7.v),
-        decoration: AppDecoration.fillGray
-            .copyWith(borderRadius: BorderRadiusStyle.roundedBorder15),
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      padding: EdgeInsets.symmetric(horizontal: 3.h, vertical: 7.v),
+      decoration: AppDecoration.fillGray.copyWith(
+        borderRadius: BorderRadiusStyle.roundedBorder15,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
           Padding(
-              padding: EdgeInsets.only(left: 4.h, bottom: 2.v),
-              child: Text(pedidoDeReuniaoText,
-                  style: CustomTextStyles.titleLargeInter
-                      .copyWith(color: appTheme.black900))),
+            padding: EdgeInsets.only(left: 4.h, bottom: 2.v),
+            child: Text(
+              pedidoDeReuniaoText,
+              style: CustomTextStyles.titleLargeInter.copyWith(
+                color: appTheme.black900,
+              ),
+            ),
+          ),
           Padding(
-              padding: EdgeInsets.only(top: 2.v),
-              child: Text(reprovadoText,
-                  style: CustomTextStyles.titleLargeInterPrimaryContainer
-                      .copyWith(color: getStatusColor(reprovadoText))))
-        ]));
+            padding: EdgeInsets.only(top: 2.v),
+            child: Text(
+              reprovadoText,
+              style: CustomTextStyles.titleLargeInterPrimaryContainer.copyWith(
+                color: getStatusColor(reprovadoText),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   onTapImgDoUtilizador(BuildContext context) {

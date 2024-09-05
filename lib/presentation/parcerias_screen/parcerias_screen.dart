@@ -4,6 +4,8 @@ import '../parcerias_screen/widgets/parceriasgrid_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
 import '../../servidor/basedados.dart';
+import 'dart:io';
+
 
 class ParceriasScreen extends StatefulWidget {
   const ParceriasScreen({Key? key}) : super(key: key);
@@ -13,34 +15,54 @@ class ParceriasScreen extends StatefulWidget {
 }
 
 class ParceriasgridItemWidget extends StatelessWidget {
+  final String logotipo; // Nome do arquivo da imagem
   final String titulo;
   final VoidCallback onTapWidget;
 
   const ParceriasgridItemWidget({
     Key? key,
+    required this.logotipo,
     required this.titulo,
     required this.onTapWidget,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Construa a URL completa da imagem
+    final String baseUrl = 'https://pi4-api.onrender.com/uploads/'; // Substitua pela URL base real
+    final String imageUrl = '$baseUrl$logotipo';
+
     return GestureDetector(
       onTap: onTapWidget,
       child: Card(
         color: Colors.white, // Cor de fundo branca
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.all(16.0), // Adiciona algum padding
-            child: Text(
-              titulo,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16.0, // Tamanho do texto, ajuste conforme necessário
-                color: Colors.black, // Cor do texto
-              ),
-              textAlign: TextAlign.center, // Alinha o texto ao centro
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Exibe o logotipo a partir da URL completa
+            Image.network(
+              imageUrl,
+              height: 120,  // Ajuste a altura conforme necessário
+              width: 120,   // Ajuste a largura conforme necessário
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Icon(Icons.error, size: 80); // Exibe um ícone de erro se a imagem falhar
+              },
             ),
-          ),
+            SizedBox(height: 0), // Espaçamento entre a imagem e o texto
+            //Padding(
+            //  padding: EdgeInsets.all(1.0), // Adiciona algum padding
+            //  child: Text(
+            //    titulo,
+            //    style: TextStyle(
+            //      fontWeight: FontWeight.bold,
+            //      fontSize: 16.0, // Tamanho do texto, ajuste conforme necessário
+            //      color: Colors.black, // Cor do texto
+            //    ),
+            //    textAlign: TextAlign.center, // Alinha o texto ao centro
+            //  ),
+            //),
+          ],
         ),
       ),
     );
@@ -249,6 +271,7 @@ class _ParceriasScreenState extends State<ParceriasScreen> {
           // Desestrutura a tupla
           var (logotipo, titulo, descricao, categoria) = parcerias[index];
           return ParceriasgridItemWidget(
+            logotipo: logotipo,
             titulo: titulo,
             onTapWidget: () {
               Navigator.push(
