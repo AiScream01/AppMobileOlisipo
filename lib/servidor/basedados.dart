@@ -38,7 +38,7 @@ class Basededados {
   Future<void> limparTabela(String tabela) async {
     // Implementação para limpar uma tabela específica
     Database db = await basededados; // obtenha sua instância de banco de dados
-    await db.delete('DELETE FROM $tabela');
+    await db.delete(tabela);
   }
 
   //---------------------------------------

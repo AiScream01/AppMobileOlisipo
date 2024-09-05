@@ -3,7 +3,8 @@ import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_elevated_button.dart';
 import 'package:rui_pedro_s_application11/servidor/servidor.dart';
 import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
-
+import 'package:rui_pedro_s_application11/servidor/basedados.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FaltasScreen extends StatefulWidget {
   const FaltasScreen({Key? key}) : super(key: key);
@@ -15,6 +16,7 @@ class FaltasScreen extends StatefulWidget {
 class _FaltasScreenState extends State<FaltasScreen> {
   final TextEditingController dateController = TextEditingController();
   final Servidor servidor = Servidor();
+  final Basededados bd = Basededados();
 
   @override
   void dispose() {
@@ -91,7 +93,8 @@ class _FaltasScreenState extends State<FaltasScreen> {
           ListTile(
             title: const Text('Despesas viatura própria'),
             onTap: () {
-              Navigator.pushNamed(context, AppRoutes.despesasViaturaPropriaScreen);
+              Navigator.pushNamed(
+                  context, AppRoutes.despesasViaturaPropriaScreen);
             },
           ),
           ListTile(
@@ -230,9 +233,21 @@ class _FaltasScreenState extends State<FaltasScreen> {
       return;
     }
 
+    final prefs = await SharedPreferences.getInstance();
+    String? idUser = prefs.getString(
+        'idUser'); // Suponho que o idUser tenha sido salvo como String
+    String estado = 'pendente'; // Estado padrão
+
     try {
+      await bd.inserirFalta([
+          (
+           dateController.text.toString(),
+            estado
+          )
+        ]);
+
       await servidor.insertFalta(
-        '2', // Substitua pelo ID real do usuário
+        idUser.toString(),
         DateTime.parse(dateController.text),
       );
 

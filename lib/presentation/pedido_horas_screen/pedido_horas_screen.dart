@@ -3,6 +3,8 @@ import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_elevated_button.dart';
 import 'package:rui_pedro_s_application11/servidor/servidor.dart';
 import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
+import 'package:rui_pedro_s_application11/servidor/basedados.dart'; // Certifique-se de que Basededados é importado
+import 'package:shared_preferences/shared_preferences.dart'; // Certifique-se de importar o pacote
 
 class PedidoHorasScreen extends StatefulWidget {
   const PedidoHorasScreen({Key? key}) : super(key: key);
@@ -13,6 +15,7 @@ class PedidoHorasScreen extends StatefulWidget {
 
 class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
   final Servidor servidor = Servidor();
+  final Basededados bd = Basededados();
   int selectedHours = 1;
 
   @override
@@ -199,11 +202,20 @@ class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
 
   void onTapEnviar(BuildContext context) async {
   try {
-    String userId = '2'; // Substitua pelo ID real do usuário
+    final prefs = await SharedPreferences.getInstance();
+    String? idUser = prefs.getString('idUser'); // Suponho que o idUser tenha sido salvo como String
+    String estado = 'pendente'; // Estado padrão
     String horas = selectedHours.toString();
-    
+
+      await bd.inserirHoras([
+          (
+            horas,
+            estado
+          )
+        ]);
+
     // Apenas chama a função sem atribuir a uma variável
-    await servidor.insertHoras(userId, horas);
+    await servidor.insertHoras(idUser.toString(), horas);
 
     showDialog(
       context: context,

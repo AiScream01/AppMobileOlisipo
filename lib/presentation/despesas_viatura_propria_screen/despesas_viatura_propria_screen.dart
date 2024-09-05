@@ -6,6 +6,8 @@ import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_text_form_field.dart'; // Certifique-se de ter isso importado
 import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
 import 'package:rui_pedro_s_application11/servidor/servidor.dart'; // Certifique-se de que Servidor é importado
+import 'package:rui_pedro_s_application11/servidor/basedados.dart'; // Certifique-se de que Basededados é importado
+import 'package:shared_preferences/shared_preferences.dart'; // Certifique-se de importar o pacote
 
 class DespesasViaturaPropriaScreen extends StatefulWidget {
   const DespesasViaturaPropriaScreen({Key? key}) : super(key: key);
@@ -24,6 +26,7 @@ class _DespesasViaturaPropriaScreenState
   final TextEditingController comprovativoController = TextEditingController();
 
   final Servidor servidor = Servidor();
+  final Basededados bd = Basededados();
 
   @override
   void dispose() {
@@ -290,9 +293,24 @@ class _DespesasViaturaPropriaScreenState
           ? comprovativoController.text
           : '';
 
+      final prefs = await SharedPreferences.getInstance();
+      String? idUser = prefs.getString('idUser'); // Suponho que o idUser tenha sido salvo como String
+      String estado = 'pendente'; // Estado padrão
+
+        await bd.inserirDespesaViaturaPessoal([
+          (
+            pontoPartida.toString(),
+            pontoChegada.toString(),
+            km.toString(),
+            comprovativo.toString(),
+            precoPortagens.toString(),
+            estado // Estado inicial como 'pendente'
+          )
+        ]);
+
       // Envia os dados para o servidor
       await servidor.insertDespesasViaturaPessoal(
-        '2', // Substitua pelo ID real do usuário
+        idUser.toString(),
         km,
         pontoPartida,
         pontoChegada,

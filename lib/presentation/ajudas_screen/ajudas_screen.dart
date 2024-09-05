@@ -5,9 +5,13 @@ import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_text_form_field.dart';
 import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
 import 'package:rui_pedro_s_application11/servidor/servidor.dart';
+import 'package:rui_pedro_s_application11/servidor/basedados.dart'; // Certifique-se de que Basededados é importado
+
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart'; // Certifique-se de importar o pacote
+
 
 class AjudasScreen extends StatefulWidget {
   const AjudasScreen({Key? key, required this.title}) : super(key: key);
@@ -34,6 +38,7 @@ class _AjudasScreen extends State<AjudasScreen> {
   }
 
   final Servidor servidor = Servidor();
+  final Basededados bd = Basededados();
 
   @override
   Widget build(BuildContext context) {
@@ -257,9 +262,22 @@ class _AjudasScreen extends State<AjudasScreen> {
       return;
     }
 
+      final prefs = await SharedPreferences.getInstance();
+      String? idUser = prefs.getString('idUser'); // Suponho que o idUser tenha sido salvo como String
+      String estado = 'pendente'; // Estado padrão
+
     try {
+        await bd.inserirAjudaCusto([
+          (
+            custoController.text,
+            descricaoController.text.isNotEmpty ? descricaoController.text : "",
+            faturaController.text.isNotEmpty ? faturaController.text : "",
+            estado // Estado inicial como 'pendente'
+          )
+        ]);
+
       await servidor.insertAjudasCusto(
-        '2', // Substitua pelo ID real do usuário
+        idUser.toString(), // Substitua pelo ID real do usuário
         custoController.text,
         descricaoController.text.isNotEmpty ? descricaoController.text : "",
         faturaController.text.isNotEmpty ? faturaController.text : "",

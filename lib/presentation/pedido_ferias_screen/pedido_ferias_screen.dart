@@ -6,6 +6,8 @@ import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
 import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
 import 'package:rui_pedro_s_application11/servidor/servidor.dart';
 import 'package:rui_pedro_s_application11/servidor/basedados.dart'; // Certifique-se de que Basededados é importado
+import 'package:shared_preferences/shared_preferences.dart'; // Certifique-se de importar o pacote
+
 
 class PedidoFeriasScreen extends StatefulWidget {
   const PedidoFeriasScreen({Key? key}) : super(key: key);
@@ -243,25 +245,7 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
     return formatter.format(date);
   }
 
-  void onTapEnviar(BuildContext context) async {
-    if (_startDate == null || _endDate == null) {
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: Text('Erro'),
-          content: Text('Por favor, selecione as datas de início e fim.'),
-          actions: [
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
-      );
-      return;
-    }
+
 
     void onTapEnviar(BuildContext context) async {
       if (_startDate == null || _endDate == null) {
@@ -283,7 +267,8 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
         return;
       }
 
-      int idUser = 2;
+      final prefs = await SharedPreferences.getInstance();
+      String? idUser = prefs.getString('idUser'); // Suponho que o idUser tenha sido salvo como String
       String estado = 'pendente'; // Estado padrão
 
       try {
@@ -333,4 +318,4 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
       }
     }
   }
-}
+

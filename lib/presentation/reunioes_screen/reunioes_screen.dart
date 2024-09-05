@@ -12,8 +12,8 @@ class ReunioesScreen extends StatefulWidget {
 
 class _ReunioesScreenState extends State<ReunioesScreen> {
   var bd = Basededados();
-
   final List<(String, String)> reunioes = [];
+  bool isLoading = true; // Variável para controlar o estado de carregamento
 
   @override
   void initState() {
@@ -22,18 +22,30 @@ class _ReunioesScreenState extends State<ReunioesScreen> {
   }
 
   Future<void> _fetchReunioes() async {
-    var resultado = await bd.listarReunioesAceitas();
-    print("Resultado das reuniões: $resultado");
-
     setState(() {
-      reunioes.clear();
-      for (var reuniao in resultado) {
-        reunioes.add((
-          reuniao['titulo'] as String,
-          reuniao['data'] as String,
-        ));
-      }
+      isLoading = true; // Quando começar a buscar os dados, mostra o loader
     });
+
+    try {
+      var resultado = await bd.listarReunioesAceitas();
+      print("Resultado das reuniões: $resultado");
+
+      setState(() {
+        reunioes.clear();
+        for (var reuniao in resultado) {
+          reunioes.add((
+            reuniao['titulo'] as String,
+            reuniao['data'] as String,
+          ));
+        }
+      });
+    } catch (e) {
+      print('Erro ao buscar reuniões: $e');
+    } finally {
+      setState(() {
+        isLoading = false; // Finaliza o carregamento, independente do resultado
+      });
+    }
   }
 
   @override
@@ -76,47 +88,68 @@ class _ReunioesScreenState extends State<ReunioesScreen> {
                 ),
                 SizedBox(height: 20.0),
                 Expanded(
-                  child: reunioes.isEmpty
-                      ? Center(child: CircularProgressIndicator())
-                      : SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(35.0),
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 15.0),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(35.0),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.3),
-                                        spreadRadius: 2,
-                                        blurRadius: 4,
-                                        offset: Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: ConstrainedBox(
-                                    constraints: BoxConstraints(
-                                      maxWidth: 600, // Ajusta a largura da tabela
-                                    ),
-                                    child: _buildMeetingTable(),
+                  child: isLoading
+                      ? Center(child: CircularProgressIndicator()) // Exibe o loader enquanto carrega
+                      : reunioes.isEmpty
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Nenhuma reunião encontrada.",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black54,
                                   ),
                                 ),
+                                SizedBox(height: 20.0),
+                                CustomElevatedButton(
+                                  width: double.infinity,
+                                  text: "Faça um pedido de reunião",
+                                  onPressed: () {
+                                    Navigator.pushNamed(context, AppRoutes.pedidoReuniaoScreen);
+                                  },
+                                ),
+                              ],
+                            )
+                          : SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(35.0),
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(vertical: 15.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(35.0),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(0.3),
+                                            spreadRadius: 2,
+                                            blurRadius: 4,
+                                            offset: Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: ConstrainedBox(
+                                        constraints: BoxConstraints(
+                                          maxWidth: 600, // Ajusta a largura da tabela
+                                        ),
+                                        child: _buildMeetingTable(),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 20.0),
+                                  CustomElevatedButton(
+                                    width: double.infinity,
+                                    text: "Faça um pedido de reunião",
+                                    onPressed: () {
+                                      Navigator.pushNamed(context, AppRoutes.pedidoReuniaoScreen);
+                                    },
+                                  ),
+                                ],
                               ),
-                              SizedBox(height: 20.0),
-                              CustomElevatedButton(
-                                width: double.infinity,
-                                text: "Faça um pedido de reunião",
-                                onPressed: () {
-                                  Navigator.pushNamed(context, AppRoutes.pedidoReuniaoScreen);
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
+                            ),
                 ),
               ],
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rui_pedro_s_application11/servidor/basedados.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Importa shared_preferences
 import 'package:rui_pedro_s_application11/servidor/servidor.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_elevated_button.dart';
@@ -13,9 +14,10 @@ class LoginScreen extends StatelessWidget {
   final passwordController = TextEditingController();
 
   final Servidor servidor = Servidor();
-
+  
   @override
   Widget build(BuildContext context) {
+
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: true,
@@ -113,12 +115,14 @@ class LoginScreen extends StatelessWidget {
               width: 155,
               text: "Login",
               onPressed: () async {
+                
                 try {
                   // Chama o método de login e obtém o id do usuário
                   var idUser = await servidor.login(
                     emailController.text,
                     passwordController.text,
                   );
+                  print('Conectando ao servidor com idUser: $idUser');
 
                   // Salva o idUser nas SharedPreferences
                   final prefs = await SharedPreferences.getInstance();
@@ -170,13 +174,20 @@ class LoginScreen extends StatelessWidget {
     Navigator.pushNamed(context, AppRoutes.registoScreen);
   }
 
-  Future<void> updateProfileData(String idUser) async {
-    try {
-      final profileData = await servidor.getProfile(idUser);
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('profileData', jsonEncode(profileData));
-    } catch (e) {
-      print('Erro ao atualizar dados do perfil: $e');
-    }
+Future<void> updateProfileData(String idUser) async {
+  try {
+    // Busca os dados do servidor
+    await servidor.getDadosServidor(idUser);
+    
+    final prefs = await SharedPreferences.getInstance();
+    final bd = Basededados();
+
+    // Obtém os dados do utilizador e armazena-os no SharedPreferences
+    var utilizador = await bd.listarUtilizador(idUser);
+    await prefs.setString('profileData', jsonEncode(utilizador));
+
+  } catch (e) {
+    print('Erro ao atualizar dados do perfil: $e');
   }
+}
 }

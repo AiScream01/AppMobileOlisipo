@@ -3,6 +3,8 @@ import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
 import 'package:rui_pedro_s_application11/servidor/servidor.dart';
 import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
+import 'package:rui_pedro_s_application11/servidor/basedados.dart'; // Certifique-se de que Basededados é importado
+import 'package:shared_preferences/shared_preferences.dart'; // Certifique-se de importar o pacote
 
 class PedidoReuniaoScreen extends StatefulWidget {
   const PedidoReuniaoScreen({Key? key}) : super(key: key);
@@ -17,6 +19,7 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
   final TextEditingController _nomeUtilizadorController = TextEditingController();
   DateTime? _selectedDate;
   final Servidor servidor = Servidor();
+  final Basededados bd = Basededados();
 
   @override
   Widget build(BuildContext context) {
@@ -294,7 +297,9 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
   /// Função chamada quando o botão "Enviar" é pressionado
   Future<void> onTapEnviar(BuildContext context) async {
     try {
-      String userId = '2'; // ID do utilizador fixo
+      final prefs = await SharedPreferences.getInstance();
+      String? idUser = prefs.getString('idUser'); // Suponho que o idUser tenha sido salvo como String
+      String estado = 'pendente'; // Estado padrão
       String nomeUtilizador = _nomeUtilizadorController.text;
       String titulo = _tituloController.text;
       String descricao = _descricaoController.text;
@@ -302,8 +307,17 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
           ? "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}"
           : '';
 
+      await bd.inserirReuniao([
+          (
+            titulo,
+            descricao,
+            dataReuniao,
+            estado // Estado inicial como 'pendente'
+          )
+        ]);
+
       // Apenas chama a função sem atribuir a uma variável
-      await servidor.insertReuniao(titulo, descricao, dataReuniao, userId, nomeUtilizador);
+      await servidor.insertReuniao(titulo, descricao, dataReuniao, idUser.toString(), nomeUtilizador);
 
       showDialog(
         context: context,

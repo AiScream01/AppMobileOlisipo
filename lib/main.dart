@@ -38,10 +38,12 @@ class MyApp extends StatelessWidget {
     Future<void> servidor_basededados() async {
       if (idUser != null && idUser!.isNotEmpty) {
         print('Conectando ao servidor com idUser: $idUser');
+        print('PASSEI AQUIIII');
         try {
           // Carregar dados do servidor
           await ser.getDadosServidor(idUser!);
           await ser.getNoticiasEParcerias();
+          print('Carregar dados do servidor');
         } catch (e) {
           print('Erro ao buscar dados do servidor: $e');
         }
