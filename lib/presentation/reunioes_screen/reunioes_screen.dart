@@ -28,7 +28,7 @@ class _ReunioesScreenState extends State<ReunioesScreen> {
 
     try {
       var resultado = await bd.listarReunioesAceitas();
-      print("Resultado das reuniões: $resultado");
+      print("Resultado das reuniões : $resultado");
 
       setState(() {
         reunioes.clear();
