@@ -16,7 +16,8 @@ class PedidoReuniaoScreen extends StatefulWidget {
 class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
   final TextEditingController _tituloController = TextEditingController();
   final TextEditingController _descricaoController = TextEditingController();
-  final TextEditingController _nomeUtilizadorController = TextEditingController();
+  final TextEditingController _nomeUtilizadorController =
+      TextEditingController();
   DateTime? _selectedDate;
   final Servidor servidor = Servidor();
   final Basededados bd = Basededados();
@@ -47,7 +48,7 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
         ),
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 30.v),
+        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
         child: Column(
           children: [
             Expanded(
@@ -69,19 +70,19 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 20.v),
+                  SizedBox(height: 20.0),
                   Container(
                     width: double.infinity,
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 20.h, vertical: 10.v),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(35.h),
+                      borderRadius: BorderRadius.circular(35.0),
                       boxShadow: [
                         BoxShadow(
                           color: const Color.fromARGB(66, 0, 0, 0),
-                          spreadRadius: 2.h,
-                          blurRadius: 8.h,
+                          spreadRadius: 2.0,
+                          blurRadius: 8.0,
                           offset: Offset(0, 4),
                         ),
                       ],
@@ -89,7 +90,7 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        SizedBox(height: 20.v),
+                        SizedBox(height: 20.0),
                         _buildEditableRowItem(
                           context,
                           label: "Título",
@@ -97,7 +98,7 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
                               controller: _tituloController,
                               hintText: "Digite o título"),
                         ),
-                        SizedBox(height: 15.v),
+                        SizedBox(height: 15.0),
                         _buildEditableRowItem(
                           context,
                           label: "Descrição",
@@ -105,29 +106,29 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
                               controller: _descricaoController,
                               hintText: "Digite a descrição"),
                         ),
-                        SizedBox(height: 15.v),
+                        SizedBox(height: 15.0),
                         _buildEditableRowItem(
                           context,
                           label: "Com",
                           child: _buildTextField(
                               controller: _nomeUtilizadorController,
-                              hintText: "Digite o nome do utilizador"), // Corrigido
+                              hintText: "Digite o nome do utilizador"),
                         ),
-                        SizedBox(height: 20.v),
+                        SizedBox(height: 20.0),
                         _buildEditableRowItem(
                           context,
                           label: "Data Reunião",
                           child: _buildDatePicker(context),
                         ),
-                        SizedBox(height: 20.v),
+                        SizedBox(height: 20.0),
                         CustomOutlinedButton(
-                          width: 144.h,
+                          width: 144.0,
                           text: "Enviar",
                           onPressed: () {
                             onTapEnviar(context);
                           },
                         ),
-                        SizedBox(height: 10.v),
+                        SizedBox(height: 10.0),
                       ],
                     ),
                   ),
@@ -212,7 +213,7 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
       actions: [
         IconButton(
           icon: Icon(Icons.account_circle),
-          iconSize: 40.h,
+          iconSize: 40.0,
           onPressed: () {
             Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
           },
@@ -225,7 +226,7 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
   Widget _buildEditableRowItem(BuildContext context,
       {required String label, required Widget child}) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -236,13 +237,13 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 10.h, vertical: 5.v),
+            padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(8.h),
+              borderRadius: BorderRadius.circular(8.0),
               border: Border.all(
                 color: Colors.green,
-                width: 1.h,
+                width: 1.0,
               ),
             ),
             child: child,
@@ -256,7 +257,7 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
   Widget _buildTextField(
       {required TextEditingController controller, required String hintText}) {
     return Container(
-      width: 150.h,
+      width: 150.0,
       child: TextField(
         controller: controller,
         decoration: InputDecoration(
@@ -298,8 +299,6 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
   Future<void> onTapEnviar(BuildContext context) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      String? idUser = prefs.getString('idUser'); // Suponho que o idUser tenha sido salvo como String
-      String estado = 'pendente'; // Estado padrão
       String nomeUtilizador = _nomeUtilizadorController.text;
       String titulo = _tituloController.text;
       String descricao = _descricaoController.text;
@@ -307,17 +306,31 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
           ? "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}"
           : '';
 
-      await bd.inserirReuniao([
-          (
-            titulo,
-            descricao,
-            dataReuniao,
-            estado // Estado inicial como 'pendente'
-          )
-        ]);
+      // Verifique os valores dos parâmetros
+      print('Título: $titulo');
+      print('Descrição: $descricao');
+      print('Nome do Utilizador: $nomeUtilizador');
+      print('Data da Reunião: $dataReuniao');
 
-      // Apenas chama a função sem atribuir a uma variável
-      await servidor.insertReuniao(titulo, descricao, dataReuniao, idUser.toString(), nomeUtilizador);
+      if (titulo.isEmpty ||
+          descricao.isEmpty ||
+          nomeUtilizador.isEmpty ||
+          dataReuniao.isEmpty) {
+        throw Exception('Todos os campos são obrigatórios.');
+      }
+
+      await bd.inserirReuniao([
+        (
+          titulo,
+          descricao,
+          dataReuniao,
+          'pendente' // Estado inicial como 'pendente'
+        )
+      ]);
+
+      // Remove o idUser da chamada da API
+      await servidor.insertReuniao(
+          titulo, descricao, dataReuniao, '', nomeUtilizador);
 
       showDialog(
         context: context,
