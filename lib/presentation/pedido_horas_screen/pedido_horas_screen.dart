@@ -55,7 +55,49 @@ class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
                   Navigator.pushNamed(context, AppRoutes.ajudasScreen);
                 },
               ),
-              // Outros itens do menu...
+              ListTile(
+                title: const Text('Despesas viatura própria'),
+                onTap: () {
+                  Navigator.pushNamed(
+                      context, AppRoutes.despesasViaturaPropriaScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Faltas'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.faltasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Notícias'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.noticiasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Parcerias'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.parceriasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Férias'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Horas'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
+                },
+              ),
+              ListTile(
+                title: const Text('Reuniões'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.reunioesScreen);
+                },
+              ),
             ],
           ),
         ),

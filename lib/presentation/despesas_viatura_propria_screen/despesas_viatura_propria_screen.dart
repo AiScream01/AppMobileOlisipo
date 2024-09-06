@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_elevated_button.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
-import 'package:file_picker/file_picker.dart'; // Adicionado para o upload de ficheiros
+import 'package:file_picker/file_picker.dart';
 import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
 import 'package:rui_pedro_s_application11/servidor/servidor.dart';
 import 'package:rui_pedro_s_application11/servidor/basedados.dart';
@@ -245,41 +245,36 @@ class _DespesasViaturaPropriaScreenState
     required String hintText,
     required TextInputType keyboardType,
   }) {
-    return Padding(
-      padding: EdgeInsets.only(left: 1.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        SizedBox(height: 5.0),
+        TextField(
+          controller: controller,
+          decoration: InputDecoration(
+            hintText: hintText,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
             ),
           ),
-          SizedBox(height: 5.0),
-          TextField(
-            controller: controller,
-            decoration: InputDecoration(
-              hintText: hintText,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              filled: true,
-              fillColor: Colors.transparent,
-            ),
-            keyboardType: keyboardType,
-          ),
-        ],
-      ),
+          keyboardType: keyboardType,
+        ),
+      ],
     );
   }
 
   Widget _buildUploadButton({
     required String title,
     required String buttonText,
-    required void Function() onPressed,
+    required VoidCallback onPressed,
   }) {
     return Padding(
       padding: EdgeInsets.only(left: 1.0),
@@ -312,16 +307,6 @@ class _DespesasViaturaPropriaScreenState
     );
   }
 
-  Widget _buildEnviarButton(BuildContext context) {
-    return CustomElevatedButton(
-      width: double.infinity,
-      text: "Enviar",
-      onPressed: () {
-        onTapEnviarButton(context);
-      },
-    );
-  }
-
   Future<void> _pickComprovativo() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -331,80 +316,73 @@ class _DespesasViaturaPropriaScreenState
       setState(() {
         comprovativo = File(result.files.single.path!);
       });
+    } else {
+      print('Nenhum arquivo selecionado');
     }
   }
 
-  void onTapEnviarButton(BuildContext context) async {
-    if (partidaController.text.isEmpty ||
-        chegadaController.text.isEmpty ||
-        kmController.text.isEmpty ||
-        portagensController.text.isEmpty) {
-      final snackBar = SnackBar(
-        content: Text('Todos os campos são obrigatórios.'),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      return;
-    }
+  Future<void> _sendData() async {
+    // Coletar os dados do formulário
+    final pontoPartida = partidaController.text;
+    final pontoChegada = chegadaController.text;
+    final km = kmController.text;
+    final portagens = portagensController.text;
+
+    // Renomear variável para evitar conflito
+    final comprovativoPath =
+        comprovativo != null ? comprovativo!.path.split('/').last : "";
+
+    // Preparar os dados para inserção na base de dados local
+    final despesaViaturaData = [
+      (pontoPartida, pontoChegada, km, comprovativoPath, portagens, 'pendente')
+    ];
 
     try {
-      double km = double.parse(kmController.text);
-      String pontoPartida = partidaController.text;
-      String pontoChegada = chegadaController.text;
-      double precoPortagens = double.parse(portagensController.text);
-      String comprovativoPath = comprovativo != null ? comprovativo!.path : '';
+      // Inserir dados na base de dados local
+      await bd.inserirDespesaViaturaPessoal(despesaViaturaData);
 
-      final prefs = await SharedPreferences.getInstance();
-      String? idUser = prefs.getString('idUser');
-      String estado = 'pendente';
-
-      await bd.inserirDespesaViaturaPessoal([
-        (
-          pontoPartida.toString(),
-          pontoChegada.toString(),
-          km.toString(),
-          comprovativoPath,
-          precoPortagens.toString(),
-          estado
-        )
-      ]);
-
-      await servidor.insertDespesasViaturaPessoal(
-        idUser.toString(),
-        km,
-        pontoPartida,
-        pontoChegada,
-        precoPortagens,
-        comprovativoPath,
-      );
-
+      // Exibir uma mensagem de sucesso ou realizar outra ação
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          content: PushNotificationDialog(),
+          content:
+              PushNotificationDialog(), // Substitua pelo seu diálogo de sucesso
           backgroundColor: Colors.transparent,
           contentPadding: EdgeInsets.zero,
           insetPadding: const EdgeInsets.only(left: 0),
         ),
       );
     } catch (e) {
-      print('Erro ao enviar despesas: $e');
+      print('Erro ao enviar despesa: $e');
+
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Erro'),
-            content: Text('Ocorreu um erro ao enviar as despesas. Erro: $e'),
+            title: Text('Erro ao enviar despesa!'),
+            content: Text(
+                'Ocorreu um erro ao enviar a despesa. Tente novamente mais tarde.'),
             actions: [
               TextButton(
+                child: Text('Fechar'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('OK'),
               ),
             ],
           );
         },
       );
     }
+  }
+
+  Widget _buildEnviarButton(BuildContext context) {
+    return CustomElevatedButton(
+      width: double.infinity,
+      text: "Enviar",
+      onPressed: () {
+        _sendData(); // Chama a função que envia os dados
+      },
+    );
   }
 }
