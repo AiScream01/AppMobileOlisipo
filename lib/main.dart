@@ -57,12 +57,13 @@ class MyApp extends StatelessWidget {
       //bd.apagartabelaUtilizadores();
       //bd.criarTabelaReunioes();
       //bd.criarTabelaAjudasCusto();
-      bd.criarTabelaHoras();
+      //bd.criarTabelaHoras();
       //bd.criarTabelaDespesasViaturaPessoal();
       //bd.criarTabelaFaltas();
       //bd.criatabelaFerias();
       //bd.apagartabelaFerias();
       //bd.CriarTabelaRecibosVencimento();
+      //bd.apagartabelaFaltas();
     }
 
     // Chamar a função assíncrona, sem bloquear a UI

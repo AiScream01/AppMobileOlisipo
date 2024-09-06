@@ -251,15 +251,27 @@ class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
       String? idUser = prefs.getString('idUser');
       String estado = 'pendente';
       String horas = selectedHours.toString();
+      String comprovativo =
+          _selectedFile != null ? _selectedFile!.path.split('/').last : "";
 
-      await bd.inserirHoras([(horas, estado, _selectedFile?.path ?? "")]);
+      if (idUser == null) {
+        throw Exception('Usuário não identificado');
+      }
 
+      var horasData = [(horas, estado, _selectedFile?.path ?? "")];
+
+      // Insere as horas no banco de dados local
+      await bd.inserirHoras(horasData);
+
+      // Envia as horas e o comprovativo para o servidor
       await servidor.insertHoras(
-        idUser.toString(),
+        idUser,
         horas,
-        _selectedFile?.path,
+        comprovativo,
+        _selectedFile?.path, // Caminho do arquivo PDF
       );
 
+      // Exibe um diálogo de sucesso
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
@@ -270,7 +282,10 @@ class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
         ),
       );
     } catch (e) {
+      // Captura e exibe o erro no console
       print('Erro ao enviar horas: $e');
+
+      // Exibe um diálogo de erro para o usuário
       showDialog(
         context: context,
         builder: (BuildContext context) {

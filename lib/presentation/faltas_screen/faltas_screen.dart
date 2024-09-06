@@ -5,6 +5,8 @@ import 'package:rui_pedro_s_application11/servidor/servidor.dart';
 import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
 import 'package:rui_pedro_s_application11/servidor/basedados.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:file_picker/file_picker.dart';
+import 'dart:io';
 
 class FaltasScreen extends StatefulWidget {
   const FaltasScreen({Key? key}) : super(key: key);
@@ -15,12 +17,16 @@ class FaltasScreen extends StatefulWidget {
 
 class _FaltasScreenState extends State<FaltasScreen> {
   final TextEditingController dateController = TextEditingController();
+  final TextEditingController hoursController =
+      TextEditingController(); // Novo: Controlador para horas
   final Servidor servidor = Servidor();
   final Basededados bd = Basededados();
+  File? _selectedFile; // Variável para armazenar o arquivo PDF selecionado
 
   @override
   void dispose() {
     dateController.dispose();
+    hoursController.dispose(); // Dispose do controlador de horas
     super.dispose();
   }
 
@@ -38,7 +44,6 @@ class _FaltasScreenState extends State<FaltasScreen> {
               },
             ),
           ],
-          // Removido o título da AppBar
           title: null,
         ),
         drawer: _buildDrawer(context),
@@ -63,6 +68,8 @@ class _FaltasScreenState extends State<FaltasScreen> {
                   _buildPageTitle(),
                   SizedBox(height: 20.0),
                   _buildInputSection(context),
+                  SizedBox(height: 20.0),
+                  _buildUploadButton(),
                   SizedBox(height: 20.0),
                   _buildEnviarButton(context),
                 ],
@@ -179,6 +186,8 @@ class _FaltasScreenState extends State<FaltasScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildDateInputField(context),
+          SizedBox(height: 20.0),
+          _buildHoursInputField(context), // Novo: Campo para horas
         ],
       ),
     );
@@ -229,6 +238,95 @@ class _FaltasScreenState extends State<FaltasScreen> {
     );
   }
 
+  Widget _buildHoursInputField(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(left: 1.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Horas Faltadas",
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          SizedBox(height: 5.0),
+          TextField(
+            controller: hoursController,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              hintText: "Número de horas",
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              filled: true,
+              fillColor: Colors.transparent,
+              suffixIcon: Icon(Icons.access_time),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUploadButton() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Comprovativo",
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+        SizedBox(height: 10.0),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton(
+            onPressed: () async {
+              await _pickFile();
+            },
+            style: OutlinedButton.styleFrom(
+              padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+              foregroundColor: Colors.black,
+              side: BorderSide(color: Colors.green, width: 1.5),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+            ),
+            child: Text(
+              "Upload de documento PDF",
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+        ),
+        if (_selectedFile != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 10.0),
+            child: Text(
+              "Arquivo Selecionado: ${_selectedFile!.path.split('/').last}",
+              style: TextStyle(fontSize: 16.0),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Future<void> _pickFile() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+
+    if (result != null) {
+      setState(() {
+        _selectedFile = File(result.files.single.path!);
+      });
+    }
+  }
+
   Widget _buildEnviarButton(BuildContext context) {
     return CustomElevatedButton(
       width: double.infinity,
@@ -240,25 +338,50 @@ class _FaltasScreenState extends State<FaltasScreen> {
   }
 
   void onTapEnviar(BuildContext context) async {
-    if (dateController.text.isEmpty) {
+    if (dateController.text.isEmpty || hoursController.text.isEmpty) {
       final snackBar = SnackBar(
-        content: Text('O campo "Data" é obrigatório.'),
+        content: Text('Os campos "Data" e "Horas" são obrigatórios.'),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return;
     }
 
     final prefs = await SharedPreferences.getInstance();
-    String? idUser = prefs.getString(
-        'idUser'); // Suponho que o idUser tenha sido salvo como String
+    String? idUser = prefs.getString('idUser');
     String estado = 'pendente'; // Estado padrão
+    String justificacao =
+        _selectedFile != null ? _selectedFile!.path.split('/').last : "";
+
+    // Print dos dados que serão enviados
+    print('Dados para enviar:');
+    print('ID do usuário: $idUser');
+    print('Data: ${dateController.text}');
+    print('Horas: ${hoursController.text}');
+    print('Estado: $estado');
+    print('Comprovativo: $justificacao');
+    print(
+        'Caminho do arquivo: ${_selectedFile?.path ?? 'Nenhum arquivo selecionado'}');
 
     try {
-      await bd.inserirFalta([(dateController.text.toString(), estado)]);
+      await bd.inserirFalta([
+        (
+          dateController.text.toString(),
+          hoursController.text,
+          estado,
+          justificacao,
+        )
+      ]);
+
+      // Convert hours to String if necessary
+      String hoursString =
+          hoursController.text; // Já é uma String, então não precisa converter
 
       await servidor.insertFalta(
         idUser.toString(),
         DateTime.parse(dateController.text),
+        hoursString, // Passe o valor como String
+        'Justificativa não fornecida', // Ajuste o valor conforme necessário
+        _selectedFile?.path ?? '', // Caminho do arquivo PDF
       );
 
       showDialog(

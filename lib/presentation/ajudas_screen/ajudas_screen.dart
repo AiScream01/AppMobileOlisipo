@@ -23,9 +23,8 @@ class AjudasScreen extends StatefulWidget {
 class _AjudasScreen extends State<AjudasScreen> {
   final TextEditingController custoController = TextEditingController();
   final TextEditingController descricaoController = TextEditingController();
-  final TextEditingController faturaController =
-      TextEditingController(); // Novo controller para a fatura
-  File? _recibo; // Guarda o arquivo selecionado
+  final TextEditingController faturaController = TextEditingController();
+  File? _recibo;
 
   final Servidor servidor = Servidor();
   final Basededados bd = Basededados();

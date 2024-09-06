@@ -653,18 +653,22 @@ class Basededados {
     CREATE TABLE faltas (
       id_falta INTEGER PRIMARY KEY AUTOINCREMENT,
       data TEXT,
-      estado TEXT
+      estado TEXT,
+      justificacao TEXT,
+      horas TEXT
     )
   ''');
   }
 
 //---------------------------------------Inserir falta
-  Future<void> inserirFalta(List<(String, String)> faltaData) async {
+  Future<void> inserirFalta(
+      List<(String, String, String, String)> faltaData) async {
     Database db = await basededados;
     await db.delete('faltas');
-    for (final (data, estado) in faltaData) {
+    for (final (data, estado, justificacao, horas) in faltaData) {
       await db.rawInsert(
-          'insert into faltas(data, estado) values(?,?)', [data, estado]);
+          'insert into faltas(data, estado, justificacao, horas) values(?,?,?,?)',
+          [data, estado, justificacao, horas]);
     }
   }
 
@@ -712,6 +716,10 @@ class Basededados {
     );
   }
 
+  Future<void> apagartabelaFaltas() async {
+    Database db = await basededados;
+    await db.execute('DROP TABLE IF EXISTS faltas');
+  }
 //---------------------------------------HORAS-----------------------------------------
 
 //---------------------------------------Criar tabela de horas
@@ -779,6 +787,11 @@ class Basededados {
       where: 'id_horas = ?',
       whereArgs: [idHoras],
     );
+  }
+
+  Future<void> apagartabelaHoras() async {
+    Database db = await basededados;
+    await db.execute('DROP TABLE IF EXISTS horas');
   }
 
 //---------------------------------------REUNIÕES-----------------------------------------

@@ -52,7 +52,7 @@ class Servidor {
     List<(String, String, String)> horas = [];
     List<(String, String, String, String)> reunioes = [];
     List<(String, String, String, String, String, String)> despesasViatura = [];
-    List<(String, String)> faltas = [];
+    List<(String, String, String, String)> faltas = [];
 
     var result = await http.get(Uri.parse(url));
 
@@ -122,7 +122,12 @@ class Servidor {
 
     var listaFaltas = jsonDecode(result.body)['faltas'];
     listaFaltas.forEach((linha) {
-      faltas.add((linha['estado'].toString(), linha['data'].toString()));
+      faltas.add((
+        linha['estado'].toString(),
+        linha['data'].toString(),
+        linha['justificacao'].toString(),
+        linha['horas'].toString()
+      ));
     });
 
     var bd = Basededados();
@@ -273,14 +278,32 @@ class Servidor {
   Future<void> insertFalta(
     String idUser,
     DateTime data,
+    String horas,
+    String justificacao,
+    String? path,
   ) async {
     // Verifica se os parâmetros obrigatórios não estão vazios
-    if (idUser.isEmpty || data == null) {
-      throw Exception('Dados inválidos: idUser e data são obrigatórios.');
+    if (idUser.isEmpty || justificacao.isEmpty || horas.isEmpty) {
+      throw Exception(
+          'Dados inválidos: idUser, justificacao e horas são obrigatórios.');
     }
 
     // Define a URL base e o endpoint para inserir a falta
     var url = '$baseURL/faltas/create';
+
+    // Prepara o corpo da requisição
+    var requestBody = {
+      'id_user': idUser,
+      'data': data.toIso8601String(),
+      'horas': horas,
+      'justificacao': justificacao,
+      'path': path ?? '', // Inclua o caminho do arquivo, se necessário
+    };
+
+    // Print dos dados que estão sendo enviados
+    print('Enviando dados para o servidor:');
+    print('URL: $url');
+    print('Dados: ${jsonEncode(requestBody)}');
 
     // Prepara a requisição HTTP POST
     var response = await http.post(
@@ -288,10 +311,7 @@ class Servidor {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, dynamic>{
-        'id_user': idUser,
-        'data': data.toIso8601String(),
-      }),
+      body: jsonEncode(requestBody),
     );
 
     // Imprime o status code e o corpo da resposta para depuração
@@ -310,6 +330,8 @@ class Servidor {
   Future<void> insertHoras(
     String idUser,
     String horas,
+    String comprovativo,
+    String? path, // O caminho do arquivo PDF
   ) async {
     // Verifica se os parâmetros obrigatórios não estão vazios
     if (idUser.isEmpty || horas.isEmpty) {
@@ -319,28 +341,31 @@ class Servidor {
     // Define a URL base e o endpoint para inserir as horas
     var url = '$baseURL/horas/create';
 
-    // Prepara a requisição HTTP POST
-    var response = await http.post(
-      Uri.parse(url),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic>{
-        'id_user': idUser,
-        'horas': horas,
-      }),
-    );
+    // Cria o cliente HTTP multipart
+    var request = http.MultipartRequest('POST', Uri.parse(url))
+      ..fields['id_user'] = idUser
+      ..fields['horas'] = horas;
 
-    // Imprime o status code e o corpo da resposta para depuração
-    print('Status code: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    // Adiciona o arquivo, se o caminho não for nulo e o arquivo existir
+    if (path != null && File(path).existsSync()) {
+      var file = await http.MultipartFile.fromPath(
+        'comprovativo', // O nome do campo de arquivo no formulário
+        path,
+        contentType:
+            MediaType('application', 'pdf'), // Define o tipo MIME do arquivo
+      );
+      request.files.add(file);
+    }
+
+    // Envia a requisição e obtém a resposta
+    var response = await request.send();
 
     // Verifica o status da resposta
     if (response.statusCode == 201) {
       print('Horas inseridas com sucesso!');
     } else {
       print('Erro ao inserir horas: ${response.statusCode}');
-      throw Exception('Falha ao inserir horas: ${response.body}');
+      throw Exception('Falha ao inserir horas: ${response.statusCode}');
     }
   }
 
