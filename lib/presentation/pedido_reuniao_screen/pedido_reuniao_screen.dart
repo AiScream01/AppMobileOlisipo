@@ -109,7 +109,7 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
                         SizedBox(height: 20.0),
                         _buildEditableRowItem(
                           context,
-                          label: "Título",
+                          label: "Título2",
                           child: _buildTextField(
                               controller: _tituloController,
                               hintText: "Digite o título"),
