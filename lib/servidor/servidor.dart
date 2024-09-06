@@ -403,11 +403,6 @@ class Servidor {
       },
       body: jsonEncode(dadosReuniao),
     );
-
-// Imprime o status code e o corpo da resposta para depuração
-    print('Status code: ${response.statusCode}');
-    print('Response body: ${response.body}');
-
 // Verifica o status da resposta
     if (response.statusCode == 201) {
       print('Reunião criada com sucesso!');
