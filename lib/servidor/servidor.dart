@@ -340,6 +340,30 @@ class Servidor {
     }
   }
 
+  Future<List<Map<String, dynamic>>> getAllUsers() async {
+    // Define a URL do endpoint que lista todos os utilizadores
+    var url = '$baseURL/utilizador/';
+
+    // Faz a requisição GET para obter a lista de utilizadores
+    var response = await http.get(Uri.parse(url));
+
+    // Verifica o status da resposta
+    if (response.statusCode == 200) {
+      // Se a resposta for bem-sucedida, decodifica o corpo da resposta
+      List<dynamic> data = jsonDecode(response.body);
+
+      // Converte a lista dinâmica em uma lista de mapas (Map<String, dynamic>)
+      List<Map<String, dynamic>> users = data.map((user) {
+        return Map<String, dynamic>.from(user);
+      }).toList();
+
+      return users; // Retorna a lista de utilizadores
+    } else {
+      // Se houver um erro, lança uma exceção
+      throw Exception('Falha ao carregar utilizadores: ${response.statusCode}');
+    }
+  }
+
   Future<void> insertReuniao(
     String titulo,
     String descricao,
@@ -359,26 +383,32 @@ class Servidor {
     // Define a URL base e o endpoint para criar a reunião
     var url = '$baseURL/reunioes/create';
 
-    // Prepara a requisição HTTP POST
+// Prepara os dados a serem enviados
+    var dadosReuniao = {
+      'titulo': titulo,
+      'descricao': descricao,
+      'data': data,
+      'id_user': idUser,
+      'nome_utilizador_reuniao': nomeUtilizadorReuniao,
+    };
+
+// Imprime os dados para depuração
+    print('Dados enviados para o servidor: $dadosReuniao');
+
+// Prepara a requisição HTTP POST
     var response = await http.post(
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, dynamic>{
-        'titulo': titulo,
-        'descricao': descricao,
-        'data': data,
-        'id_user': idUser,
-        'nome_utilizador_reuniao': nomeUtilizadorReuniao, // Corrigido
-      }),
+      body: jsonEncode(dadosReuniao),
     );
 
-    // Imprime o status code e o corpo da resposta para depuração
+// Imprime o status code e o corpo da resposta para depuração
     print('Status code: ${response.statusCode}');
     print('Response body: ${response.body}');
 
-    // Verifica o status da resposta
+// Verifica o status da resposta
     if (response.statusCode == 201) {
       print('Reunião criada com sucesso!');
     } else {

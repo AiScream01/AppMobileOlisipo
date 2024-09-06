@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
 import 'package:rui_pedro_s_application11/servidor/servidor.dart';
-import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
-import 'package:rui_pedro_s_application11/servidor/basedados.dart'; // Certifique-se de que Basededados é importado
-import 'package:shared_preferences/shared_preferences.dart'; // Certifique-se de importar o pacote
+import 'package:rui_pedro_s_application11/servidor/basedados.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PedidoReuniaoScreen extends StatefulWidget {
   const PedidoReuniaoScreen({Key? key}) : super(key: key);
@@ -16,11 +15,26 @@ class PedidoReuniaoScreen extends StatefulWidget {
 class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
   final TextEditingController _tituloController = TextEditingController();
   final TextEditingController _descricaoController = TextEditingController();
-  final TextEditingController _nomeUtilizadorController =
-      TextEditingController();
   DateTime? _selectedDate;
+  String? _selectedUserId; // Guarda o ID do utilizador selecionado
+  String? _selectedUserName; // Guarda o nome do utilizador selecionado
+  List<Map<String, dynamic>> _users = []; // Lista de utilizadores
+
   final Servidor servidor = Servidor();
   final Basededados bd = Basededados();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUsers();
+  }
+
+  Future<void> _fetchUsers() async {
+    List<Map<String, dynamic>> users = await servidor.getAllUsers();
+    setState(() {
+      _users = users;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,12 +44,11 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
         extendBodyBehindAppBar: true,
         appBar: _buildAppBar(context),
         body: _buildBody(context),
-        drawer: _buildDrawer(context), // Navbar lateral
+        drawer: _buildDrawer(context),
       ),
     );
   }
 
-  /// Corpo principal da tela
   Widget _buildBody(BuildContext context) {
     return Container(
       width: double.infinity,
@@ -109,10 +122,8 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
                         SizedBox(height: 15.0),
                         _buildEditableRowItem(
                           context,
-                          label: "Com",
-                          child: _buildTextField(
-                              controller: _nomeUtilizadorController,
-                              hintText: "Digite o nome do utilizador"),
+                          label: "Utilizador",
+                          child: _buildUserDropdown(),
                         ),
                         SizedBox(height: 20.0),
                         _buildEditableRowItem(
@@ -141,7 +152,6 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
     );
   }
 
-  /// Navbar lateral
   Widget _buildDrawer(BuildContext context) {
     return Drawer(
       child: ListView(
@@ -207,7 +217,6 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
     );
   }
 
-  /// AppBar
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       actions: [
@@ -222,7 +231,6 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
     );
   }
 
-  /// Função auxiliar para criar os itens de linha editáveis
   Widget _buildEditableRowItem(BuildContext context,
       {required String label, required Widget child}) {
     return Padding(
@@ -253,7 +261,6 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
     );
   }
 
-  /// Campo de texto para os campos editáveis
   Widget _buildTextField(
       {required TextEditingController controller, required String hintText}) {
     return Container(
@@ -270,7 +277,6 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
     );
   }
 
-  /// Seletor de data
   Widget _buildDatePicker(BuildContext context) {
     return InkWell(
       onTap: () async {
@@ -289,79 +295,84 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
       child: Text(
         _selectedDate != null
             ? "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}"
-            : "Selecione a data",
+            : "Selecionar Data",
         style: theme.textTheme.titleLarge?.copyWith(color: Colors.black),
       ),
     );
   }
 
-  /// Função chamada quando o botão "Enviar" é pressionado
-  Future<void> onTapEnviar(BuildContext context) async {
+  Widget _buildUserDropdown() {
+    return DropdownButton<String>(
+      value: _selectedUserId,
+      hint: Text(
+        "Selecione o utilizador",
+        style: theme.textTheme.titleLarge?.copyWith(color: Colors.black),
+      ),
+      items: _users.map<DropdownMenuItem<String>>((user) {
+        return DropdownMenuItem<String>(
+          value: user['id_user'].toString(), // ID do utilizador como String
+          child: Text(
+            user['nome'],
+            style: theme.textTheme.titleLarge?.copyWith(color: Colors.black),
+          ),
+        );
+      }).toList(),
+      onChanged: (String? newValue) {
+        setState(() {
+          _selectedUserId = newValue;
+          // Atualiza o nome selecionado com base no ID selecionado
+          _selectedUserName = _users.firstWhere(
+              (user) => user['id_user'].toString() == newValue,
+              orElse: () => {'nome': 'Nome desconhecido'})['nome'];
+        });
+      },
+    );
+  }
+
+  void onTapEnviar(BuildContext context) async {
+    if (_tituloController.text.isEmpty ||
+        _descricaoController.text.isEmpty ||
+        _selectedDate == null ||
+        _selectedUserId == null ||
+        _selectedUserName == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Preencha todos os campos!"),
+        ),
+      );
+      return;
+    }
+
     try {
       final prefs = await SharedPreferences.getInstance();
-      String nomeUtilizador = _nomeUtilizadorController.text;
-      String titulo = _tituloController.text;
-      String descricao = _descricaoController.text;
-      String dataReuniao = _selectedDate != null
-          ? "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}"
-          : '';
+      final String? nomeUtilizador = prefs.getString('nome_utilizador');
 
-      // Verifique os valores dos parâmetros
-      print('Título: $titulo');
-      print('Descrição: $descricao');
-      print('Nome do Utilizador: $nomeUtilizador');
-      print('Data da Reunião: $dataReuniao');
+      print('Dados enviados para o servidor: {'
+          'titulo: ${_tituloController.text}, '
+          'descricao: ${_descricaoController.text}, '
+          'data: ${_selectedDate.toString()}, '
+          'id_user: ${_selectedUserId}, '
+          'nome_utilizador_reuniao: ${_selectedUserName}'
+          '}');
 
-      if (titulo.isEmpty ||
-          descricao.isEmpty ||
-          nomeUtilizador.isEmpty ||
-          dataReuniao.isEmpty) {
-        throw Exception('Todos os campos são obrigatórios.');
-      }
-
-      await bd.inserirReuniao([
-        (
-          titulo,
-          descricao,
-          dataReuniao,
-          'pendente' // Estado inicial como 'pendente'
-        )
-      ]);
-
-      // Remove o idUser da chamada da API
       await servidor.insertReuniao(
-          titulo, descricao, dataReuniao, '', nomeUtilizador);
+        _tituloController.text,
+        _descricaoController.text,
+        _selectedDate.toString(),
+        _selectedUserId!,
+        _selectedUserName!, // Envia o nome do utilizador selecionado
+      );
 
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          content: PushNotificationDialog(),
-          backgroundColor: Colors.transparent,
-          contentPadding: EdgeInsets.zero,
-          insetPadding: const EdgeInsets.only(left: 0),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Reunião marcada com sucesso!"),
         ),
       );
     } catch (e) {
-      print('Erro ao enviar reunião: $e');
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Erro ao enviar Reunião!'),
-            content: Text(
-              'Ocorreu um erro ao tentar enviar a reunião. Verifique os dados e tente novamente.\nErro: $e',
-              style: TextStyle(fontSize: 17),
-            ),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        },
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Erro ao marcar reunião: ${e.toString()}"),
+        ),
       );
     }
   }
