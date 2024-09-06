@@ -400,11 +400,24 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
           'nome_utilizador_reuniao: ${_selectedUserName}'
           '}');
 
+      // Crie a lista com a tupla esperada e sem o estado
+      List<(String, String, String, String)> dadosReuniao = [
+        (
+          _tituloController.text,
+          _descricaoController.text,
+          _selectedDate.toString(),
+          _formatTimeOfDay(_selectedTime!)
+        )
+      ];
+
+      // Passe a lista para a função
+      await bd.inserirReuniao(dadosReuniao);
+
       await servidor.insertReuniao(
         _tituloController.text,
         _descricaoController.text,
         _selectedDate.toString(),
-        _formatTimeOfDay(_selectedTime!), // Hora formatada
+        _formatTimeOfDay(_selectedTime!),
         _selectedUserId!,
         _selectedUserName!,
       );

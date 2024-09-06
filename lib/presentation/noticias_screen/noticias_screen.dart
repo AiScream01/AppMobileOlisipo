@@ -1,22 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart'; // Certifique-se de que este pacote está incluído em pubspec.yaml
 import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:rui_pedro_s_application11/presentation/noticia_screen/noticia_screen.dart';
 import '../../servidor/basedados.dart';
-
-// Modelo de Noticia
-class Noticia {
-  final String data;
-  final String titulo;
-  final String descricao;
-  final String imagem;
-
-  Noticia({
-    required this.data,
-    required this.titulo,
-    required this.descricao,
-    required this.imagem,
-  });
-}
 
 class NoticiasScreen extends StatefulWidget {
   const NoticiasScreen({Key? key}) : super(key: key);
@@ -27,7 +13,6 @@ class NoticiasScreen extends StatefulWidget {
 
 class _NoticiasScreenState extends State<NoticiasScreen> {
   final Basededados bd = Basededados();
-
   final List<Noticia> noticias = [];
 
   @override
@@ -66,8 +51,8 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
               },
             ),
           ],
-          backgroundColor: Colors.transparent,
-          elevation: 0,
+          backgroundColor: Colors.white,
+          elevation: 4,
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(
@@ -91,13 +76,11 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
               fit: BoxFit.cover,
             ),
           ),
-          child: Padding(
-            padding: EdgeInsets.all(20.0),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(top: 100.0), // Espaço para o AppBar
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.center, // Alinhar tudo no centro
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 100), // Espaço para o AppBar
                 Text(
                   "Notícias",
                   style: TextStyle(
@@ -114,9 +97,7 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
                   ),
                 ),
                 SizedBox(height: 20),
-                Expanded(
-                  child: _buildNoticiasTable(context),
-                ),
+                _buildNoticiasList(context),
               ],
             ),
           ),
@@ -132,7 +113,7 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
         children: [
           const DrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.green, // Cor verde usada no menu
+              color: Colors.green,
             ),
             child: Text('Menu de Navegação',
                 style: TextStyle(color: Colors.white, fontSize: 24)),
@@ -191,104 +172,101 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
     );
   }
 
-  Widget _buildNoticiasTable(BuildContext context) {
+  Widget _buildNoticiasList(BuildContext context) {
     if (noticias.isEmpty) {
       return Center(child: CircularProgressIndicator());
     }
 
-    return SingleChildScrollView(
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.3),
-              spreadRadius: 2,
-              blurRadius: 8,
-              offset: Offset(0, 3),
-            ),
-          ],
-        ),
-        child: DataTable(
-          columnSpacing: 24.0,
-          headingRowColor: WidgetStateColor.resolveWith(
-            (states) => Colors.green, // Verde usado no cabeçalho
-          ),
-          headingTextStyle: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-          dataRowColor: WidgetStateColor.resolveWith(
-            (states) => Colors.white,
-          ),
-          dividerThickness: 2,
-          columns: [
-            DataColumn(
-              label: Expanded(
-                child: Text(
-                  'Título',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: noticias.length,
+      itemBuilder: (context, index) {
+        final noticia = noticias[index];
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => NoticiaScreen(
+                  titulo: noticia.titulo,
+                  descricao: noticia.descricao,
+                  imagem: noticia.imagem,
+                  data: noticia.data,
                 ),
               ),
+            );
+          },
+          child: Card(
+            margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
             ),
-            DataColumn(
-              label: Expanded(
-                child: Text(
-                  'Data',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-          ],
-          rows: noticias.map((noticia) {
-            return DataRow(
-              cells: [
-                DataCell(
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => NoticiaScreen(
-                            titulo: noticia.titulo,
-                            descricao: noticia.descricao,
-                            imagem: noticia.imagem,
-                            data: noticia.data,
-                          ),
-                        ),
+            elevation: 5,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius:
+                      BorderRadius.vertical(top: Radius.circular(15.0)),
+                  child: CachedNetworkImage(
+                    imageUrl: noticia.imagem,
+                    placeholder: (context, url) => Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    errorWidget: (context, url, error) {
+                      print(
+                          "Erro ao carregar a imagem: $url"); // Adiciona uma mensagem de erro
+                      return Center(
+                        child: Icon(Icons.error, color: Colors.red),
                       );
                     },
-                    child: Container(
-                      padding: EdgeInsets.all(12.0),
-                      child: Text(
-                        noticia.titulo,
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          color: Colors.black87,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                    height: 180.0,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    noticia.titulo,
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-                DataCell(
-                  Container(
-                    padding: EdgeInsets.all(12.0),
-                    child: Text(
-                      noticia.data,
-                      style: TextStyle(fontSize: 14.0, color: Colors.black54),
-                      textAlign: TextAlign.center,
+                Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  child: Text(
+                    noticia.data,
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      color: Colors.black54,
                     ),
                   ),
                 ),
               ],
-            );
-          }).toList(),
-        ),
-      ),
+            ),
+          ),
+        );
+      },
     );
   }
+}
+
+// Modelo de Noticia
+class Noticia {
+  final String data;
+  final String titulo;
+  final String descricao;
+  final String imagem;
+
+  Noticia({
+    required this.data,
+    required this.titulo,
+    required this.descricao,
+    required this.imagem,
+  });
 }

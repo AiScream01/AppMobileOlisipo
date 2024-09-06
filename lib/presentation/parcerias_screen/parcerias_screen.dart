@@ -1,9 +1,8 @@
-import 'package:rui_pedro_s_application11/presentation/parcerias_pormenor_one_screen/parcerias_pormenor_one_screen.dart';
-import '../parcerias_screen/widgets/parceriasgrid_item_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
+import 'package:rui_pedro_s_application11/presentation/parcerias_pormenor_one_screen/parcerias_pormenor_one_screen.dart';
 import '../../servidor/basedados.dart';
-import 'dart:io';
 
 class ParceriasScreen extends StatefulWidget {
   const ParceriasScreen({Key? key}) : super(key: key);
@@ -39,17 +38,16 @@ class ParceriasgridItemWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Exibe o logotipo a partir da URL completa
-            Image.network(
-              imageUrl,
+            CachedNetworkImage(
+              imageUrl: imageUrl,
               height: 120, // Ajuste a altura conforme necessário
               width: 120, // Ajuste a largura conforme necessário
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Icon(Icons.error,
-                    size: 80); // Exibe um ícone de erro se a imagem falhar
-              },
+              errorWidget: (context, url, error) => Icon(Icons.error, size: 80),
             ),
-            SizedBox(height: 0), // Espaçamento entre a imagem e o texto
+            SizedBox(height: 8), // Espaçamento entre a imagem e o texto
+            Text(titulo,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           ],
         ),
       ),
@@ -105,68 +103,44 @@ class _ParceriasScreenState extends State<ParceriasScreen> {
         extendBodyBehindAppBar: true,
         drawer: _buildDrawer(context),
         body: Container(
-          width: SizeUtils.width,
-          height: SizeUtils.height,
+          width: double.infinity,
+          height: double.infinity,
           decoration: BoxDecoration(
-            color: theme.colorScheme.onPrimaryContainer,
-            boxShadow: [
-              BoxShadow(
-                color: appTheme.black900.withOpacity(0.3),
-                spreadRadius: 2.h,
-                blurRadius: 2.h,
-                offset: Offset(10, 10),
-              ),
-            ],
             image: DecorationImage(
               image: AssetImage(ImageConstant.imgLogin),
               fit: BoxFit.cover,
             ),
           ),
-          child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 30.v),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(height: 50.v), // Espaçamento para descer o conteúdo
-                Container(
-                  padding: EdgeInsets.all(16.h),
-                  child: Text(
-                    "Parcerias",
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                      shadows: [
-                        Shadow(
-                          offset: Offset(1, 1),
-                          blurRadius: 3.0,
-                          color: Colors.grey.withOpacity(0.5),
-                        ),
-                      ],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                SizedBox(height: 20.v), // Espaçamento entre o título e o grid
-                Container(
-                  padding: EdgeInsets.all(16.h),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.onPrimary.withOpacity(0.9),
-                    borderRadius: BorderRadius.circular(20.h),
-                    boxShadow: [
-                      BoxShadow(
-                        color: appTheme.black900.withOpacity(0.25),
-                        spreadRadius: 2.h,
-                        blurRadius: 2.h,
-                        offset: Offset(0, 4),
+          child: Column(
+            children: [
+              SizedBox(height: 60), // Espaçamento para descer o conteúdo
+              Container(
+                padding: EdgeInsets.all(16),
+                child: Text(
+                  "Parcerias",
+                  style: TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                    shadows: [
+                      Shadow(
+                        offset: Offset(1, 1),
+                        blurRadius: 3.0,
+                        color: Colors.grey.withOpacity(0.5),
                       ),
                     ],
                   ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              SizedBox(height: 15), // Espaçamento entre o título e o grid
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.all(16),
                   child: _buildParceriasGrid(context),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -239,62 +213,38 @@ class _ParceriasScreenState extends State<ParceriasScreen> {
   }
 
   Widget _buildParceriasGrid(BuildContext context) {
-    // Verifica se já há parcerias carregadas
     if (parcerias.isEmpty) {
       return Center(child: CircularProgressIndicator());
     }
 
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.v),
-      child: GridView.builder(
-        shrinkWrap: true,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          mainAxisExtent: 120.v,
-          crossAxisCount: 2,
-          mainAxisSpacing: 16.h,
-          crossAxisSpacing: 16.h,
-        ),
-        physics: NeverScrollableScrollPhysics(),
-        itemCount: parcerias.length,
-        itemBuilder: (context, index) {
-          // Desestrutura a tupla
-          var (logotipo, titulo, descricao, categoria) = parcerias[index];
-          return ParceriasgridItemWidget(
-            logotipo: logotipo,
-            titulo: titulo,
-            onTapWidget: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ParceriasPormenorOneScreen(
-                    logotipo: logotipo,
-                    titulo: titulo,
-                    descricao: descricao,
-                    categoria: categoria,
-                  ),
-                ),
-              );
-            },
-          );
-        },
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 16,
+        crossAxisSpacing: 16,
+        childAspectRatio: 1, // Mantém o aspecto da imagem quadrada
       ),
-    );
-  }
-
-  void onTapWidget(BuildContext context, int index) {
-    var parceria = parcerias[index];
-    Navigator.pushNamed(
-      context,
-      AppRoutes.parceriasPormenorOneScreen,
-      arguments: parceria,
-    );
-  }
-
-  void onTapImgImageThree(BuildContext context, String idParceria) {
-    Navigator.pushNamed(
-      context,
-      AppRoutes.parceriasPormenorOneScreen,
-      arguments: idParceria,
+      itemCount: parcerias.length,
+      itemBuilder: (context, index) {
+        var (logotipo, titulo, descricao, categoria) = parcerias[index];
+        return ParceriasgridItemWidget(
+          logotipo: logotipo,
+          titulo: titulo,
+          onTapWidget: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ParceriasPormenorOneScreen(
+                  logotipo: logotipo,
+                  titulo: titulo,
+                  descricao: descricao,
+                  categoria: categoria,
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
