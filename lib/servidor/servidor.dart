@@ -397,6 +397,7 @@ class Servidor {
     String titulo,
     String descricao,
     String data,
+    String hora,
     String idUser,
     String nomeUtilizadorReuniao,
   ) async {
@@ -405,7 +406,8 @@ class Servidor {
         descricao.isEmpty ||
         data.isEmpty ||
         idUser.isEmpty ||
-        nomeUtilizadorReuniao.isEmpty) {
+        nomeUtilizadorReuniao.isEmpty ||
+        hora.isEmpty) {
       throw Exception('Dados inválidos: todos os parâmetros são obrigatórios.');
     }
 
@@ -417,6 +419,7 @@ class Servidor {
       'titulo': titulo,
       'descricao': descricao,
       'data': data,
+      'hora': hora,
       'id_user': idUser,
       'nome_utilizador_reuniao': nomeUtilizadorReuniao,
     };

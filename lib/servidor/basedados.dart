@@ -805,6 +805,7 @@ class Basededados {
       titulo TEXT,
       descricao TEXT,
       data TEXT,
+      hora TEXT,
       estado TEXT
     )
   ''');
@@ -823,7 +824,7 @@ class Basededados {
     await db.delete('reunioes');
     for (final (titulo, descricao, data, estado) in reuniaoData) {
       await db.rawInsert(
-          'insert into reunioes(titulo, descricao, data, estado) values(?,?,?,?)',
+          'insert into reunioes(titulo, descricao, data, hora, estado) values(?,?,?,?,?)',
           [titulo, descricao, data, estado]);
     }
   }

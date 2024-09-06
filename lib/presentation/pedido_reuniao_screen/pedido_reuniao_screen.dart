@@ -5,6 +5,7 @@ import 'package:rui_pedro_s_application11/servidor/servidor.dart';
 import 'package:rui_pedro_s_application11/servidor/basedados.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
+import 'package:intl/intl.dart'; // Adicione esta linha para formatar a hora
 
 class PedidoReuniaoScreen extends StatefulWidget {
   const PedidoReuniaoScreen({Key? key}) : super(key: key);
@@ -17,9 +18,10 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
   final TextEditingController _tituloController = TextEditingController();
   final TextEditingController _descricaoController = TextEditingController();
   DateTime? _selectedDate;
-  String? _selectedUserId; // Guarda o ID do utilizador selecionado
-  String? _selectedUserName; // Guarda o nome do utilizador selecionado
-  List<Map<String, dynamic>> _users = []; // Lista de utilizadores
+  TimeOfDay? _selectedTime; // Armazena o horário selecionado
+  String? _selectedUserId;
+  String? _selectedUserName;
+  List<Map<String, dynamic>> _users = [];
 
   final Servidor servidor = Servidor();
   final Basededados bd = Basededados();
@@ -132,6 +134,12 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
                           label: "Data Reunião",
                           child: _buildDatePicker(context),
                         ),
+                        SizedBox(height: 15.0),
+                        _buildEditableRowItem(
+                          context,
+                          label: "Hora",
+                          child: _buildTimePicker(context), // Atualizado aqui
+                        ),
                         SizedBox(height: 20.0),
                         CustomOutlinedButton(
                           width: 144.0,
@@ -151,6 +159,41 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildTimePicker(BuildContext context) {
+    return InkWell(
+      onTap: () async {
+        final TimeOfDay? picked = await showTimePicker(
+          context: context,
+          initialTime: _selectedTime ?? TimeOfDay.now(),
+        );
+        if (picked != null && picked != _selectedTime) {
+          setState(() {
+            _selectedTime = picked;
+          });
+        }
+      },
+      child: Text(
+        _selectedTime != null
+            ? _formatTimeOfDay(_selectedTime!) // Exibe no formato 00:00
+            : "Selecionar Hora",
+        style: theme.textTheme.titleLarge?.copyWith(color: Colors.black),
+      ),
+    );
+  }
+
+  // Função para formatar a hora no formato HH:mm
+  String _formatTimeOfDay(TimeOfDay time) {
+    final now = DateTime.now();
+    final dateTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      time.hour,
+      time.minute,
+    );
+    return DateFormat('HH:mm').format(dateTime);
   }
 
   Widget _buildDrawer(BuildContext context) {
@@ -311,7 +354,7 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
       ),
       items: _users.map<DropdownMenuItem<String>>((user) {
         return DropdownMenuItem<String>(
-          value: user['id_user'].toString(), // ID do utilizador como String
+          value: user['id_user'].toString(),
           child: Text(
             user['nome'],
             style: theme.textTheme.titleLarge?.copyWith(color: Colors.black),
@@ -321,7 +364,6 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
       onChanged: (String? newValue) {
         setState(() {
           _selectedUserId = newValue;
-          // Atualiza o nome selecionado com base no ID selecionado
           _selectedUserName = _users.firstWhere(
               (user) => user['id_user'].toString() == newValue,
               orElse: () => {'nome': 'Nome desconhecido'})['nome'];
@@ -334,6 +376,7 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
     if (_tituloController.text.isEmpty ||
         _descricaoController.text.isEmpty ||
         _selectedDate == null ||
+        _selectedTime == null ||
         _selectedUserId == null ||
         _selectedUserName == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -346,12 +389,13 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      final String? nomeUtilizador = prefs.getString('nome_utilizador');
+      final String? nomeUtilizador = prefs.getString('nome_utilizador_reuniao');
 
       print('Dados enviados para o servidor: {'
           'titulo: ${_tituloController.text}, '
           'descricao: ${_descricaoController.text}, '
           'data: ${_selectedDate.toString()}, '
+          'hora: ${_formatTimeOfDay(_selectedTime!)}, '
           'id_user: ${_selectedUserId}, '
           'nome_utilizador_reuniao: ${_selectedUserName}'
           '}');
@@ -360,8 +404,9 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
         _tituloController.text,
         _descricaoController.text,
         _selectedDate.toString(),
+        _formatTimeOfDay(_selectedTime!), // Hora formatada
         _selectedUserId!,
-        _selectedUserName!, // Envia o nome do utilizador selecionado
+        _selectedUserName!,
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
