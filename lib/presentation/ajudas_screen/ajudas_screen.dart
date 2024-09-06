@@ -178,7 +178,7 @@ class _AjudasScreen extends State<AjudasScreen> {
           ),
           SizedBox(height: 10.0),
           _buildUploadButton(
-            title: "comprovativo",
+            title: "Comprovativo",
             buttonText: "Upload Documento",
             onPressed: () async {
               await _pickRecibo();

@@ -3,8 +3,9 @@ import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_elevated_button.dart';
 import 'package:rui_pedro_s_application11/servidor/servidor.dart';
 import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
-import 'package:rui_pedro_s_application11/servidor/basedados.dart'; // Certifique-se de que Basededados é importado
-import 'package:shared_preferences/shared_preferences.dart'; // Certifique-se de importar o pacote
+import 'package:rui_pedro_s_application11/servidor/basedados.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:file_picker/file_picker.dart';
 
 class PedidoHorasScreen extends StatefulWidget {
   const PedidoHorasScreen({Key? key}) : super(key: key);
@@ -17,6 +18,7 @@ class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
   final Servidor servidor = Servidor();
   final Basededados bd = Basededados();
   int selectedHours = 1;
+  PlatformFile? selectedFile;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
           actions: [
             IconButton(
               icon: Icon(Icons.account_circle),
-              iconSize: 40.h,
+              iconSize: 40.0,
               onPressed: () {
                 Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
               },
@@ -54,7 +56,8 @@ class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
               ListTile(
                 title: const Text('Despesas viatura própria'),
                 onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.despesasViaturaPropriaScreen);
+                  Navigator.pushNamed(
+                      context, AppRoutes.despesasViaturaPropriaScreen);
                 },
               ),
               ListTile(
@@ -110,23 +113,32 @@ class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 30.v),
+              padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 30.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(height: 80.v),
+                  SizedBox(height: 80.0),
                   Text(
                     "Horas",
                     style: theme.textTheme.displayMedium?.copyWith(
-                      fontSize: 32.h,
+                      fontSize: 32.0,
                       fontWeight: FontWeight.bold,
                       color: const Color.fromARGB(255, 0, 0, 0),
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 20.v),
+                  SizedBox(height: 20.0),
                   _buildPedidoHoras(context),
-                  SizedBox(height: 20.v),
+                  SizedBox(height: 20.0),
+                  if (selectedFile != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        'Arquivo: ${selectedFile?.name}',
+                        style: TextStyle(color: Colors.green),
+                      ),
+                    ),
+                  SizedBox(height: 20.0),
                   CustomElevatedButton(
                     width: double.infinity,
                     text: "Enviar",
@@ -145,15 +157,15 @@ class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
 
   Widget _buildPedidoHoras(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20.h),
+      padding: EdgeInsets.all(20.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20.h),
+        borderRadius: BorderRadius.circular(20.0),
         boxShadow: [
           BoxShadow(
             color: appTheme.black900.withOpacity(0.25),
-            spreadRadius: 2.h,
-            blurRadius: 2.h,
+            spreadRadius: 2.0,
+            blurRadius: 2.0,
             offset: Offset(0, 4),
           ),
         ],
@@ -167,17 +179,17 @@ class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
               Text(
                 "Horas",
                 style: theme.textTheme.titleLarge?.copyWith(
-                  fontSize: 24.h,
-                  color: theme.colorScheme.primary,
+                  fontSize: 24.0,
+                  color: Colors.black, // Cor preta para "Horas"
                 ),
               ),
               SizedBox(
-                width: 120.h,
+                width: 120.0,
                 child: DropdownButtonFormField<int>(
                   value: selectedHours,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
                   items: List.generate(50, (index) => index + 1)
@@ -195,59 +207,115 @@ class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
               ),
             ],
           ),
+          SizedBox(height: 20.0),
+          _buildUploadButton(
+            title: "Comprovativo",
+            buttonText: "Upload de documento",
+            onPressed: () async {
+              await _pickFile();
+            },
+          ),
         ],
       ),
     );
   }
 
-  void onTapEnviar(BuildContext context) async {
-  try {
-    final prefs = await SharedPreferences.getInstance();
-    String? idUser = prefs.getString('idUser'); // Suponho que o idUser tenha sido salvo como String
-    String estado = 'pendente'; // Estado padrão
-    String horas = selectedHours.toString();
-
-      await bd.inserirHoras([
-          (
-            horas,
-            estado
-          )
-        ]);
-
-    // Apenas chama a função sem atribuir a uma variável
-    await servidor.insertHoras(idUser.toString(), horas);
-
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        content: PushNotificationDialog(),
-        backgroundColor: Colors.transparent,
-        contentPadding: EdgeInsets.zero,
-        insetPadding: const EdgeInsets.only(left: 0),
-      ),
-    );
-  } catch (e) {
-    print('Erro ao enviar horas: $e');
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Erro ao enviar Horas!'),
-          content: Text(
-            'Ocorreu um erro ao tentar enviar as horas. Verifique os dados e tente novamente.\nErro: $e',
-            style: TextStyle(fontSize: 17),
+  Widget _buildUploadButton({
+    required String title,
+    required String buttonText,
+    required VoidCallback onPressed,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontSize: 16.0,
+            fontWeight: FontWeight.bold,
           ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
+        ),
+        SizedBox(height: 10.0),
+        SizedBox(
+          width: double.infinity, // Aumenta a largura do botão
+          child: OutlinedButton(
+            onPressed: onPressed,
+            style: OutlinedButton.styleFrom(
+              padding: EdgeInsets.symmetric(
+                  horizontal: 20.0,
+                  vertical: 16.0), // Aumenta o padding do botão
+              foregroundColor: Colors.black, // Texto na cor preta
+              side: BorderSide(
+                  color: Colors.green, width: 1.5), // Borda verde fina
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0), // Borda arredondada
+              ),
             ),
-          ],
-        );
-      },
+            child: Text(
+              buttonText,
+              style: TextStyle(
+                fontSize: 16.0, // Tamanho do texto
+                fontWeight: FontWeight.w400, // Peso do texto
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
-}
+
+  Future<void> _pickFile() async {
+    final result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      setState(() {
+        selectedFile = result.files.first;
+      });
+      print('Arquivo selecionado: ${selectedFile?.name}');
+    } else {
+      print('Nenhum arquivo selecionado');
+    }
+  }
+
+  void onTapEnviar(BuildContext context) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String? idUser = prefs.getString('idUser');
+      String estado = 'pendente';
+      String horas = selectedHours.toString();
+
+      await bd.inserirHoras([(horas, estado)]);
+
+      await servidor.insertHoras(idUser.toString(), horas);
+
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          content: PushNotificationDialog(),
+          backgroundColor: Colors.transparent,
+          contentPadding: EdgeInsets.zero,
+          insetPadding: const EdgeInsets.only(left: 0),
+        ),
+      );
+    } catch (e) {
+      print('Erro ao enviar horas: $e');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Erro ao enviar Horas!'),
+            content: Text(
+              'Ocorreu um erro ao tentar enviar as horas. Verifique os dados e tente novamente.\nErro: $e',
+              style: TextStyle(fontSize: 17.0),
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
 }
