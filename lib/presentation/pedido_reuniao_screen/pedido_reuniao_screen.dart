@@ -4,6 +4,7 @@ import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
 import 'package:rui_pedro_s_application11/servidor/servidor.dart';
 import 'package:rui_pedro_s_application11/servidor/basedados.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/push_notification_dialog.dart';
 
 class PedidoReuniaoScreen extends StatefulWidget {
   const PedidoReuniaoScreen({Key? key}) : super(key: key);
@@ -366,6 +367,15 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Reunião marcada com sucesso!"),
+        ),
+      );
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          content: PushNotificationDialog(),
+          backgroundColor: Colors.transparent,
+          contentPadding: EdgeInsets.zero,
+          insetPadding: const EdgeInsets.only(left: 0),
         ),
       );
     } catch (e) {
