@@ -8,7 +8,6 @@ import 'package:rui_pedro_s_application11/servidor/servidor.dart';
 import 'package:rui_pedro_s_application11/servidor/basedados.dart'; // Certifique-se de que Basededados é importado
 import 'package:shared_preferences/shared_preferences.dart'; // Certifique-se de importar o pacote
 
-
 class PedidoFeriasScreen extends StatefulWidget {
   const PedidoFeriasScreen({Key? key}) : super(key: key);
 
@@ -116,7 +115,18 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
                 Center(
                   child: Text(
                     "Férias",
-                    style: theme.textTheme.displayMedium,
+                    style: TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                      shadows: [
+                        Shadow(
+                          offset: Offset(1, 1),
+                          blurRadius: 3.0,
+                          color: Colors.grey.withOpacity(0.5),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 SizedBox(height: 20),
@@ -245,77 +255,75 @@ class _PedidoFeriasScreenState extends State<PedidoFeriasScreen> {
     return formatter.format(date);
   }
 
+  void onTapEnviar(BuildContext context) async {
+    if (_startDate == null || _endDate == null) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text('Erro'),
+          content: Text('Por favor, selecione as datas de início e fim.'),
+          actions: [
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
+    final prefs = await SharedPreferences.getInstance();
+    String? idUser = prefs.getString(
+        'idUser'); // Suponho que o idUser tenha sido salvo como String
+    String estado = 'pendente'; // Estado padrão
 
-    void onTapEnviar(BuildContext context) async {
-      if (_startDate == null || _endDate == null) {
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: Text('Erro'),
-            content: Text('Por favor, selecione as datas de início e fim.'),
-            actions: [
-              TextButton(
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
-        );
-        return;
-      }
+    try {
+      // Tenta inserir no banco de dados local (bd)
+      await bd.inserirFerias([
+        (
+          DateFormat('yyyy-MM-dd').format(_startDate!), // Data de início
+          DateFormat('yyyy-MM-dd').format(_endDate!), // Data de fim
+          estado // Estado inicial como 'pendente'
+        )
+      ]);
 
-      final prefs = await SharedPreferences.getInstance();
-      String? idUser = prefs.getString('idUser'); // Suponho que o idUser tenha sido salvo como String
-      String estado = 'pendente'; // Estado padrão
+      // Se a inserção local foi bem-sucedida, tenta enviar para o servidor
+      await servidor.insertFerias(
+          idUser.toString(),
+          DateFormat('yyyy-MM-dd').format(_startDate!),
+          DateFormat('yyyy-MM-dd').format(_endDate!),
+          estado);
 
-      try {
-        // Tenta inserir no banco de dados local (bd)
-        await bd.inserirFerias([
-          (
-            DateFormat('yyyy-MM-dd').format(_startDate!), // Data de início
-            DateFormat('yyyy-MM-dd').format(_endDate!), // Data de fim
-            estado // Estado inicial como 'pendente'
-          )
-        ]);
-
-        // Se a inserção local foi bem-sucedida, tenta enviar para o servidor
-        await servidor.insertFerias(
-            idUser.toString(),
-            DateFormat('yyyy-MM-dd').format(_startDate!),
-            DateFormat('yyyy-MM-dd').format(_endDate!),
-            estado);
-
-        // Mostra a notificação de sucesso
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            content: PushNotificationDialog(),
-            backgroundColor: Colors.transparent,
-            contentPadding: EdgeInsets.zero,
-            insetPadding: const EdgeInsets.only(left: 0),
-          ),
-        );
-      } catch (e) {
-        // Qualquer erro é capturado aqui e uma mensagem de erro é exibida
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: Text('Erro'),
-            content: Text('Ocorreu um erro: $e'),
-            actions: [
-              TextButton(
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
-        );
-      }
+      // Mostra a notificação de sucesso
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          content: PushNotificationDialog(),
+          backgroundColor: Colors.transparent,
+          contentPadding: EdgeInsets.zero,
+          insetPadding: const EdgeInsets.only(left: 0),
+        ),
+      );
+    } catch (e) {
+      // Qualquer erro é capturado aqui e uma mensagem de erro é exibida
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text('Erro'),
+          content: Text('Ocorreu um erro: $e'),
+          actions: [
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+      );
     }
   }
-
+}

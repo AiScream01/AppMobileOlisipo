@@ -63,7 +63,7 @@ class _ParceriasPormenorOneScreenState
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(height: 30.v),
+                SizedBox(height: 60.v),
                 Expanded(
                   child: SingleChildScrollView(
                     child: Container(
@@ -73,7 +73,19 @@ class _ParceriasPormenorOneScreenState
                           SizedBox(height: 30.v),
                           Text(
                             "Parcerias",
-                            style: theme.textTheme.displayMedium,
+                            style: TextStyle(
+                              fontSize: 38,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                              shadows: [
+                                Shadow(
+                                  offset: Offset(1, 1),
+                                  blurRadius: 3.0,
+                                  color: Colors.grey.withOpacity(0.5),
+                                ),
+                              ],
+                            ),
+                            textAlign: TextAlign.center,
                           ),
                           SizedBox(height: 12.v),
                           Container(
@@ -100,22 +112,6 @@ class _ParceriasPormenorOneScreenState
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      //Container(
-                                      //  padding: EdgeInsets.symmetric(
-                                      //      horizontal: 9.h, vertical: 12.v),
-                                      //  decoration: AppDecoration.fillGray
-                                      //      .copyWith(
-                                      //          borderRadius: BorderRadiusStyle
-                                      //              .roundedBorder8),
-                                      //  child: Row(
-                                      //    mainAxisAlignment:
-                                      //        MainAxisAlignment.spaceBetween,
-                                      //    children: [
-                                      //      Icon(Icons.arrow_back_ios),
-                                      //      Icon(Icons.arrow_forward_ios),
-                                      //    ],
-                                      //  ),
-                                      //),
                                       SizedBox(height: 10.v),
                                       Text(
                                           'Categoria: ${widget.categoria ?? 'Não especificado'}',

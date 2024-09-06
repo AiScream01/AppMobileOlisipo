@@ -45,13 +45,25 @@ class _DespesasViaturaPropriaScreenState
         appBar: AppBar(
           actions: [
             IconButton(
-              icon: Icon(Icons.account_circle),
+              icon: Icon(Icons.account_circle, color: Colors.black87),
               iconSize: 40.0,
               onPressed: () {
                 Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
               },
             ),
           ],
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                icon: Icon(Icons.menu, color: Colors.black87),
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
+              );
+            },
+          ),
         ),
         drawer: Drawer(
           child: ListView(
@@ -61,7 +73,8 @@ class _DespesasViaturaPropriaScreenState
                 decoration: BoxDecoration(
                   color: Colors.green,
                 ),
-                child: Text('Menu de Navegação'),
+                child: Text('Menu de Navegação',
+                    style: TextStyle(color: Colors.white, fontSize: 24)),
               ),
               ListTile(
                 title: const Text('Ajudas de Custo'),
@@ -125,26 +138,33 @@ class _DespesasViaturaPropriaScreenState
                 ),
               ),
             ),
-            Center(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(height: 10.0),
-                      Text(
-                        "Despesas Viatura Própria",
-                        style: Theme.of(context).textTheme.headlineMedium,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+              child: Column(
+                children: [
+                  SizedBox(height: 10.0),
+                  Center(
+                    child: Text(
+                      "Despesas Viatura Própria",
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                        shadows: [
+                          Shadow(
+                            offset: Offset(1, 1),
+                            blurRadius: 3.0,
+                            color: Colors.grey.withOpacity(0.5),
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 20.0),
-                      _buildInputSection(context),
-                      SizedBox(height: 20.0),
-                      _buildEnviarButton(context),
-                    ],
+                    ),
                   ),
-                ),
+                  SizedBox(height: 20.0),
+                  _buildInputSection(context),
+                  SizedBox(height: 20.0),
+                  _buildEnviarButton(context),
+                ],
               ),
             ),
           ],
@@ -169,7 +189,6 @@ class _DespesasViaturaPropriaScreenState
         ],
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildInputField(
@@ -233,7 +252,11 @@ class _DespesasViaturaPropriaScreenState
         children: [
           Text(
             title,
-            style: Theme.of(context).textTheme.titleMedium,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
           ),
           SizedBox(height: 5.0),
           TextField(
@@ -265,7 +288,11 @@ class _DespesasViaturaPropriaScreenState
         children: [
           Text(
             title,
-            style: Theme.of(context).textTheme.titleMedium,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
           ),
           SizedBox(height: 5.0),
           CustomOutlinedButton(
@@ -274,7 +301,11 @@ class _DespesasViaturaPropriaScreenState
             text: buttonText,
             onPressed: onPressed,
             buttonStyle: CustomButtonStyles.outlinePrimary,
-            buttonTextStyle: Theme.of(context).textTheme.titleMedium!,
+            buttonTextStyle: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
           ),
         ],
       ),

@@ -120,10 +120,17 @@ class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
                   SizedBox(height: 80.0),
                   Text(
                     "Horas",
-                    style: theme.textTheme.displayMedium?.copyWith(
-                      fontSize: 32.0,
+                    style: TextStyle(
+                      fontSize: 36.0,
                       fontWeight: FontWeight.bold,
-                      color: const Color.fromARGB(255, 0, 0, 0),
+                      color: Colors.black87,
+                      shadows: [
+                        Shadow(
+                          offset: Offset(1, 1),
+                          blurRadius: 3.0,
+                          color: Colors.grey.withOpacity(0.5),
+                        ),
+                      ],
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -178,7 +185,7 @@ class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
             children: [
               Text(
                 "Horas",
-                style: theme.textTheme.titleLarge?.copyWith(
+                style: TextStyle(
                   fontSize: 24.0,
                   color: Colors.black, // Cor preta para "Horas"
                 ),

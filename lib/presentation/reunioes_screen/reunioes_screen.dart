@@ -33,10 +33,8 @@ class _ReunioesScreenState extends State<ReunioesScreen> {
       setState(() {
         reunioes.clear();
         for (var reuniao in resultado) {
-          reunioes.add((
-            reuniao['titulo'] as String,
-            reuniao['data'] as String,
-          ));
+          reunioes
+              .add((reuniao['titulo'] as String, reuniao['data'] as String));
         }
       });
     } catch (e) {
@@ -80,16 +78,27 @@ class _ReunioesScreenState extends State<ReunioesScreen> {
                 Center(
                   child: Text(
                     "Reuniões",
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    style: TextStyle(
+                      fontSize: 32.0,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: Colors.black87,
+                      shadows: [
+                        Shadow(
+                          offset: Offset(1, 1),
+                          blurRadius: 3.0,
+                          color: Colors.grey.withOpacity(0.5),
+                        ),
+                      ],
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
                 SizedBox(height: 20.0),
                 Expanded(
                   child: isLoading
-                      ? Center(child: CircularProgressIndicator()) // Exibe o loader enquanto carrega
+                      ? Center(
+                          child:
+                              CircularProgressIndicator()) // Exibe o loader enquanto carrega
                       : reunioes.isEmpty
                           ? Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -106,7 +115,8 @@ class _ReunioesScreenState extends State<ReunioesScreen> {
                                   width: double.infinity,
                                   text: "Faça um pedido de reunião",
                                   onPressed: () {
-                                    Navigator.pushNamed(context, AppRoutes.pedidoReuniaoScreen);
+                                    Navigator.pushNamed(
+                                        context, AppRoutes.pedidoReuniaoScreen);
                                   },
                                 ),
                               ],
@@ -118,13 +128,16 @@ class _ReunioesScreenState extends State<ReunioesScreen> {
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(35.0),
                                     child: Container(
-                                      padding: EdgeInsets.symmetric(vertical: 15.0),
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 15.0),
                                       decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius: BorderRadius.circular(35.0),
+                                        borderRadius:
+                                            BorderRadius.circular(35.0),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black.withOpacity(0.3),
+                                            color:
+                                                Colors.black.withOpacity(0.3),
                                             spreadRadius: 2,
                                             blurRadius: 4,
                                             offset: Offset(0, 2),
@@ -133,7 +146,8 @@ class _ReunioesScreenState extends State<ReunioesScreen> {
                                       ),
                                       child: ConstrainedBox(
                                         constraints: BoxConstraints(
-                                          maxWidth: 600, // Ajusta a largura da tabela
+                                          maxWidth:
+                                              600, // Ajusta a largura da tabela
                                         ),
                                         child: _buildMeetingTable(),
                                       ),
@@ -144,7 +158,8 @@ class _ReunioesScreenState extends State<ReunioesScreen> {
                                     width: double.infinity,
                                     text: "Faça um pedido de reunião",
                                     onPressed: () {
-                                      Navigator.pushNamed(context, AppRoutes.pedidoReuniaoScreen);
+                                      Navigator.pushNamed(context,
+                                          AppRoutes.pedidoReuniaoScreen);
                                     },
                                   ),
                                 ],
@@ -179,7 +194,8 @@ class _ReunioesScreenState extends State<ReunioesScreen> {
           ListTile(
             title: const Text('Despesas viatura própria'),
             onTap: () {
-              Navigator.pushNamed(context, AppRoutes.despesasViaturaPropriaScreen);
+              Navigator.pushNamed(
+                  context, AppRoutes.despesasViaturaPropriaScreen);
             },
           ),
           ListTile(

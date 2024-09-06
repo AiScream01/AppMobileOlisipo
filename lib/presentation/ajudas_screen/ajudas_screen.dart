@@ -7,7 +7,7 @@ import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/
 import 'package:rui_pedro_s_application11/servidor/servidor.dart';
 import 'package:rui_pedro_s_application11/servidor/basedados.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:file_picker/file_picker.dart'; // Adiciona o File Picker
+import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -45,13 +45,25 @@ class _AjudasScreen extends State<AjudasScreen> {
         appBar: AppBar(
           actions: [
             IconButton(
-              icon: Icon(Icons.account_circle),
+              icon: Icon(Icons.account_circle, color: Colors.black87),
               iconSize: 40.0,
               onPressed: () {
                 Navigator.pushNamed(context, AppRoutes.paginaPerfilScreen);
               },
             ),
           ],
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                icon: Icon(Icons.menu, color: Colors.black87),
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
+              );
+            },
+          ),
         ),
         drawer: Drawer(
           child: ListView(
@@ -61,7 +73,8 @@ class _AjudasScreen extends State<AjudasScreen> {
                 decoration: BoxDecoration(
                   color: Colors.green,
                 ),
-                child: Text('Menu de Navegação'),
+                child: Text('Menu de Navegação',
+                    style: TextStyle(color: Colors.white, fontSize: 24)),
               ),
               ListTile(
                 title: const Text('Ajudas de Custo'),
@@ -132,7 +145,18 @@ class _AjudasScreen extends State<AjudasScreen> {
                   SizedBox(height: 10.0),
                   Text(
                     "Ajudas de Custo",
-                    style: Theme.of(context).textTheme.headlineSmall,
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                      shadows: [
+                        Shadow(
+                          offset: Offset(1, 1),
+                          blurRadius: 3.0,
+                          color: Colors.grey.withOpacity(0.5),
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(height: 20.0),
                   _buildInputSection(context),
@@ -201,7 +225,11 @@ class _AjudasScreen extends State<AjudasScreen> {
         children: [
           Text(
             title,
-            style: Theme.of(context).textTheme.titleMedium,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
           ),
           SizedBox(height: 5.0),
           CustomTextFormField(
@@ -225,7 +253,11 @@ class _AjudasScreen extends State<AjudasScreen> {
         children: [
           Text(
             title,
-            style: Theme.of(context).textTheme.titleMedium,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
           ),
           SizedBox(height: 5.0),
           CustomOutlinedButton(
@@ -234,7 +266,11 @@ class _AjudasScreen extends State<AjudasScreen> {
             text: buttonText,
             onPressed: onPressed,
             buttonStyle: CustomButtonStyles.outlinePrimary,
-            buttonTextStyle: Theme.of(context).textTheme.titleMedium!,
+            buttonTextStyle: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
           ),
           if (_recibo != null)
             Padding(
@@ -286,10 +322,8 @@ class _AjudasScreen extends State<AjudasScreen> {
         idUser.toString(),
         custoController.text,
         descricaoController.text.isNotEmpty ? descricaoController.text : "",
-        faturaController.text.isNotEmpty
-            ? faturaController.text
-            : "", // Adiciona a fatura
-        _recibo?.path, // Caminho do arquivo
+        faturaController.text.isNotEmpty ? faturaController.text : "",
+        _recibo?.path,
       );
 
       showDialog(

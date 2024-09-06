@@ -38,6 +38,8 @@ class _FaltasScreenState extends State<FaltasScreen> {
               },
             ),
           ],
+          // Removido o título da AppBar
+          title: null,
         ),
         drawer: _buildDrawer(context),
         body: Stack(
@@ -46,7 +48,7 @@ class _FaltasScreenState extends State<FaltasScreen> {
               width: double.infinity,
               height: double.infinity,
               decoration: BoxDecoration(
-                color: theme.colorScheme.onPrimaryContainer,
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
                 image: DecorationImage(
                   image: AssetImage(ImageConstant.imgLogin),
                   fit: BoxFit.cover,
@@ -56,13 +58,12 @@ class _FaltasScreenState extends State<FaltasScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 10.v),
+                  SizedBox(height: 10.0),
                   _buildPageTitle(),
-                  SizedBox(height: 20.v),
+                  SizedBox(height: 20.0),
                   _buildInputSection(context),
-                  SizedBox(height: 20.v),
+                  SizedBox(height: 20.0),
                   _buildEnviarButton(context),
                 ],
               ),
@@ -139,9 +140,23 @@ class _FaltasScreenState extends State<FaltasScreen> {
   }
 
   Widget _buildPageTitle() {
-    return Text(
-      "Faltas",
-      style: theme.textTheme.displayMedium,
+    return Align(
+      alignment: Alignment.center,
+      child: Text(
+        "Faltas",
+        style: TextStyle(
+          fontSize: 32,
+          fontWeight: FontWeight.bold,
+          color: Colors.black87,
+          shadows: [
+            Shadow(
+              offset: Offset(1, 1),
+              blurRadius: 3.0,
+              color: Colors.grey.withOpacity(0.5),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -171,15 +186,15 @@ class _FaltasScreenState extends State<FaltasScreen> {
 
   Widget _buildDateInputField(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(left: 1.h),
+      padding: EdgeInsets.only(left: 1.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             "Data",
-            style: theme.textTheme.titleLarge,
+            style: Theme.of(context).textTheme.titleMedium, // Estilo ajustado
           ),
-          SizedBox(height: 5.v),
+          SizedBox(height: 5.0),
           GestureDetector(
             onTap: () async {
               DateTime? pickedDate = await showDatePicker(
@@ -239,12 +254,7 @@ class _FaltasScreenState extends State<FaltasScreen> {
     String estado = 'pendente'; // Estado padrão
 
     try {
-      await bd.inserirFalta([
-          (
-           dateController.text.toString(),
-            estado
-          )
-        ]);
+      await bd.inserirFalta([(dateController.text.toString(), estado)]);
 
       await servidor.insertFalta(
         idUser.toString(),

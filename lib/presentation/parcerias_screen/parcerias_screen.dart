@@ -50,18 +50,6 @@ class ParceriasgridItemWidget extends StatelessWidget {
               },
             ),
             SizedBox(height: 0), // Espaçamento entre a imagem e o texto
-            //Padding(
-            //  padding: EdgeInsets.all(1.0), // Adiciona algum padding
-            //  child: Text(
-            //    titulo,
-            //    style: TextStyle(
-            //      fontWeight: FontWeight.bold,
-            //      fontSize: 16.0, // Tamanho do texto, ajuste conforme necessário
-            //      color: Colors.black, // Cor do texto
-            //    ),
-            //    textAlign: TextAlign.center, // Alinha o texto ao centro
-            //  ),
-            //),
           ],
         ),
       ),
@@ -143,18 +131,19 @@ class _ParceriasScreenState extends State<ParceriasScreen> {
                 SizedBox(height: 50.v), // Espaçamento para descer o conteúdo
                 Container(
                   padding: EdgeInsets.all(16.h),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(ImageConstant.imgLogin),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
                   child: Text(
                     "Parcerias",
-                    style: theme.textTheme.displayMedium?.copyWith(
-                      fontSize: 38.h,
+                    style: TextStyle(
+                      fontSize: 36,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: Colors.black87,
+                      shadows: [
+                        Shadow(
+                          offset: Offset(1, 1),
+                          blurRadius: 3.0,
+                          color: Colors.grey.withOpacity(0.5),
+                        ),
+                      ],
                     ),
                     textAlign: TextAlign.center,
                   ),

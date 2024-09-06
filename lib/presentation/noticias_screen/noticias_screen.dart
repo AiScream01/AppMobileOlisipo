@@ -101,7 +101,7 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
                 Text(
                   "Notícias",
                   style: TextStyle(
-                    fontSize: 32,
+                    fontSize: 36,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
                     shadows: [
