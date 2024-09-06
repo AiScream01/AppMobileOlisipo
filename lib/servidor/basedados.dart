@@ -721,18 +721,20 @@ class Basededados {
     CREATE TABLE horas (
       id_horas INTEGER PRIMARY KEY AUTOINCREMENT,
       horas TEXT,
-      estado TEXT
+      estado TEXT,
+      comprovativo TEXT
     )
   ''');
   }
 
 //---------------------------------------Inserir horas
-  Future<void> inserirHoras(List<(String, String)> horasData) async {
+  Future<void> inserirHoras(List<(String, String, String)> horasData) async {
     Database db = await basededados;
     await db.delete('horas');
-    for (final (horas, estado) in horasData) {
+    for (final (horas, estado, comprovativo) in horasData) {
       await db.rawInsert(
-          'insert into horas(horas, estado) values(?,?)', [horas, estado]);
+          'insert into horas(horas, estado, comprovativo) values(?,?,?)',
+          [horas, estado, comprovativo]);
     }
   }
 

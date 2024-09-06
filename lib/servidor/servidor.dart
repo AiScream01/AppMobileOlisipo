@@ -49,7 +49,7 @@ class Servidor {
         utilizador = [];
     List<(String, String, String)> ferias = [];
     List<(String, String, String, String)> ajudas = [];
-    List<(String, String)> horas = [];
+    List<(String, String, String)> horas = [];
     List<(String, String, String, String)> reunioes = [];
     List<(String, String, String, String, String, String)> despesasViatura = [];
     List<(String, String)> faltas = [];
@@ -91,7 +91,11 @@ class Servidor {
 
     var listaHoras = jsonDecode(result.body)['horas'];
     listaHoras.forEach((linha) {
-      horas.add((linha['horas'].toString(), linha['estado'].toString()));
+      horas.add((
+        linha['horas'].toString(),
+        linha['estado'].toString(),
+        linha['comprovativo'].toString()
+      ));
     });
 
     var listaReunioes = jsonDecode(result.body)['reunioes'];

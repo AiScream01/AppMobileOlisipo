@@ -53,11 +53,11 @@ class MyApp extends StatelessWidget {
 
       //bd.criatabelaParcerias();
       //bd.criarTabelaNoticias();
-      
+
       //bd.apagartabelaUtilizadores();
       //bd.criarTabelaReunioes();
       //bd.criarTabelaAjudasCusto();
-      //bd.criarTabelaHoras();
+      bd.criarTabelaHoras();
       //bd.criarTabelaDespesasViaturaPessoal();
       //bd.criarTabelaFaltas();
       //bd.criatabelaFerias();
@@ -75,7 +75,8 @@ class MyApp extends StatelessWidget {
           title: 'Olisipo App',
           debugShowCheckedModeBanner: false,
           initialRoute: idUser != null && idUser!.isNotEmpty
-              ? AppRoutes.paginaPrincipalScreen // Vai para a página principal se o idUser estiver armazenado
+              ? AppRoutes
+                  .paginaPrincipalScreen // Vai para a página principal se o idUser estiver armazenado
               : AppRoutes.loginScreen, // Senão, vai para o login
           routes: AppRoutes.routes,
         );

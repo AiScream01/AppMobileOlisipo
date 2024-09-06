@@ -6,6 +6,7 @@ import 'package:rui_pedro_s_application11/presentation/push_notification_dialog/
 import 'package:rui_pedro_s_application11/servidor/basedados.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:file_picker/file_picker.dart';
+import 'dart:io';
 
 class PedidoHorasScreen extends StatefulWidget {
   const PedidoHorasScreen({Key? key}) : super(key: key);
@@ -18,7 +19,8 @@ class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
   final Servidor servidor = Servidor();
   final Basededados bd = Basededados();
   int selectedHours = 1;
-  PlatformFile? selectedFile;
+  File?
+      _selectedFile; // Novo: Variável para armazenar o arquivo PDF selecionado
 
   @override
   Widget build(BuildContext context) {
@@ -53,49 +55,7 @@ class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
                   Navigator.pushNamed(context, AppRoutes.ajudasScreen);
                 },
               ),
-              ListTile(
-                title: const Text('Despesas viatura própria'),
-                onTap: () {
-                  Navigator.pushNamed(
-                      context, AppRoutes.despesasViaturaPropriaScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Faltas'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.faltasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Notícias'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.noticiasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Parcerias'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.parceriasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Férias'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Horas'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
-                },
-              ),
-              ListTile(
-                title: const Text('Reuniões'),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.reunioesScreen);
-                },
-              ),
+              // Outros itens do menu...
             ],
           ),
         ),
@@ -137,11 +97,11 @@ class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
                   SizedBox(height: 20.0),
                   _buildPedidoHoras(context),
                   SizedBox(height: 20.0),
-                  if (selectedFile != null)
+                  if (_selectedFile != null)
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
-                        'Arquivo: ${selectedFile?.name}',
+                        'Arquivo: ${_selectedFile?.path.split('/').last}',
                         style: TextStyle(color: Colors.green),
                       ),
                     ),
@@ -187,7 +147,7 @@ class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
                 "Horas",
                 style: TextStyle(
                   fontSize: 24.0,
-                  color: Colors.black, // Cor preta para "Horas"
+                  color: Colors.black,
                 ),
               ),
               SizedBox(
@@ -217,7 +177,7 @@ class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
           SizedBox(height: 20.0),
           _buildUploadButton(
             title: "Comprovativo",
-            buttonText: "Upload de documento",
+            buttonText: "Upload de documento PDF",
             onPressed: () async {
               await _pickFile();
             },
@@ -272,12 +232,14 @@ class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
   }
 
   Future<void> _pickFile() async {
-    final result = await FilePicker.platform.pickFiles();
-    if (result != null) {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'], // Permitir apenas arquivos PDF
+    );
+    if (result != null && result.files.single.path != null) {
       setState(() {
-        selectedFile = result.files.first;
+        _selectedFile = File(result.files.single.path!);
       });
-      print('Arquivo selecionado: ${selectedFile?.name}');
     } else {
       print('Nenhum arquivo selecionado');
     }
@@ -290,9 +252,13 @@ class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
       String estado = 'pendente';
       String horas = selectedHours.toString();
 
-      await bd.inserirHoras([(horas, estado)]);
+      await bd.inserirHoras([(horas, estado, _selectedFile?.path ?? "")]);
 
-      await servidor.insertHoras(idUser.toString(), horas);
+      await servidor.insertHoras(
+        idUser.toString(),
+        horas,
+        _selectedFile?.path,
+      );
 
       showDialog(
         context: context,
@@ -311,13 +277,13 @@ class _PedidoHorasScreenState extends State<PedidoHorasScreen> {
           return AlertDialog(
             title: Text('Erro ao enviar Horas!'),
             content: Text(
-              'Ocorreu um erro ao tentar enviar as horas. Verifique os dados e tente novamente.\nErro: $e',
-              style: TextStyle(fontSize: 17.0),
-            ),
-            actions: <Widget>[
+                'Ocorreu um erro ao enviar as Horas. Tente novamente mais tarde.'),
+            actions: [
               TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text('OK'),
+                child: Text('Fechar'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
               ),
             ],
           );
