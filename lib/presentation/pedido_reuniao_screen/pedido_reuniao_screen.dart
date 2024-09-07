@@ -313,9 +313,9 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
     return DropdownButton<String>(
       value: _selectedUserId,
       hint: Text(
-        "Selecione o utilizador",
+        "Selecione Utilizador",
         style: TextStyle(
-          fontSize: 18,
+          fontSize: 17,
           fontWeight: FontWeight.bold,
           color: Colors.black87,
         ),
@@ -326,7 +326,7 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
           child: Text(
             user['nome'],
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
             ),
@@ -390,7 +390,7 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
         hintStyle: TextStyle(color: Colors.grey),
       ),
       style: TextStyle(
-        fontSize: 18,
+        fontSize: 15,
         fontWeight: FontWeight.bold,
         color: Colors.black87,
       ),
