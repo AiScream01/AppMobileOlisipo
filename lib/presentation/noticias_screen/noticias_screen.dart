@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart'; // Certifique-se de que este pacote está incluído em pubspec.yaml
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:rui_pedro_s_application11/presentation/noticia_screen/noticia_screen.dart';
 import '../../servidor/basedados.dart';
@@ -54,8 +54,8 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
               },
             ),
           ],
-          backgroundColor: Colors.white,
-          elevation: 4,
+          backgroundColor: Colors.white, // Cor de fundo da AppBar
+          elevation: 0, // Remove a sombra da AppBar
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(
@@ -187,7 +187,7 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
       itemBuilder: (context, index) {
         final noticia = noticias[index];
         final imageUrl =
-            'https://pi4-api.onrender.com/uploads/${noticia.imagem}'; // Corrigido aqui
+            'https://pi4-api.onrender.com/uploads/${noticia.imagem}';
 
         return GestureDetector(
           onTap: () {
