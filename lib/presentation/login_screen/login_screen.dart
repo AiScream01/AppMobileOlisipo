@@ -14,10 +14,9 @@ class LoginScreen extends StatelessWidget {
   final passwordController = TextEditingController();
 
   final Servidor servidor = Servidor();
-  
+
   @override
   Widget build(BuildContext context) {
-
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: true,
@@ -115,7 +114,6 @@ class LoginScreen extends StatelessWidget {
               width: 155,
               text: "Login",
               onPressed: () async {
-                
                 try {
                   // Chama o método de login e obtém o id do usuário
                   var idUser = await servidor.login(
@@ -132,7 +130,7 @@ class LoginScreen extends StatelessWidget {
                   await updateProfileData(idUser);
 
                   // Log para verificar o idUser
-                  print('Usuário logado com id: $idUser');
+                  print('Utilizador logado com id: $idUser');
 
                   // Redireciona para a tela principal
                   Navigator.pushReplacementNamed(
@@ -154,7 +152,7 @@ class LoginScreen extends StatelessWidget {
               onTapTxtNovoAquiFazO(context);
             },
             child: Text(
-              "Novo aqui?\nFaz o pedido de conta",
+              "",
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.primary,
@@ -174,20 +172,19 @@ class LoginScreen extends StatelessWidget {
     Navigator.pushNamed(context, AppRoutes.registoScreen);
   }
 
-Future<void> updateProfileData(String idUser) async {
-  try {
-    // Busca os dados do servidor
-    await servidor.getDadosServidor(idUser);
-    
-    final prefs = await SharedPreferences.getInstance();
-    final bd = Basededados();
+  Future<void> updateProfileData(String idUser) async {
+    try {
+      // Busca os dados do servidor
+      await servidor.getDadosServidor(idUser);
 
-    // Obtém os dados do utilizador e armazena-os no SharedPreferences
-    var utilizador = await bd.listarUtilizador(idUser);
-    await prefs.setString('profileData', jsonEncode(utilizador));
+      final prefs = await SharedPreferences.getInstance();
+      final bd = Basededados();
 
-  } catch (e) {
-    print('Erro ao atualizar dados do perfil: $e');
+      // Obtém os dados do utilizador e armazena-os no SharedPreferences
+      var utilizador = await bd.listarUtilizador(idUser);
+      await prefs.setString('profileData', jsonEncode(utilizador));
+    } catch (e) {
+      print('Erro ao atualizar dados do perfil: $e');
+    }
   }
-}
 }

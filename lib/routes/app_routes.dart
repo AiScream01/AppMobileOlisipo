@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:rui_pedro_s_application11/presentation/login_screen/login_screen.dart';
 import 'package:rui_pedro_s_application11/presentation/pagina_principal_screen/pagina_principal_screen.dart';
 import 'package:rui_pedro_s_application11/presentation/noticia_screen/noticia_screen.dart';
-import 'package:rui_pedro_s_application11/presentation/registo_screen/registo_screen.dart';
 import 'package:rui_pedro_s_application11/presentation/recuperar_password_email_screen/recuperar_password_email_screen.dart';
 import 'package:rui_pedro_s_application11/presentation/recuperar_password_confirmar_password_screen/recuperar_password_confirmar_password_screen.dart';
 import 'package:rui_pedro_s_application11/presentation/noticias_screen/noticias_screen.dart';
@@ -68,7 +67,6 @@ class AppRoutes {
           imagem: '',
           data: '',
         ),
-    registoScreen: (context) => RegistoScreen(),
     recuperarPasswordEmailScreen: (context) => RecuperarPasswordEmailScreen(),
     recuperarPasswordConfirmarPasswordScreen: (context) =>
         RecuperarPasswordConfirmarPasswordScreen(),
