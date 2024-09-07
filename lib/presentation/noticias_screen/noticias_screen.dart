@@ -22,19 +22,22 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
   }
 
   Future<void> _fetchNoticias() async {
-    final resultado = await bd.listarTodasNoticias();
-
-    setState(() {
-      noticias.clear();
-      for (var noticia in resultado) {
-        noticias.add(Noticia(
-          data: noticia['data'] as String,
-          titulo: noticia['titulo'] as String,
-          descricao: noticia['descricao'] as String,
-          imagem: noticia['imagem'] as String,
-        ));
-      }
-    });
+    try {
+      final resultado = await bd.listarTodasNoticias();
+      setState(() {
+        noticias.clear();
+        for (var noticia in resultado) {
+          noticias.add(Noticia(
+            data: noticia['data'] as String,
+            titulo: noticia['titulo'] as String,
+            descricao: noticia['descricao'] as String,
+            imagem: noticia['imagem'] as String,
+          ));
+        }
+      });
+    } catch (e) {
+      print("Erro ao buscar notícias: $e");
+    }
   }
 
   @override
@@ -183,6 +186,9 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
       itemCount: noticias.length,
       itemBuilder: (context, index) {
         final noticia = noticias[index];
+        final imageUrl =
+            'https://pi4-api.onrender.com/uploads/${noticia.imagem}'; // Corrigido aqui
+
         return GestureDetector(
           onTap: () {
             Navigator.push(
@@ -210,13 +216,13 @@ class _NoticiasScreenState extends State<NoticiasScreen> {
                   borderRadius:
                       BorderRadius.vertical(top: Radius.circular(15.0)),
                   child: CachedNetworkImage(
-                    imageUrl: noticia.imagem,
+                    imageUrl: imageUrl,
                     placeholder: (context, url) => Center(
                       child: CircularProgressIndicator(),
                     ),
                     errorWidget: (context, url, error) {
                       print(
-                          "Erro ao carregar a imagem: $url"); // Adiciona uma mensagem de erro
+                          "Erro ao carregar a imagem: $url"); // Mensagem de erro
                       return Center(
                         child: Icon(Icons.error, color: Colors.red),
                       );

@@ -17,7 +17,8 @@ class NoticiaScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Construa a URL completa da imagem
-    final String baseUrl = 'https://pi4-api.onrender.com/uploads/'; // Substitua pela URL base real
+    final String baseUrl =
+        'https://pi4-api.onrender.com/uploads/'; // Substitua pela URL base real
     final String imageUrl = '$baseUrl$imagem';
 
     return SafeArea(
