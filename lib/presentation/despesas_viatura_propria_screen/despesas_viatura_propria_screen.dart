@@ -18,13 +18,12 @@ class DespesasViaturaPropriaScreen extends StatefulWidget {
 }
 
 class _DespesasViaturaPropriaScreenState
-    extends State<DespesasViaturaPropriaScreen> {
+  extends State<DespesasViaturaPropriaScreen> {
   final TextEditingController partidaController = TextEditingController();
   final TextEditingController chegadaController = TextEditingController();
   final TextEditingController kmController = TextEditingController();
   final TextEditingController portagensController = TextEditingController();
-
-  File? comprovativo; // Variável para armazenar o ficheiro PDF
+  File? _comprovativo; // Variável para armazenar o ficheiro PDF
 
   final Servidor servidor = Servidor();
   final Basededados bd = Basededados();
@@ -220,20 +219,12 @@ class _DespesasViaturaPropriaScreenState
           ),
           SizedBox(height: 10.0),
           _buildUploadButton(
-            title: "Comprovativo",
+            title: "comprovativo",
             buttonText: "Upload de documento",
             onPressed: () async {
-              await _pickComprovativo();
+              await _pick_comprovativo();
             },
           ),
-          if (comprovativo != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Text(
-                'Arquivo: ${comprovativo?.path.split('/').last}',
-                style: TextStyle(color: Colors.green),
-              ),
-            ),
         ],
       ),
     );
@@ -302,87 +293,118 @@ class _DespesasViaturaPropriaScreenState
               color: Colors.black87,
             ),
           ),
+          if (_comprovativo != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Text(
+                'Arquivo: ${_comprovativo?.path.split('/').last}',
+                style: TextStyle(color: Colors.green),
+              ),
+            ),
         ],
       ),
     );
   }
 
-  Future<void> _pickComprovativo() async {
+
+Widget _buildEnviarButton(BuildContext context) {
+  return CustomElevatedButton(
+    width: double.infinity,
+    text: "Enviar",
+    onPressed: () {
+      onTapEnviarButton(context); // Chama a função que envia os dados
+    },
+  );
+}
+
+void onTapEnviarButton(BuildContext context) async {
+  // Verifica se os campos obrigatórios estão preenchidos
+  if (partidaController.text.isEmpty || chegadaController.text.isEmpty || kmController.text.isEmpty || portagensController.text.isEmpty) {
+    final snackBar = SnackBar(
+      content: Text('Todos os campos são obrigatórios.'),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    return;
+  }
+
+  final prefs = await SharedPreferences.getInstance();
+  String? idUser = prefs.getString('idUser');
+  String estado = 'pendente';
+
+  try {
+    // Converte valores para o formato adequado
+    final km = double.tryParse(kmController.text) ?? 0.0;
+    final portagens = double.tryParse(portagensController.text) ?? 0.0;
+
+    // Insere dados na base de dados local
+    await bd.inserirDespesaViaturaPessoal([
+      (
+        partidaController.text,
+        chegadaController.text,
+        km.toString(),
+        portagens.toString(),
+        _comprovativo?.path ?? "",
+        estado
+      )
+    ]);
+
+    // Envia dados para o servidor
+    await servidor.insertDespesasViaturaPessoal(
+      idUser.toString(),
+      km,
+      partidaController.text,
+      chegadaController.text,
+      portagens,
+      _comprovativo?.path,  // Garante que será passada uma string
+    );
+
+    // Exibe uma mensagem de sucesso
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        content: PushNotificationDialog(),
+        backgroundColor: Colors.transparent,
+        contentPadding: EdgeInsets.zero,
+        insetPadding: const EdgeInsets.only(left: 0),
+      ),
+    );
+  } catch (e) {
+    print('Erro ao enviar despesa: $e');
+
+    // Exibe uma mensagem de erro
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Erro ao enviar despesa!'),
+          content: Text(
+            'Ocorreu um erro ao tentar enviar a despesa. Verifique os dados e tente novamente.\nErro: ${e.toString()}',
+            style: TextStyle(fontSize: 17),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+  Future<void> _pick_comprovativo() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf'],
     );
     if (result != null && result.files.single.path != null) {
       setState(() {
-        comprovativo = File(result.files.single.path!);
+        _comprovativo = File(result.files.single.path!);
       });
     } else {
       print('Nenhum arquivo selecionado');
     }
-  }
-
-  Future<void> _sendData() async {
-    // Coletar os dados do formulário
-    final pontoPartida = partidaController.text;
-    final pontoChegada = chegadaController.text;
-    final km = kmController.text;
-    final portagens = portagensController.text;
-
-    // Renomear variável para evitar conflito
-    final comprovativoPath =
-        comprovativo != null ? comprovativo!.path.split('/').last : "";
-
-    // Preparar os dados para inserção na base de dados local
-    final despesaViaturaData = [
-      (pontoPartida, pontoChegada, km, comprovativoPath, portagens, 'pendente')
-    ];
-
-    try {
-      // Inserir dados na base de dados local
-      await bd.inserirDespesaViaturaPessoal(despesaViaturaData);
-
-      // Exibir uma mensagem de sucesso ou realizar outra ação
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          content:
-              PushNotificationDialog(), // Substitua pelo seu diálogo de sucesso
-          backgroundColor: Colors.transparent,
-          contentPadding: EdgeInsets.zero,
-          insetPadding: const EdgeInsets.only(left: 0),
-        ),
-      );
-    } catch (e) {
-      print('Erro ao enviar despesa: $e');
-
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Erro ao enviar despesa!'),
-            content: Text(
-                'Ocorreu um erro ao enviar a despesa. Tente novamente mais tarde.'),
-            actions: [
-              TextButton(
-                child: Text('Fechar'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
-  }
-
-  Widget _buildEnviarButton(BuildContext context) {
-    return CustomElevatedButton(
-      width: double.infinity,
-      text: "Enviar",
-      onPressed: () {
-        _sendData(); // Chama a função que envia os dados
-      },
-    );
   }
 }

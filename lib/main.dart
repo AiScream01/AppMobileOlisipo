@@ -32,7 +32,24 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     var bd = Basededados();
     var ser = Servidor();
+
+    //bd.apagartabelaHoras();
+    //bd.apagartabelaUtilizadores();
+    //bd.apagartabelaFerias();
+    //bd.apagartabelaReunioes();
+    //bd.apagartabelaFaltas();
+
     //bd.criatabelaUtilizadores();
+    //bd.criarTabelaHoras();
+    //bd.criatabelaParcerias();
+    //bd.criarTabelaNoticias();
+    //bd.criarTabelaReunioes();
+    //bd.criarTabelaAjudasCusto();
+    //bd.criarTabelaDespesasViaturaPessoal();
+    //bd.criarTabelaFaltas();
+    //bd.criatabelaFerias();
+    //bd.CriarTabelaRecibosVencimento();
+
 
     // Função que conecta ao servidor ou à base de dados local
     Future<void> servidor_basededados() async {
@@ -50,20 +67,6 @@ class MyApp extends StatelessWidget {
       } else {
         print('Nenhum idUser encontrado. Redirecionando para o login.');
       }
-
-      //bd.criatabelaParcerias();
-      //bd.criarTabelaNoticias();
-
-      //bd.apagartabelaUtilizadores();
-      //bd.criarTabelaReunioes();
-      //bd.criarTabelaAjudasCusto();
-      //bd.criarTabelaHoras();
-      //bd.criarTabelaDespesasViaturaPessoal();
-      //bd.criarTabelaFaltas();
-      //bd.criatabelaFerias();
-      //bd.apagartabelaFerias();
-      //bd.CriarTabelaRecibosVencimento();
-      //bd.apagartabelaReunioes();
     }
 
     // Chamar a função assíncrona, sem bloquear a UI

@@ -23,7 +23,6 @@ class AjudasScreen extends StatefulWidget {
 class _AjudasScreen extends State<AjudasScreen> {
   final TextEditingController custoController = TextEditingController();
   final TextEditingController descricaoController = TextEditingController();
-  final TextEditingController faturaController = TextEditingController();
   File? _recibo;
 
   final Servidor servidor = Servidor();
@@ -33,7 +32,6 @@ class _AjudasScreen extends State<AjudasScreen> {
   void dispose() {
     custoController.dispose();
     descricaoController.dispose();
-    faturaController.dispose(); // Dispose do novo controller
     super.dispose();
   }
 
@@ -321,7 +319,6 @@ class _AjudasScreen extends State<AjudasScreen> {
         idUser.toString(),
         custoController.text,
         descricaoController.text.isNotEmpty ? descricaoController.text : "",
-        faturaController.text.isNotEmpty ? faturaController.text : "",
         _recibo?.path,
       );
 
@@ -368,6 +365,8 @@ class _AjudasScreen extends State<AjudasScreen> {
       setState(() {
         _recibo = File(result.files.single.path!);
       });
+    } else {
+      print('Nenhum arquivo selecionado');
     }
   }
 }

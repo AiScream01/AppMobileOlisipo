@@ -574,28 +574,13 @@ class Basededados {
 
 //---------------------------------------Inserir despesa de viatura pessoal
   Future<void> inserirDespesaViaturaPessoal(
-      List<(String, String, String, String, String, String)>
-          despesaViaturaData) async {
+      List<(String, String, String, String, String, String)> despesaViaturaData) async {
     Database db = await basededados;
     await db.delete('despesas_viatura_pessoal');
-    for (final (
-          ponto_partida,
-          ponto_chegada,
-          km,
-          comprovativo,
-          preco_portagens,
-          estado
-        ) in despesaViaturaData) {
+    for (final (ponto_partida,ponto_chegada,km,comprovativo,preco_portagens,estado) in despesaViaturaData) {
       await db.rawInsert(
           'insert into despesas_viatura_pessoal(ponto_partida, ponto_chegada, km, comprovativo, preco_portagens, estado) values(?,?,?,?,?,?)',
-          [
-            ponto_partida,
-            ponto_chegada,
-            km,
-            comprovativo,
-            preco_portagens,
-            estado
-          ]);
+          [ponto_partida,ponto_chegada,km,comprovativo,preco_portagens,estado]);
     }
   }
 

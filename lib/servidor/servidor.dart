@@ -188,7 +188,6 @@ class Servidor {
     String idUser,
     String custo,
     String descricao,
-    String comprovativo,
     String? path, // O caminho do arquivo PDF
   ) async {
     // Verifica se os parâmetros obrigatórios não estão vazios
@@ -227,53 +226,52 @@ class Servidor {
     }
   }
 
-  Future<void> insertDespesasViaturaPessoal(
-    String idUser,
-    double km,
-    String pontoPartida,
-    String pontoChegada,
-    double precoPortagens,
-    String comprovativo,
-  ) async {
-    // Verifica se os parâmetros obrigatórios não estão vazios
-    if (idUser.isEmpty || pontoPartida.isEmpty || pontoChegada.isEmpty) {
-      throw Exception(
-          'Dados inválidos: idUser, pontoPartida e pontoChegada são obrigatórios.');
-    }
+Future<void> insertDespesasViaturaPessoal(
+  String idUser,
+  double km,
+  String pontoPartida,
+  String pontoChegada,
+  double precoPortagens,
+  String? path,
+) async {
+  // Verifica se os parâmetros obrigatórios não estão vazios
+  if (idUser.isEmpty || pontoPartida.isEmpty || pontoChegada.isEmpty) {
+    throw Exception(
+        'Dados inválidos: idUser, pontoPartida e pontoChegada são obrigatórios.');
+  }
 
-    // Define a URL base e o endpoint para inserir as despesas de viatura pessoal
-    var url = '$baseURL/despesasviatura/create';
+  var url = '$baseURL/despesasviatura/create';
 
-    // Prepara a requisição HTTP POST
-    var response = await http.post(
-      Uri.parse(url),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic>{
-        'km': km,
-        'ponto_partida': pontoPartida,
-        'ponto_chegada': pontoChegada,
-        'preco_portagens': precoPortagens,
-        'comprovativo': comprovativo,
-        'id_user': idUser,
-      }),
-    );
+  // Criar uma requisição multipart
+  var request = http.MultipartRequest('POST', Uri.parse(url));
+  // Adicionar os campos do formulário
+  request.fields['id_user'] = idUser;
+  request.fields['km'] = km.toString();
+  request.fields['ponto_partida'] = pontoPartida;
+  request.fields['ponto_chegada'] = pontoChegada;
+  request.fields['preco_portagens'] = precoPortagens.toString();
 
-    // Imprime o status code e o corpo da resposta para depuração
-    print('Status code: ${response.statusCode}');
-    print('Response body: ${response.body}');
+  // Adicionar o arquivo se ele existir
+  if (path != null && File(path).existsSync()) {
+      var comprovativoFile = await http.MultipartFile.fromPath(
+        'comprovativo',
+        path,
+        contentType:
+            MediaType('application', 'pdf'), // Define o tipo MIME do arquivo
+      );
+      request.files.add(comprovativoFile);
+  }
 
-    // Verifica o status da resposta
+  var response = await request.send();
+
+  // Processa a resposta
     if (response.statusCode == 201) {
       print('Despesa de viatura pessoal inserida com sucesso!');
     } else {
-      print(
-          'Erro ao inserir despesa de viatura pessoal: ${response.statusCode}');
-      throw Exception(
-          'Falha ao inserir despesa de viatura pessoal: ${response.body}');
+      print('Falha ao inserir despesa de viatura pessoal: ${response.statusCode}');
     }
-  }
+}
+
 
   Future<void> insertFalta(
     String idUser,
