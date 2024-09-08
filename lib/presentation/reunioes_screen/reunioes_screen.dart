@@ -36,8 +36,7 @@ class _ReunioesScreenState extends State<ReunioesScreen> {
           reunioes.add((
             reuniao['titulo'] as String,
             reuniao['data'] as String,
-            reuniao['hora'] as String,
-            
+            reuniao['hora'] != null ? reuniao['hora'] as String : 'Hora não definida'
           ));
         }
       });
