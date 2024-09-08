@@ -264,12 +264,12 @@ class _PaginaPrincipalScreenState extends State<PaginaPrincipalScreen> {
                                       pedidoDeReuniaoText: "Pedido de Reunião",
                                       reprovadoText: estadoReuniao,
                                     ),
-                                    SizedBox(height: 10.v),
-                                    _buildRequestRow(
-                                      context,
-                                      pedidoDeReuniaoText: "Pedido de Ajudas",
-                                      reprovadoText: estadoAjudas,
-                                    ),
+                                    //SizedBox(height: 10.v),
+                                    //_buildRequestRow(
+                                    //  context,
+                                    //  pedidoDeReuniaoText: "Pedido de Ajudas",
+                                    //  reprovadoText: estadoAjudas,
+                                    //),
                                     SizedBox(height: 10.v),
                                     _buildRequestRow(
                                       context,
