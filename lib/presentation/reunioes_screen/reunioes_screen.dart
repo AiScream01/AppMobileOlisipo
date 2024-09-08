@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:rui_pedro_s_application11/servidor/basedados.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_elevated_button.dart';
+import 'package:intl/intl.dart';
 
 class ReunioesScreen extends StatefulWidget {
   const ReunioesScreen({Key? key}) : super(key: key);
@@ -21,33 +22,34 @@ class _ReunioesScreenState extends State<ReunioesScreen> {
     _fetchReunioes();
   }
 
-  Future<void> _fetchReunioes() async {
+Future<void> _fetchReunioes() async {
+  setState(() {
+    isLoading = true;
+  });
+
+  try {
+    var resultado = await bd.listarReunioesAceitas();
+    print("Resultado das reuniões : $resultado");
+
     setState(() {
-      isLoading = true; // Quando começar a buscar os dados, mostra o loader
+      reunioes.clear();
+      for (var reuniao in resultado) {
+        String formattedDate = DateFormat('dd/MM/yyyy').format(DateTime.parse(reuniao['data']));
+        reunioes.add((
+          reuniao['titulo'] as String,
+          formattedDate,
+          reuniao['hora'] != null ? reuniao['hora'] as String : 'Hora não definida'
+        ));
+      }
     });
-
-    try {
-      var resultado = await bd.listarReunioesAceitas();
-      print("Resultado das reuniões : $resultado");
-
-      setState(() {
-        reunioes.clear();
-        for (var reuniao in resultado) {
-          reunioes.add((
-            reuniao['titulo'] as String,
-            reuniao['data'] as String,
-            reuniao['hora'] != null ? reuniao['hora'] as String : 'Hora não definida'
-          ));
-        }
-      });
-    } catch (e) {
-      print('Erro ao buscar reuniões: $e');
-    } finally {
-      setState(() {
-        isLoading = false; // Finaliza o carregamento, independente do resultado
-      });
-    }
+  } catch (e) {
+    print('Erro ao buscar reuniões: $e');
+  } finally {
+    setState(() {
+      isLoading = false;
+    });
   }
+}
 
   @override
   Widget build(BuildContext context) {
