@@ -1,9 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
 import 'package:rui_pedro_s_application11/servidor/servidor.dart';
 import 'package:rui_pedro_s_application11/servidor/basedados.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dio/dio.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class PaginaPerfilScreen extends StatefulWidget {
   const PaginaPerfilScreen({Key? key}) : super(key: key);
@@ -57,6 +62,14 @@ class _PaginaPerfilScreenState extends State<PaginaPerfilScreen> {
       print("Erro ao buscar dados do perfil: $e");
     }
   }
+
+  Future<void> requestStoragePermission() async {
+  var status = await Permission.storage.status;
+  if (!status.isGranted) {
+    // Solicitar permissão
+    await Permission.storage.request();
+  }
+}
 
   @override
   void dispose() {
@@ -137,6 +150,72 @@ class _PaginaPerfilScreenState extends State<PaginaPerfilScreen> {
         },
       );
     }
+  }
+Future<void> DownloadDeclaracaoAcademica() async {
+  try {
+    var listaPerfil = await bd.listarTodosUtilizadores();
+    
+    if (listaPerfil.isNotEmpty) {
+      var perfil = listaPerfil[0];
+      String caminhoDeclaracao = perfil['declaracao_academica'] ?? '';
+
+      if (caminhoDeclaracao.isNotEmpty) {
+        // URL completa do documento (ajuste conforme necessário)
+        String urlDocumento = 'https://pi4-api.onrender.com/uploads/$caminhoDeclaracao';
+
+        // Pedir permissões de armazenamento
+        var status = await Permission.storage.request();
+        
+        if (status.isGranted) {
+          // Caminho do diretório de downloads
+          var dir = await getExternalStorageDirectory();
+          String caminhoDestino = '${dir!.path}/declaracao_academica.pdf';
+
+          // Fazer o download do arquivo usando o pacote Dio
+          Dio dio = Dio();
+          await dio.download(urlDocumento, caminhoDestino);
+
+          // Mostrar um SnackBar de sucesso
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Declaração acadêmica baixada com sucesso!'),
+            ),
+          );
+        } else if (status.isDenied || status.isPermanentlyDenied) {
+          // Mostrar um SnackBar informando sobre a permissão negada
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Permissão de armazenamento negada. Não é possível baixar o arquivo.'),
+            ),
+          );
+
+          // Se a permissão foi permanentemente negada, sugira abrir as configurações
+          if (status.isPermanentlyDenied) {
+            openAppSettings(); // Abre as configurações do app para o usuário conceder a permissão manualmente
+          }
+        }
+      } else {
+        // Mostrar um SnackBar caso o caminho esteja vazio
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Caminho da declaração acadêmica não encontrado.'),
+          ),
+        );
+      }
+    }
+  } catch (e) {
+    // Mostrar um SnackBar de erro
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Erro ao baixar declaração acadêmica: $e'),
+      ),
+    );
+  }
+}
+
+
+
+  Future<void> DownloadDeclaracaoBancaria() async {
   }
 
   @override
@@ -337,13 +416,30 @@ class _PaginaPerfilScreenState extends State<PaginaPerfilScreen> {
         SizedBox(height: 8.v),
         CustomOutlinedButton(
           height: 29.v,
+          width: 200.h,
+          text: "Declaração Academica",
+          buttonTextStyle: CustomTextStyles.bodyLarge16_1,
+          onPressed:
+              DownloadDeclaracaoAcademica, // Chama a função de atualização ao pressionar o botão
+        ),
+        SizedBox(height: 8.v),
+        CustomOutlinedButton(
+          height: 29.v,
+          width: 200.h,
+          text: "Declaração Bancaria",
+          buttonTextStyle: CustomTextStyles.bodyLarge16_1,
+          onPressed:
+              DownloadDeclaracaoBancaria, // Chama a função de atualização ao pressionar o botão
+        ),
+        SizedBox(height: 8.v),
+        CustomOutlinedButton(
+          height: 29.v,
           width: 81.h,
           text: "Editar",
           buttonTextStyle: CustomTextStyles.bodyLarge16_1,
           onPressed:
               _updateProfile, // Chama a função de atualização ao pressionar o botão
         ),
-        SizedBox(height: 20.v),
         CustomOutlinedButton(
           height: 29,
           width: 81,
