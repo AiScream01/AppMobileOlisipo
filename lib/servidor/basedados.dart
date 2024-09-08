@@ -574,13 +574,28 @@ class Basededados {
 
 //---------------------------------------Inserir despesa de viatura pessoal
   Future<void> inserirDespesaViaturaPessoal(
-      List<(String, String, String, String, String, String)> despesaViaturaData) async {
+      List<(String, String, String, String, String, String)>
+          despesaViaturaData) async {
     Database db = await basededados;
     await db.delete('despesas_viatura_pessoal');
-    for (final (ponto_partida,ponto_chegada,km,comprovativo,preco_portagens,estado) in despesaViaturaData) {
+    for (final (
+          ponto_partida,
+          ponto_chegada,
+          km,
+          comprovativo,
+          preco_portagens,
+          estado
+        ) in despesaViaturaData) {
       await db.rawInsert(
           'insert into despesas_viatura_pessoal(ponto_partida, ponto_chegada, km, comprovativo, preco_portagens, estado) values(?,?,?,?,?,?)',
-          [ponto_partida,ponto_chegada,km,comprovativo,preco_portagens,estado]);
+          [
+            ponto_partida,
+            ponto_chegada,
+            km,
+            comprovativo,
+            preco_portagens,
+            estado
+          ]);
     }
   }
 
@@ -806,11 +821,15 @@ class Basededados {
   Future<void> inserirReuniao(
       List<(String, String, String, String, String)> reuniaoData) async {
     Database db = await basededados;
-    await db.delete('reunioes');
+    await db.delete('reunioes'); // Limpa a tabela antes de inserir novos dados
+
     for (final (titulo, descricao, data, hora, estado) in reuniaoData) {
+      print(
+          "Hora inserida: $hora"); // Verifica o valor da hora antes de inserir
       await db.rawInsert(
-          'insert into reunioes(titulo, descricao, data, hora, estado) values(?,?,?,?,?)',
-          [titulo, descricao, data, hora, estado]);
+        'insert into reunioes(titulo, descricao, data, hora, estado) values(?,?,?,?,?)',
+        [titulo, descricao, data, hora, estado],
+      );
     }
   }
 
@@ -835,9 +854,9 @@ class Basededados {
 //---------------------------------------Listar todas as reuniões com estado 'Aceite'
   Future<List<Map<String, dynamic>>> listarReunioesAceitas() async {
     Database db = await basededados;
-    // Adiciona a cláusula WHERE para filtrar por estado
     return await db.query(
       'reunioes',
+      columns: ['titulo', 'data', 'hora'], // Especifica as colunas necessárias
       where: 'estado = ?',
       whereArgs: ['Aceite'],
     );

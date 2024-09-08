@@ -12,7 +12,7 @@ class ReunioesScreen extends StatefulWidget {
 
 class _ReunioesScreenState extends State<ReunioesScreen> {
   var bd = Basededados();
-  final List<(String, String)> reunioes = [];
+  final List<(String, String, String)> reunioes = [];
   bool isLoading = true; // Variável para controlar o estado de carregamento
 
   @override
@@ -33,8 +33,12 @@ class _ReunioesScreenState extends State<ReunioesScreen> {
       setState(() {
         reunioes.clear();
         for (var reuniao in resultado) {
-          reunioes
-              .add((reuniao['titulo'] as String, reuniao['data'] as String));
+          reunioes.add((
+            reuniao['titulo'] as String,
+            reuniao['data'] as String,
+            reuniao['hora'] as String,
+            
+          ));
         }
       });
     } catch (e) {
@@ -245,8 +249,9 @@ class _ReunioesScreenState extends State<ReunioesScreen> {
         horizontalInside: BorderSide(color: Color(0xFF1ED700), width: 1.0),
       ),
       columnWidths: {
-        0: FlexColumnWidth(2),
+        0: FlexColumnWidth(1),
         1: FlexColumnWidth(1),
+        2: FlexColumnWidth(1),
       },
       children: [
         TableRow(
@@ -256,7 +261,7 @@ class _ReunioesScreenState extends State<ReunioesScreen> {
           children: [
             TableCell(
               child: Padding(
-                padding: EdgeInsets.all(12.0),
+                padding: EdgeInsets.all(8.0),
                 child: Text(
                   'Título da Reunião',
                   style: TextStyle(
@@ -269,9 +274,22 @@ class _ReunioesScreenState extends State<ReunioesScreen> {
             ),
             TableCell(
               child: Padding(
-                padding: EdgeInsets.all(12.0),
+                padding: EdgeInsets.all(8.0),
                 child: Text(
                   'Data',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontSize: 16.0,
+                  ),
+                ),
+              ),
+            ),
+            TableCell(
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  'Hora',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -287,7 +305,7 @@ class _ReunioesScreenState extends State<ReunioesScreen> {
             children: [
               TableCell(
                 child: Padding(
-                  padding: EdgeInsets.all(12.0),
+                  padding: EdgeInsets.all(8.0),
                   child: Text(
                     reuniao.$1,
                     style: TextStyle(
@@ -299,9 +317,21 @@ class _ReunioesScreenState extends State<ReunioesScreen> {
               ),
               TableCell(
                 child: Padding(
-                  padding: EdgeInsets.all(12.0),
+                  padding: EdgeInsets.all(8.0),
                   child: Text(
                     reuniao.$2,
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              TableCell(
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    reuniao.$3,
                     style: TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,

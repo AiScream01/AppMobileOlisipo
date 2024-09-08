@@ -426,14 +426,13 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
           'nome_utilizador_reuniao: ${_selectedUserName}'
           '}');
 
-
       await bd.inserirReuniao([
         (
-        _tituloController.text,
-        _descricaoController.text,
-        _selectedDate.toString(),
-        _formatTimeOfDay(_selectedTime!),
-        estado,
+          _tituloController.text,
+          _descricaoController.text,
+          _selectedDate.toString(),
+          _formatTimeOfDay(_selectedTime!),
+          estado,
         )
       ]);
 
