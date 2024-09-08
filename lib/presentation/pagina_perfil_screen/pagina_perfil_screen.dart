@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart'
-    as http; // Adicione o pacote http ao pubspec.yaml
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:rui_pedro_s_application11/core/app_export.dart';
 import 'package:rui_pedro_s_application11/widgets/custom_outlined_button.dart';
 import 'package:rui_pedro_s_application11/servidor/servidor.dart';
 import 'package:rui_pedro_s_application11/servidor/basedados.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:io';
-import 'dart:async';
 
 class PaginaPerfilScreen extends StatefulWidget {
   const PaginaPerfilScreen({Key? key}) : super(key: key);
@@ -145,46 +139,6 @@ class _PaginaPerfilScreenState extends State<PaginaPerfilScreen> {
     }
   }
 
-  Future<void> _downloadFile(String url, String fileName) async {
-    // Verificar permissões
-    var status = await Permission.storage.request();
-    if (!status.isGranted) {
-      // Se a permissão não for concedida, mostrar uma mensagem de erro
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Permissão de armazenamento não concedida.')),
-      );
-      return;
-    }
-
-    try {
-      // Baixar o arquivo
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        // Obter o diretório de armazenamento
-        final directory = await getApplicationDocumentsDirectory();
-        final file = File('${directory.path}/$fileName');
-
-        // Salvar o arquivo
-        await file.writeAsBytes(response.bodyBytes);
-
-        // Informar o usuário sobre o sucesso
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Arquivo baixado com sucesso!')),
-        );
-      } else {
-        // Informar o usuário sobre o erro
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao baixar o arquivo.')),
-        );
-      }
-    } catch (e) {
-      // Informar o usuário sobre o erro
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao baixar o arquivo: $e')),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -198,8 +152,8 @@ class _PaginaPerfilScreenState extends State<PaginaPerfilScreen> {
               top:
                   kToolbarHeight), // Adiciona padding para não sobrepor a AppBar
           child: Container(
-            width: double.infinity,
-            height: MediaQuery.of(context).size.height,
+            width: SizeUtils.width,
+            height: SizeUtils.height,
             decoration: BoxDecoration(
               color: theme.colorScheme.onPrimaryContainer,
               boxShadow: [
@@ -216,7 +170,7 @@ class _PaginaPerfilScreenState extends State<PaginaPerfilScreen> {
               ),
             ),
             child: Container(
-              width: double.infinity,
+              width: double.maxFinite,
               padding: EdgeInsets.symmetric(horizontal: 21.h, vertical: 28.v),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -225,25 +179,6 @@ class _PaginaPerfilScreenState extends State<PaginaPerfilScreen> {
                   _buildProfileImage(),
                   SizedBox(height: 50.v),
                   _buildProfileForm(),
-                  SizedBox(height: 20.v),
-                  CustomOutlinedButton(
-                    height: 29.v,
-                    width: 150.h,
-                    text: "Download Declaração Acadêmica",
-                    buttonTextStyle: CustomTextStyles.bodyLarge16_1,
-                    onPressed: () => _downloadFile(
-                        'URL_DA_DECLARACAO_ACADEMICA',
-                        'declaracao_academica.pdf'),
-                  ),
-                  SizedBox(height: 10.v),
-                  CustomOutlinedButton(
-                    height: 29.v,
-                    width: 150.h,
-                    text: "Download Declaração Bancária",
-                    buttonTextStyle: CustomTextStyles.bodyLarge16_1,
-                    onPressed: () => _downloadFile('URL_DA_DECLARACAO_BANCARIA',
-                        'declaracao_bancaria.pdf'),
-                  ),
                 ],
               ),
             ),
@@ -296,9 +231,21 @@ class _PaginaPerfilScreenState extends State<PaginaPerfilScreen> {
             },
           ),
           ListTile(
-            title: const Text('Logout'),
+            title: const Text('Férias'),
             onTap: () {
-              Navigator.pushReplacementNamed(context, AppRoutes.loginScreen);
+              Navigator.pushNamed(context, AppRoutes.pedidoFeriasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Horas'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.pedidoHorasScreen);
+            },
+          ),
+          ListTile(
+            title: const Text('Reuniões'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.reunioesScreen);
             },
           ),
         ],
@@ -307,17 +254,44 @@ class _PaginaPerfilScreenState extends State<PaginaPerfilScreen> {
   }
 
   Widget _buildProfileImage() {
-    return Container(
-      width: 130.h,
-      height: 130.h,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(65.h),
-        image: DecorationImage(
-          image: AssetImage(ImageConstant
-              .imgProfilePic), // Substitua com a imagem de perfil real
-          fit: BoxFit.cover,
-        ),
-        border: Border.all(color: Colors.white, width: 4),
+    return Align(
+      alignment: Alignment.center,
+      child: Stack(
+        alignment: Alignment.bottomRight,
+        children: [
+          Container(
+            height: 120.v,
+            width: 120.h,
+            decoration: BoxDecoration(
+              color: appTheme.gray300,
+              borderRadius: BorderRadius.circular(60.h),
+              boxShadow: [
+                BoxShadow(
+                  color: appTheme.black900.withOpacity(0.25),
+                  spreadRadius: 2.h,
+                  blurRadius: 2.h,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Center(
+              child: CustomImageView(
+                imagePath: ImageConstant.imgDoUtilizador,
+                height: 90.adaptSize,
+                width: 90.adaptSize,
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: CustomImageView(
+              imagePath: ImageConstant.imgEdit,
+              height: 19.v,
+              width: 19.h,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -329,75 +303,66 @@ class _PaginaPerfilScreenState extends State<PaginaPerfilScreen> {
       decoration: AppDecoration.outlineGray.copyWith(
         borderRadius: BorderRadiusStyle.roundedBorder35,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Nome", style: CustomTextStyles.titleLargePrimary),
-          TextField(
-            controller: nameController,
-            decoration: const InputDecoration(
-              border: UnderlineInputBorder(),
-              isDense: true,
-            ),
-            style: theme.textTheme.bodyLarge,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text("Nome", style: CustomTextStyles.titleLargePrimary),
+        TextField(
+          controller: nameController,
+          decoration: const InputDecoration(
+            border: UnderlineInputBorder(),
+            isDense: true,
           ),
-          SizedBox(height: 20.v),
-          Text("Senha", style: CustomTextStyles.titleLargePrimary),
-          TextField(
-            controller: passwordController,
-            decoration: const InputDecoration(
-              border: UnderlineInputBorder(),
-              isDense: true,
-            ),
-            obscureText: true,
-            style: theme.textTheme.bodyLarge,
+          style: theme.textTheme.bodyLarge,
+        ),
+        SizedBox(height: 20.v),
+        Text("Senha", style: CustomTextStyles.titleLargePrimary),
+        TextField(
+          controller: passwordController,
+          decoration: const InputDecoration(
+            border: UnderlineInputBorder(),
+            isDense: true,
           ),
-          SizedBox(height: 20.v),
-          Text("Email", style: CustomTextStyles.titleLargePrimary),
-          TextField(
-            controller: emailController,
-            decoration: const InputDecoration(
-              border: UnderlineInputBorder(),
-              isDense: true,
-            ),
-            style: theme.textTheme.bodyLarge,
+          obscureText: true,
+          style: theme.textTheme.bodyLarge,
+        ),
+        SizedBox(height: 20.v),
+        Text("Email", style: CustomTextStyles.titleLargePrimary),
+        TextField(
+          controller: emailController,
+          decoration: const InputDecoration(
+            border: UnderlineInputBorder(),
+            isDense: true,
           ),
-          SizedBox(height: 20.v),
-          // Botões dentro do Container
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CustomOutlinedButton(
-                height: 29.v,
-                width: 81.h,
-                text: "Editar",
-                buttonTextStyle: CustomTextStyles.bodyLarge16_1,
-                onPressed: _updateProfile,
-              ),
-              CustomOutlinedButton(
-                height: 29,
-                width: 81,
-                text: "Log Out",
-                margin: EdgeInsets.only(right: 6),
-                buttonTextStyle: TextStyle(fontSize: 16),
-                alignment: Alignment.centerRight,
-                onPressed: () async {
-                  // Limpe os dados do perfil armazenados
-                  final prefs = await SharedPreferences.getInstance();
-                  await prefs.remove('idUser');
-                  await prefs.remove(
-                      'profileData'); // Supondo que você armazena dados do perfil aqui
+          style: theme.textTheme.bodyLarge,
+        ),
+        SizedBox(height: 8.v),
+        CustomOutlinedButton(
+          height: 29.v,
+          width: 81.h,
+          text: "Editar",
+          buttonTextStyle: CustomTextStyles.bodyLarge16_1,
+          onPressed:
+              _updateProfile, // Chama a função de atualização ao pressionar o botão
+        ),
+        SizedBox(height: 20.v),
+        CustomOutlinedButton(
+          height: 29,
+          width: 81,
+          text: "Log Out",
+          margin: EdgeInsets.only(right: 6),
+          buttonTextStyle: TextStyle(fontSize: 16),
+          alignment: Alignment.centerRight,
+          onPressed: () async {
+            // Limpe os dados do perfil armazenados
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.remove('idUser');
+            await prefs.remove(
+                'profileData'); // Supondo que você armazena dados do perfil aqui
 
-                  // Redirecione para a tela de login
-                  Navigator.pushReplacementNamed(
-                      context, AppRoutes.loginScreen);
-                },
-              ),
-            ],
-          ),
-          SizedBox(height: 20.v),
-        ],
-      ),
+            // Redirecione para a tela de login
+            Navigator.pushReplacementNamed(context, AppRoutes.loginScreen);
+          },
+        ),
+      ]),
     );
   }
 }
