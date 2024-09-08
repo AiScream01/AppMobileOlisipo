@@ -591,80 +591,47 @@ class Servidor {
   }
 
   //UTILIZADOR
-
   Future<void> insertUtilizador(
-    String id,
-    String nome,
-    String email,
-    String fotoPath, // Caminho para a foto
-    String senha,
-    String declaracaoAcademicaPath, // Caminho para a declaração acadêmica
-    String declaracaoBancariaPath, // Caminho para a declaração bancária
-    String role,
-  ) async {
-    if (id.isEmpty ||
-        nome.isEmpty ||
-        email.isEmpty ||
-        senha.isEmpty ||
-        role.isEmpty) {
-      throw Exception(
-          'Dados inválidos: ID, nome, email, senha e role são obrigatórios.');
-    }
+  String nome,
+  String email,
+  String role,
+  String palavrapasse,
+) async {
+  // Verifica se os parâmetros obrigatórios não estão vazios
+  if (nome.isEmpty || email.isEmpty || role.isEmpty || palavrapasse.isEmpty) {
+    throw Exception('Dados inválidos: todos os parâmetros são obrigatórios.');
+  }
 
-    var url = '$baseURL/utilizador/create'; // Endpoint correto
+  // Define a URL base e o endpoint para criar o utilizador
+  var url = '$baseURL/utilizador/create';
 
-    var request = http.MultipartRequest('POST', Uri.parse(url))
-      ..fields['id'] = id
-      ..fields['nome'] = nome
-      ..fields['email'] = email
-      ..fields['senha'] = senha
-      ..fields['role'] = role;
+  // Prepara a requisição HTTP POST
+  var response = await http.post(
+    Uri.parse(url),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, dynamic>{
+      'nome': nome,
+      'email': email,
+      'role': role,
+      'palavrapasse': palavrapasse,
+    }),
+  );
 
-    // Adiciona a foto, se disponível
-    if (fotoPath.isNotEmpty && File(fotoPath).existsSync()) {
-      var fotoFile = await http.MultipartFile.fromPath(
-        'foto', // Nome do campo para a foto
-        fotoPath,
-        contentType: MediaType(
-            'image', 'jpeg'), // Ajuste o tipo MIME conforme necessário
-      );
-      request.files.add(fotoFile);
-    }
+  // Imprime o status code e o corpo da resposta para depuração
+  print('Status code: ${response.statusCode}');
+  print('Response body: ${response.body}');
 
-    // Adiciona a declaração acadêmica, se disponível
-    if (declaracaoAcademicaPath.isNotEmpty &&
-        File(declaracaoAcademicaPath).existsSync()) {
-      var declaracaoAcademicaFile = await http.MultipartFile.fromPath(
-        'declaracao_academica', // Nome do campo para a declaração acadêmica
-        declaracaoAcademicaPath,
-        contentType: MediaType(
-            'application', 'pdf'), // Ajuste o tipo MIME conforme necessário
-      );
-      request.files.add(declaracaoAcademicaFile);
-    }
-
-    // Adiciona a declaração bancária, se disponível
-    if (declaracaoBancariaPath.isNotEmpty &&
-        File(declaracaoBancariaPath).existsSync()) {
-      var declaracaoBancariaFile = await http.MultipartFile.fromPath(
-        'declaracao_bancaria', // Nome do campo para a declaração bancária
-        declaracaoBancariaPath,
-        contentType: MediaType(
-            'application', 'pdf'), // Ajuste o tipo MIME conforme necessário
-      );
-      request.files.add(declaracaoBancariaFile);
-    }
-
-    // Envia a requisição
-    var response = await request.send();
-
-    // Lê a resposta do servidor
-    final responseBody = await response.stream.bytesToString();
-
-    if (response.statusCode == 201) {
-      print('Utilizador criado com sucesso!');
-    } else {
-      throw Exception('Falha ao criar utilizador: $responseBody');
-    }
+  // Verifica o status da resposta
+  if (response.statusCode == 201) {
+    print('Utilizador criado com sucesso!');
+  } else {
+    print('Erro ao criar utilizador: ${response.statusCode}');
+    throw Exception('Falha ao criar utilizador: ${response.body}');
   }
 }
+
+}
+
+
