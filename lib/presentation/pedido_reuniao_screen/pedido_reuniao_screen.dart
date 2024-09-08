@@ -415,6 +415,7 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
     try {
       final prefs = await SharedPreferences.getInstance();
       String? idUser = prefs.getString('idUser');
+      String estado = 'Pendente';
 
       print('Dados enviados para o servidor: {'
           'titulo: ${_tituloController.text}, '
@@ -425,16 +426,16 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
           'nome_utilizador_reuniao: ${_selectedUserName}'
           '}');
 
-      List<(String, String, String, String)> dadosReuniao = [
-        (
-          _tituloController.text,
-          _descricaoController.text,
-          _selectedDate.toString(),
-          _formatTimeOfDay(_selectedTime!),
-        )
-      ];
 
-      await bd.inserirReuniao(dadosReuniao);
+      await bd.inserirReuniao([
+        (
+        _tituloController.text,
+        _descricaoController.text,
+        _selectedDate.toString(),
+        _formatTimeOfDay(_selectedTime!),
+        estado,
+        )
+      ]);
 
       await servidor.insertReuniao(
         _tituloController.text,

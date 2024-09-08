@@ -804,13 +804,13 @@ class Basededados {
 
 //---------------------------------------Inserir reunião
   Future<void> inserirReuniao(
-      List<(String, String, String, String)> reuniaoData) async {
+      List<(String, String, String, String, String)> reuniaoData) async {
     Database db = await basededados;
     await db.delete('reunioes');
-    for (final (titulo, descricao, data, estado) in reuniaoData) {
+    for (final (titulo, descricao, data, hora, estado) in reuniaoData) {
       await db.rawInsert(
           'insert into reunioes(titulo, descricao, data, hora, estado) values(?,?,?,?,?)',
-          [titulo, descricao, data, estado]);
+          [titulo, descricao, data, hora, estado]);
     }
   }
 

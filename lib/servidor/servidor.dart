@@ -50,7 +50,7 @@ class Servidor {
     List<(String, String, String)> ferias = [];
     List<(String, String, String, String)> ajudas = [];
     List<(String, String, String)> horas = [];
-    List<(String, String, String, String)> reunioes = [];
+    List<(String, String, String, String, String)> reunioes = [];
     List<(String, String, String, String, String, String)> despesasViatura = [];
     List<(String, String, String, String)> faltas = [];
 
@@ -104,6 +104,7 @@ class Servidor {
         linha['titulo'].toString(),
         linha['descricao'].toString(),
         linha['data'].toString(),
+        linha['hora'].toString(),
         linha['estado'].toString()
       ));
     });
