@@ -152,7 +152,7 @@ class LoginScreen extends StatelessWidget {
               onTapTxtNovoAquiFazO(context);
             },
             child: Text(
-              "",
+              "Novo aqui?\nFaz o pedido de conta!",
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.primary,

@@ -5,6 +5,7 @@ import 'package:rui_pedro_s_application11/presentation/noticia_screen/noticia_sc
 import 'package:rui_pedro_s_application11/presentation/recuperar_password_email_screen/recuperar_password_email_screen.dart';
 import 'package:rui_pedro_s_application11/presentation/recuperar_password_confirmar_password_screen/recuperar_password_confirmar_password_screen.dart';
 import 'package:rui_pedro_s_application11/presentation/noticias_screen/noticias_screen.dart';
+import 'package:rui_pedro_s_application11/presentation/registo_screen/registo_screen.dart';
 import 'package:rui_pedro_s_application11/presentation/pedido_ferias_screen/pedido_ferias_screen.dart';
 import 'package:rui_pedro_s_application11/presentation/despesas_viatura_propria_screen/despesas_viatura_propria_screen.dart';
 import 'package:rui_pedro_s_application11/presentation/ajudas_screen/ajudas_screen.dart';
@@ -67,6 +68,7 @@ class AppRoutes {
           imagem: '',
           data: '',
         ),
+    registoScreen: (context) => RegistoScreen(),
     recuperarPasswordEmailScreen: (context) => RecuperarPasswordEmailScreen(),
     recuperarPasswordConfirmarPasswordScreen: (context) =>
         RecuperarPasswordConfirmarPasswordScreen(),

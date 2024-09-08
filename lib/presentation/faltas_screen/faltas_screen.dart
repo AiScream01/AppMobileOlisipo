@@ -19,9 +19,11 @@ class _FaltasScreenState extends State<FaltasScreen> {
   final TextEditingController dateController = TextEditingController();
   final TextEditingController hoursController =
       TextEditingController(); // Novo: Controlador para horas
+  File? _justificacao;
+
   final Servidor servidor = Servidor();
   final Basededados bd = Basededados();
-  File? _selectedFile; // Variável para armazenar o arquivo PDF selecionado
+  // Variável para armazenar o arquivo PDF selecionado
 
   @override
   void dispose() {
@@ -294,7 +296,7 @@ class _FaltasScreenState extends State<FaltasScreen> {
               ),
             ),
             child: Text(
-              "Upload de documento PDF",
+              "Upload da justificação",
               style: TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.w400,
@@ -302,11 +304,11 @@ class _FaltasScreenState extends State<FaltasScreen> {
             ),
           ),
         ),
-        if (_selectedFile != null)
+        if (_justificacao != null)
           Padding(
             padding: const EdgeInsets.only(top: 10.0),
             child: Text(
-              "Arquivo Selecionado: ${_selectedFile!.path.split('/').last}",
+              "Arquivo Selecionado: ${_justificacao?.path.split('/').last}",
               style: TextStyle(fontSize: 16.0),
             ),
           ),
@@ -322,7 +324,7 @@ class _FaltasScreenState extends State<FaltasScreen> {
 
     if (result != null) {
       setState(() {
-        _selectedFile = File(result.files.single.path!);
+        _justificacao = File(result.files.single.path!);
       });
     }
   }
@@ -350,7 +352,7 @@ class _FaltasScreenState extends State<FaltasScreen> {
     String? idUser = prefs.getString('idUser');
     String estado = 'pendente'; // Estado padrão
     String justificacao =
-        _selectedFile != null ? _selectedFile!.path.split('/').last : "";
+        _justificacao != null ? _justificacao!.path.split('/').last : "";
 
     // Print dos dados que serão enviados
     print('Dados para enviar:');
@@ -360,7 +362,7 @@ class _FaltasScreenState extends State<FaltasScreen> {
     print('Estado: $estado');
     print('Comprovativo: $justificacao');
     print(
-        'Caminho do arquivo: ${_selectedFile?.path ?? 'Nenhum arquivo selecionado'}');
+        'Caminho do arquivo: ${_justificacao?.path ?? 'Nenhum arquivo selecionado'}');
 
     try {
       await bd.inserirFalta([
@@ -380,8 +382,7 @@ class _FaltasScreenState extends State<FaltasScreen> {
         idUser.toString(),
         DateTime.parse(dateController.text),
         hoursString, // Passe o valor como String
-        'Justificativa não fornecida', // Ajuste o valor conforme necessário
-        _selectedFile?.path ?? '', // Caminho do arquivo PDF
+        _justificacao?.path,
       );
 
       showDialog(

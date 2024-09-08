@@ -50,7 +50,6 @@ class MyApp extends StatelessWidget {
     //bd.criatabelaFerias();
     //bd.CriarTabelaRecibosVencimento();
 
-
     // Função que conecta ao servidor ou à base de dados local
     Future<void> servidor_basededados() async {
       if (idUser != null && idUser!.isNotEmpty) {
