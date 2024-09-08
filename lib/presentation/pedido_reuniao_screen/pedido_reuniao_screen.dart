@@ -414,7 +414,7 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      final String? nomeUtilizador = prefs.getString('nome_utilizador_reuniao');
+      String? idUser = prefs.getString('idUser');
 
       print('Dados enviados para o servidor: {'
           'titulo: ${_tituloController.text}, '
@@ -441,7 +441,7 @@ class _PedidoReuniaoScreenState extends State<PedidoReuniaoScreen> {
         _descricaoController.text,
         _selectedDate.toString(),
         _formatTimeOfDay(_selectedTime!),
-        _selectedUserId!,
+        idUser!,
         _selectedUserName!,
       );
 

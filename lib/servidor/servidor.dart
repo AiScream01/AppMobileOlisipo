@@ -403,9 +403,10 @@ Future<void> insertDespesasViaturaPessoal(
     if (titulo.isEmpty ||
         descricao.isEmpty ||
         data.isEmpty ||
+        hora.isEmpty||
         idUser.isEmpty ||
-        nomeUtilizadorReuniao.isEmpty ||
-        hora.isEmpty) {
+        nomeUtilizadorReuniao.isEmpty
+    ) {
       throw Exception('Dados inválidos: todos os parâmetros são obrigatórios.');
     }
 
