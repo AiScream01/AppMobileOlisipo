@@ -589,4 +589,82 @@ class Servidor {
       throw Exception('Falha ao carregar perfil');
     }
   }
+
+  //UTILIZADOR
+
+  Future<void> insertUtilizador(
+    String id,
+    String nome,
+    String email,
+    String fotoPath, // Caminho para a foto
+    String senha,
+    String declaracaoAcademicaPath, // Caminho para a declaração acadêmica
+    String declaracaoBancariaPath, // Caminho para a declaração bancária
+    String role,
+  ) async {
+    if (id.isEmpty ||
+        nome.isEmpty ||
+        email.isEmpty ||
+        senha.isEmpty ||
+        role.isEmpty) {
+      throw Exception(
+          'Dados inválidos: ID, nome, email, senha e role são obrigatórios.');
+    }
+
+    var url = '$baseURL/utilizador/create'; // Endpoint correto
+
+    var request = http.MultipartRequest('POST', Uri.parse(url))
+      ..fields['id'] = id
+      ..fields['nome'] = nome
+      ..fields['email'] = email
+      ..fields['senha'] = senha
+      ..fields['role'] = role;
+
+    // Adiciona a foto, se disponível
+    if (fotoPath.isNotEmpty && File(fotoPath).existsSync()) {
+      var fotoFile = await http.MultipartFile.fromPath(
+        'foto', // Nome do campo para a foto
+        fotoPath,
+        contentType: MediaType(
+            'image', 'jpeg'), // Ajuste o tipo MIME conforme necessário
+      );
+      request.files.add(fotoFile);
+    }
+
+    // Adiciona a declaração acadêmica, se disponível
+    if (declaracaoAcademicaPath.isNotEmpty &&
+        File(declaracaoAcademicaPath).existsSync()) {
+      var declaracaoAcademicaFile = await http.MultipartFile.fromPath(
+        'declaracao_academica', // Nome do campo para a declaração acadêmica
+        declaracaoAcademicaPath,
+        contentType: MediaType(
+            'application', 'pdf'), // Ajuste o tipo MIME conforme necessário
+      );
+      request.files.add(declaracaoAcademicaFile);
+    }
+
+    // Adiciona a declaração bancária, se disponível
+    if (declaracaoBancariaPath.isNotEmpty &&
+        File(declaracaoBancariaPath).existsSync()) {
+      var declaracaoBancariaFile = await http.MultipartFile.fromPath(
+        'declaracao_bancaria', // Nome do campo para a declaração bancária
+        declaracaoBancariaPath,
+        contentType: MediaType(
+            'application', 'pdf'), // Ajuste o tipo MIME conforme necessário
+      );
+      request.files.add(declaracaoBancariaFile);
+    }
+
+    // Envia a requisição
+    var response = await request.send();
+
+    // Lê a resposta do servidor
+    final responseBody = await response.stream.bytesToString();
+
+    if (response.statusCode == 201) {
+      print('Utilizador criado com sucesso!');
+    } else {
+      throw Exception('Falha ao criar utilizador: $responseBody');
+    }
+  }
 }
